@@ -43,10 +43,13 @@ const QUESTIONS_CALCUL = [
   {
     id: "calc_003", theme: "calcul", groupe :"fraction",
     niveau: ["techno", "specifique", "specialite"], cols: 2,
-    variables: { a: { min: 1, max: 6 }, b: { min: 3, max: 8 }, c: { min: 1, max: 6 }, d: { min: 3, max: 8 } },
+    variables: { a: { min: 3, max: 6 }, b: { min: 3, max: 8 }, c: { min: 1, max: 6 }, d: { min: 3, max: 8 } },
     enonce: (v) => {
-      if (v.b===v.a){v.a--}
-      if (v.c===v.d){v.c--}
+      if (v.b<=v.a){v.a=v.b-1}
+      if (v.d<=v.c){v.c=v.d-1}
+      if (v.b===v.d){v.b++}
+      if (v.a===v.c){v.a--}
+
       return`Comparer $\\dfrac{${v.a}}{${v.b}}$ et $\\dfrac{${v.c}}{${v.d}}$`},
     bonneReponse: (v) => {
       const lhs = v.a * v.d, rhs = v.c * v.b;
@@ -277,7 +280,7 @@ const QUESTIONS_CALCUL = [
   // ── Expression littérale : simplification ── done
   {
     id: "calc_017", theme: "calcul",
-    niveau: ["techno", "specifique", "specialite"], cols: 4,
+    niveau: ["techno", "specifique"], cols: 4,
     variables: { a: { min: 2, max: 7 }, b: { min: 1, max: 6 } },
     enonce: (v) => `Simplifier $-(${v.a}x - ${v.b})$`,
     bonneReponse: (v) => `$-${v.a}x + ${v.b}$`,

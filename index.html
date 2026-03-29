@@ -531,7 +531,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
         <div class="theme-check">✓</div>
       </div>
       <div class="theme-card" data-theme="proportions" style="--accent:#a78bfa;--icon-bg:rgba(167,139,250,0.15)" onclick="toggleTheme(this)">
-        <div class="theme-icon">⚖️</div>
+        <div class="theme-icon">➗</div>
         <div class="theme-name">Proportions et pourcentages</div>
         <div class="theme-desc">Fractions, pourcentages, proportionnalité</div>
         <div class="theme-check">✓</div>
@@ -609,7 +609,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
       <button class="btn" onclick="goToView('config')">← Reconfigurer</button>
       <button class="btn btn-blue" onclick="regenerate()">🔄 Régénérer</button>
       <button class="btn btn-green" id="btnSubmit" onclick="submitQCM()">✅ Soumettre</button>
-      <button class="btn" id="btnCorrect" onclick="toggleCorrection()">👁 Afficher le corrigé</button>
+      <button class="btn" id="btnCorrect" onclick="toggleCorrection()">👁️ Afficher le corrigé</button>
       <button class="btn btn-blue" onclick="goToView('export')">📄 Exporter →</button>
     </div>
     <div id="scoreBar" style="display:none" class="score-bar">
@@ -628,7 +628,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
     </div>
     <div class="tab-bar">
       <button class="tab-btn active" onclick="switchExportTab('exam',this)">📝 Document classique</button>
-      <button class="tab-btn" onclick="switchExportTab('beamer',this)">🎞 Diaporama Beamer</button>
+      <button class="tab-btn" onclick="switchExportTab('beamer',this)">👨‍🏫 Diaporama</button>
     </div>
     <div id="opts-exam" class="export-options">
       <label class="checkbox-opt">
@@ -852,7 +852,7 @@ function renderPreview() {
     `${state.generatedQuestions.length} questions — ${themes.map(t=>themeNames[t]||t).join(', ')}`;
   document.getElementById('scoreBar').style.display = 'none';
   document.getElementById('btnSubmit').style.display = '';
-  document.getElementById('btnCorrect').textContent = '👁 Afficher le corrigé';
+  document.getElementById('btnCorrect').textContent = '👁️ Afficher le corrigé';
 
   const container = document.getElementById('questionsContainer');
   container.innerHTML = '';
@@ -966,7 +966,7 @@ function submitQCM() {
 }
 function toggleCorrection() {
   state.showCorrection = !state.showCorrection;
-  document.getElementById('btnCorrect').textContent = state.showCorrection ? '🙈 Masquer le corrigé' : '👁 Afficher le corrigé';
+  document.getElementById('btnCorrect').textContent = state.showCorrection ? '🙈 Masquer le corrigé' : '👁️ Afficher le corrigé';
   state.generatedQuestions.forEach((q,qi) => {
     const sel = state.userAnswers[qi];
     document.getElementById('answers_'+qi).querySelectorAll('.answer-btn').forEach((btn,ri) => {

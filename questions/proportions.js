@@ -5,81 +5,87 @@
 
 const QUESTIONS_PROPORTIONS = [
 
-  // ── Calculer p% d'une valeur ──
+  // ── Calculer p% d'une valeur ── done
   {
     id: "prop_001", theme: "proportions",
-    niveau: ["techno", "specifique", "specialite"], cols: 4,
-    variables: { total: { min: 20, max: 200 }, taux: { min: 5, max: 50 } },
-    enonce: (v) => `Calculer $${v.taux}\\%$ de $${v.total}$`,
-    bonneReponse: (v) => `$${v.total * v.taux / 100}$`,
+    niveau: ["techno", "specifique"], cols: 2,
+    variables: { total: { min: 20, max: 200}, taux: { min: 10, max: 90, step:10 } },
+    enonce: (v) => `Pour calculer $${v.taux}\\%$ de $${v.total}$, il faut faire :`,
+    bonneReponse: (v) => `$${v.total} \\times \\dfrac{${v.taux}}{ 100}$`,
     distracteurs: (v) => [
-      `$${v.total + v.taux}$`,
-      `$${(v.total / v.taux).toFixed(1)}$`,
-      `$${(v.taux * 100 / v.total).toFixed(1)}$`
+      `$${v.total} \\times \\dfrac{ 100}{${v.taux}}$`,
+      `$${v.taux} \\times \\dfrac{ 100}{${v.total}}$`,
+      `$${v.taux} \\times ${v.total}$`
     ]
   },
 
-  // ── Exprimer une fraction en pourcentage ──
+  // ── Exprimer une fraction en pourcentage ── done
   {
     id: "prop_002", theme: "proportions",
     niveau: ["techno", "specifique", "specialite"], cols: 4,
-    variables: { partie: { min: 5, max: 40 }, total: { min: 50, max: 200 } },
-    enonce: (v) => `Exprimer $\\dfrac{${v.partie}}{${v.total}}$ en pourcentage`,
-    bonneReponse: (v) => `$${(v.partie / v.total * 100).toFixed(1)}\\%$`,
+    variables: { a: { values : [1,2,3,4]}, b:{values : [5,10,25]},c:{values:[3,4,5,6]}  },
+    enonce: (v) => {
+      v.c=(v.c*v.b===100) ? v.c+1:v.c;
+      return `Exprimer $\\dfrac{${v.a*v.c}}{${v.b*v.c}} $ en pourcentage.`},
+    bonneReponse: (v) => `$${(v.a/v.b*100).toFixed(0)}\\%$`,
     distracteurs: (v) => [
-      `$${(v.total / v.partie).toFixed(1)}\\%$`,
-      `$${v.partie}\\%$`,
-      `$${(v.partie * v.total / 100).toFixed(1)}\\%$`
+      `$${(v.a/v.b*100-3).toFixed(0)}\\%$`,
+      `$${(v.a/v.b*100-1).toFixed(0)}\\%$`,
+      `$ ${v.a*v.c}\\%$`
     ]
   },
 
-  // ── Trouver le tout connaissant la partie et le taux ──
+  // ── Trouver le tout connaissant la partie et le taux ── done
   {
     id: "prop_003", theme: "proportions",
-    niveau: ["techno", "specifique", "specialite"], cols: 4,
-    variables: { partie: { min: 5, max: 30 }, taux: { min: 10, max: 50 } },
-    enonce: (v) => `$${v.partie}$ représente $${v.taux}\\%$ d'un total. Quel est ce total ?`,
-    bonneReponse: (v) => `$${v.partie * 100 / v.taux}$`,
+    niveau: ["specialite"], cols: 4,
+    variables: { p: { min: 20, max: 200, step:10 }, t: { values : [10,20,30,40,60,70,80,90]} },
+    enonce: (v) => `$${(v.p*v.t/100).toFixed(0)}$ représente $${v.t}\\%$ de :`,
+    bonneReponse: (v) => `$${v.p}$`,
     distracteurs: (v) => [
-      `$${(v.partie * v.taux / 100).toFixed(1)}$`,
-      `$${v.partie + v.taux}$`,
-      `$${(v.partie / v.taux).toFixed(1)}$`
+      `$${(v.p*v.t/100+100-v.t).toFixed(0)}$`,
+      `$${(v.p*v.t/100 + v.t).toFixed(0)}$`,
+      `$${v.p+10}$`
     ]
   },
 
-  // ── Écriture décimale d'une fraction ──
+  // ── Écriture décimale d'une fraction ── done
   {
     id: "prop_004", theme: "proportions",
     niveau: ["techno", "specifique", "specialite"], cols: 4,
-    variables: { a: { min: 1, max: 7 }, b: { min: 2, max: 9 } },
-    enonce: (v) => `Écrire $\\dfrac{${v.a}}{${v.b}}$ sous forme décimale (arrondir au centième)`,
-    bonneReponse: (v) => `$${(v.a / v.b).toFixed(2)}$`,
+    variables: { a: { values:[2,4,5]}, b: { min:2, max:9} ,c:{values : [3,4,5,6,7,8,9]}},
+    enonce: (v) => {v.b=(v.a===v.b) ? v.b+1:v.b;
+      
+      return `Écrire $\\dfrac{${v.b*v.c}}{${v.a*v.c}}$ sous forme décimale (arrondir au centième)`},
+    bonneReponse: (v) => `$${+parseFloat(v.b / v.a).toFixed(2)}$`,
     distracteurs: (v) => [
-      `$${(v.b / v.a).toFixed(2)}$`,
-      `$${v.a * v.b}$`,
-      `$${(v.a / v.b).toFixed(1)}$`
+      `$${+parseFloat(v.b / v.a+.25).toFixed(2)}$`,
+      `$${+parseFloat(v.b / v.a+.05).toFixed(2)}$`,
+      `$${+parseFloat(v.b / v.a+.5).toFixed(2)}$`,
     ]
   },
 
-  // ── Proportion : trouver la partie ──
+  // ── Proportion : trouver la partie ── done
   {
     id: "prop_005", theme: "proportions",
     niveau: ["techno", "specifique", "specialite"], cols: 4,
-    variables: { total: { min: 100, max: 500 }, num: { min: 1, max: 7 }, den: { min: 2, max: 8 } },
-    enonce: (v) => `Un groupe de $${v.total}$ personnes. $\\dfrac{${v.num}}{${v.den}}$ sont des femmes. Combien de femmes ?`,
-    bonneReponse: (v) => `$${Math.round(v.total * v.num / v.den)}$`,
+    variables: { a: { min: 3, max: 9 }, b: { min: 3, max: 9 }, c: { min: 2, max: 9 } },
+    enonce: (v) => {
+      v.c=(v.c>=v.b) ? v.b-1:v.c;
+      return `Un groupe de $${v.a*v.b}$ personnes. $\\dfrac{${v.c}}{${v.b}}$ sont des femmes. Combien de femmes ?`},
+    bonneReponse: (v) => `$${v.a*v.c}$`,
     distracteurs: (v) => [
-      `$${v.total - Math.round(v.total * v.num / v.den)}$`,
-      `$${v.num * v.den}$`,
-      `$${Math.round(v.total / v.den)}$`
+      `$${v.a*v.c-1}$`,
+      `$${v.a*v.c+2}$`,
+      `$${v.a*v.c-2}$`,
     ]
   },
 
   // ── Passer de fraction à pourcentage (valeurs simples) ── done
   {
     id: "prop_006", theme: "proportions",
-    niveau: ["techno", "specifique", "specialite"], cols: 4,
-    variables: {n:{values:[20,25,40,50,60,75,80,100]}},
+    niveau: ["techno", "specifique"], cols: 4,
+    variables: {n:{values:[20,25,40,50,60,75,80]}},
     enonce: (v) => `Quelle est la fraction équivalente à $${v.n}\\%$ ?`,
     bonneReponse: (v) => `$${frac(v.n, 100)}$`,
     distracteurs: (v) => [

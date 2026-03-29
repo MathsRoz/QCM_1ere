@@ -5,7 +5,7 @@
 
 const QUESTIONS_PROBA = [
 
-  // ── Probabilité de l'événement contraire ──
+  // ── Probabilité de l'événement contraire ── done
   {
     id: "proba_001", theme: "proba", 
     niveau: ["techno", "specifique", "specialite"], cols: 4,
@@ -19,7 +19,7 @@ const QUESTIONS_PROBA = [
     ]
   },
 
-  // ── Probabilité d'une issue sur un dé ──
+  // ── Probabilité d'une issue sur un dé ── done
   {
     id: "proba_002", theme: "proba", groupe:"de",
     niveau: ["techno", "specifique", "specialite"], cols: 4,
@@ -33,7 +33,7 @@ const QUESTIONS_PROBA = [
     ]
   },
 
-  // ── Probabilité d'un multiple sur un dé ──
+  // ── Probabilité d'un multiple sur un dé ── done
   {
     id: "proba_003", theme: "proba", groupe:"de",
     niveau: ["techno", "specifique", "specialite"], cols: 4,
@@ -57,7 +57,7 @@ const QUESTIONS_PROBA = [
   },
 
 
-  // ── Probabilité d'une issue sur un dé ──
+  // ── Probabilité d'une issue sur un dé ── done
   {
     id: "proba_003b", theme: "proba", groupe:"de",
     niveau: ["techno", "specifique", "specialite"], cols: 4,
@@ -71,7 +71,7 @@ const QUESTIONS_PROBA = [
     ]
   },
 
-  // ── Événements indépendants : P(A∩B) ──
+  // ── Événements indépendants : P(A∩B) ── done
   {
     id: "proba_004", theme: "proba",
     niveau: ["specifique", "specialite"], cols: 4,
@@ -85,7 +85,7 @@ const QUESTIONS_PROBA = [
     ]
   },
 
-  // ── Tirage sans remise : bille colorée ──
+  // ── Tirage sans remise : bille colorée ── done
   {
     id: "proba_005", theme: "proba",
     niveau: ["techno", "specifique", "specialite"], cols: 4,
@@ -119,7 +119,7 @@ const QUESTIONS_PROBA = [
   //   ]
   // },
 
-  // ── Distinguer P(A∩B), PA(B), PB(A) ──
+  // ── Distinguer P(A∩B), PA(B), PB(A) ── done
   {
     id: "proba_007", theme: "proba",
     niveau: ["specifique", "specialite"], cols: 4,
@@ -133,7 +133,7 @@ const QUESTIONS_PROBA = [
     ]
   },
 
-  // ── Probabilité somme des issues ──
+  // ── Probabilité somme des issues ── done
   {
     id: "proba_008", theme: "proba",
     niveau: ["techno", "specifique", "specialite"], cols: 4,

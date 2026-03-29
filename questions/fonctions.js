@@ -116,7 +116,7 @@ const QUESTIONS_FONCTIONS = [
     niveau: ["specifique", "specialite"], cols: 2,
     variables: { a: { min: -5, max: 5 }, b: { min: -6, max: 6 }, c: { min: 1, max: 8 } },
     enonce: (v) => {
-      
+      if(v.a==0){v.a=3}
       return 'La droite d\'équation '+ simplExpr(' $y = '+(v.a)+'x +'+ (v.b) +'$' )+` passe par le point de coordonnées :`},
     bonneReponse: (v) => `$(${v.c};${v.a*v.c+v.b})$`,
     distracteurs: (v) => [
