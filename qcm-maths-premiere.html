@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM Mathématiques — Première</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+:root {
+  --bg: #0B1120;
+  --card: #131d30;
+  --card2: #162035;
+  --border: rgba(79,142,247,0.15);
+  --border2: rgba(255,255,255,0.06);
+  --blue: #4f8ef7;
+  --blue2: #3b7de8;
+  --green: #34d399;
+  --green2: #10b981;
+  --orange: #f59e0b;
+  --red: #f87171;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #64748b;
+  --mono: 'DM Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 12px;
+  --radius2: 8px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 10% 10%, rgba(79,142,247,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 90% 85%, rgba(52,211,153,0.07) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(79,142,247,0.3); border-radius: 99px; }
+
+/* ─── HEADER ─── */
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(11,17,32,0.75);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border2);
+  padding: 0 24px;
+  height: 62px;
+  display: flex; align-items: center; gap: 24px;
+}
+.logo {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 15px; font-weight: 600; letter-spacing: -0.3px; white-space: nowrap;
+}
+.logo-badge {
+  background: linear-gradient(135deg, var(--blue), var(--green));
+  border-radius: 8px; width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.logo-text span { color: var(--text2); font-weight: 400; }
+.steps {
+  display: flex; align-items: center; gap: 4px; margin-left: auto;
+}
+.step-pill {
+  display: flex; align-items: center; gap: 7px;
+  padding: 5px 13px; border-radius: 99px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  border: 1px solid transparent;
+  color: var(--text3); transition: all 0.25s;
+}
+.step-pill .step-num {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: rgba(255,255,255,0.07);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-family: var(--mono); font-weight: 500;
+  transition: all 0.25s;
+}
+.step-pill.active {
+  color: var(--blue);
+  border-color: rgba(79,142,247,0.3);
+  background: rgba(79,142,247,0.08);
+  box-shadow: 0 0 16px rgba(79,142,247,0.15);
+}
+.step-pill.active .step-num { background: var(--blue); color: #fff; }
+.step-pill.done { color: var(--text2); }
+.step-pill.done .step-num { background: rgba(52,211,153,0.2); color: var(--green); }
+.step-sep { color: var(--text3); font-size: 16px; }
+
+/* ─── MAIN ─── */
+main { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
+
+/* ─── VIEW TRANSITIONS ─── */
+.view { display: none; animation: slideIn 0.3s cubic-bezier(0.16,1,0.3,1); }
+.view.active { display: block; }
+@keyframes slideIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ─── SECTION TITLE ─── */
+.section-title {
+  font-size: 22px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px;
+}
+.section-sub { font-size: 14px; color: var(--text2); margin-bottom: 28px; }
+
+/* ─── THEME CARDS ─── */
+.theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+.theme-card {
+  background: var(--card); border: 1px solid var(--border2);
+  border-radius: var(--radius); padding: 18px 20px;
+  cursor: pointer; position: relative; overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+}
+.theme-card::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+  background: var(--accent, var(--blue));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+.theme-card:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-2px); }
+.theme-card:hover::after { transform: scaleX(0.5); }
+.theme-card.selected { border-color: var(--accent, var(--blue)); background: var(--card2); }
+.theme-card.selected::after { transform: scaleX(1); }
+.theme-icon {
+  width: 36px; height: 36px; border-radius: 9px;
+  background: var(--icon-bg, rgba(79,142,247,0.15));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; margin-bottom: 12px;
+}
+.theme-name { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+.theme-desc { font-size: 12px; color: var(--text2); line-height: 1.4; }
+.theme-check {
+  position: absolute; top: 12px; right: 14px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--accent, var(--blue));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; opacity: 0;
+  transform: scale(0.5) rotate(-45deg);
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.theme-card.selected .theme-check { opacity: 1; transform: scale(1) rotate(0deg); }
+
+/* ─── LEVEL BUTTONS ─── */
+.level-section { margin-bottom: 28px; }
+.level-label { font-size: 13px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+.level-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.level-btn {
+  padding: 9px 20px; border-radius: 99px; border: 1px solid var(--border2);
+  background: var(--card); color: var(--text2);
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.25s;
+}
+.level-btn:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+.level-btn.active[data-lvl="techno"] { background: rgba(52,211,153,0.1); border-color: var(--green); color: var(--green); box-shadow: 0 0 14px rgba(52,211,153,0.2); }
+.level-btn.active[data-lvl="specifique"] { background: rgba(245,158,11,0.1); border-color: var(--orange); color: var(--orange); box-shadow: 0 0 14px rgba(245,158,11,0.2); }
+.level-btn.active[data-lvl="specialite"] { background: rgba(248,113,113,0.1); border-color: var(--red); color: var(--red); box-shadow: 0 0 14px rgba(248,113,113,0.2); }
+
+/* ─── FILTER TOGGLE ─── */
+.filter-section { margin-bottom: 28px; }
+.filter-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.toggle-wrap { display: flex; align-items: center; gap: 10px; }
+.toggle {
+  width: 44px; height: 24px; border-radius: 99px;
+  background: var(--card2); border: 1px solid var(--border2);
+  position: relative; cursor: pointer; transition: background 0.25s;
+  flex-shrink: 0;
+}
+.toggle.on { background: var(--blue); border-color: var(--blue); }
+.toggle::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 16px; height: 16px; border-radius: 50%; background: #fff;
+  transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+.toggle.on::after { transform: translateX(20px); }
+.toggle-label { font-size: 13px; font-weight: 500; }
+.filter-info {
+  font-size: 12px; color: var(--text3);
+  background: var(--card2); border: 1px solid var(--border2);
+  border-radius: 99px; padding: 4px 11px; font-family: var(--mono);
+  transition: all 0.25s;
+}
+.tooltip-wrap { position: relative; display: inline-block; }
+.tooltip-icon {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--card2); border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: var(--text3); cursor: help;
+}
+.tooltip-box {
+  position: absolute; bottom: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%);
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: var(--radius2); padding: 10px 14px;
+  font-size: 12px; color: var(--text2); line-height: 1.5;
+  width: 240px; z-index: 99;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s; white-space: normal;
+}
+.tooltip-wrap:hover .tooltip-box { opacity: 1; }
+
+/* ─── SLIDER CARD ─── */
+.slider-card {
+  background: var(--card); border: 1px solid var(--border2);
+  border-radius: var(--radius); padding: 20px 22px; margin-bottom: 28px;
+}
+.slider-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; }
+.slider-title { font-size: 14px; font-weight: 600; }
+.slider-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.slider-num {
+  font-family: var(--mono); font-size: 22px; font-weight: 500;
+  color: var(--blue); border: none; background: transparent;
+  width: 50px; text-align: right; outline: none;
+}
+input[type=range] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 4px; border-radius: 99px;
+  background: var(--card2); outline: none;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--blue); cursor: pointer;
+  box-shadow: 0 0 10px rgba(79,142,247,0.4);
+  transition: transform 0.2s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+/* ─── GENERATE BUTTON ─── */
+.btn-generate {
+  display: block; width: 100%;
+  padding: 14px; border-radius: 99px;
+  background: linear-gradient(135deg, var(--blue), var(--blue2));
+  border: none; color: #fff;
+  font-family: var(--sans); font-size: 15px; font-weight: 600;
+  cursor: pointer; position: relative; overflow: hidden;
+  transition: all 0.25s; letter-spacing: -0.2px;
+}
+.btn-generate::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transition: left 0.5s;
+}
+.btn-generate:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(79,142,247,0.4); }
+.btn-generate:hover::after { left: 100%; }
+.btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* ─── GENERIC BUTTONS ─── */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 18px; border-radius: 99px;
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.2s; border: 1px solid var(--border2);
+  background: var(--card);  color: var(--text2);
+}
+.btn:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+.btn-blue { background: rgba(79,142,247,0.12); border-color: rgba(79,142,247,0.3); color: var(--blue); }
+.btn-blue:hover { background: rgba(79,142,247,0.2); }
+.btn-green { background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.3); color: var(--green); }
+.btn-green:hover { background: rgba(52,211,153,0.18); }
+.btn-red { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.3); color: var(--red); }
+.btn-red:hover { background: rgba(248,113,113,0.18); }
+
+/* ─── PREVIEW ─── */
+.preview-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+.preview-meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.meta-badge {
+  font-family: var(--mono); font-size: 11px; padding: 4px 10px;
+  border-radius: 99px; border: 1px solid;
+  background: transparent;
+}
+.meta-blue { border-color: rgba(79,142,247,0.4); color: var(--blue); }
+.meta-green { border-color: rgba(52,211,153,0.4); color: var(--green); }
+.meta-orange { border-color: rgba(245,158,11,0.4); color: var(--orange); }
+.meta-gray { border-color: var(--border2); color: var(--text3); }
+.preview-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+
+.question-card {
+  background: var(--card); border: 1px solid var(--border2);
+  border-radius: var(--radius); padding: 22px 24px; margin-bottom: 14px;
+  transition: border-color 0.2s;
+}
+.q-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
+.q-num {
+  font-family: var(--mono); font-size: 12px; color: var(--text3);
+  background: var(--card2); border: 1px solid var(--border2);
+  padding: 2px 9px; border-radius: 99px; flex-shrink: 0;
+}
+.q-enonce { font-size: 14px; line-height: 1.7; flex: 1; }
+.answers-grid {
+  display: grid; gap: 8px; margin-top: 14px;
+}
+.answer-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: var(--radius2);
+  border: 1px solid var(--border2); background: var(--card2);
+  cursor: pointer; transition: all 0.2s; text-align: left;
+  font-family: var(--sans); font-size: 13px; color: var(--text); width: 100%;
+}
+.answer-letter {
+  width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(255,255,255,0.06); border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  transition: all 0.2s;
+}
+.answer-btn:hover { border-color: rgba(79,142,247,0.4); }
+.answer-btn:hover .answer-letter { background: rgba(79,142,247,0.15); border-color: rgba(79,142,247,0.4); color: var(--blue); }
+.answer-btn.selected { border-color: var(--blue); background: rgba(79,142,247,0.08); }
+.answer-btn.selected .answer-letter { background: var(--blue); border-color: var(--blue); color: #fff; }
+.answer-btn.correct { border-color: var(--green); background: rgba(52,211,153,0.08); }
+.answer-btn.correct .answer-letter { background: var(--green); border-color: var(--green); color: #fff; }
+.answer-btn.wrong { border-color: var(--red); background: rgba(248,113,113,0.08); }
+.answer-btn.wrong .answer-letter { background: var(--red); border-color: var(--red); color: #fff; }
+
+.score-bar {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px 22px; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 16px;
+}
+.score-num { font-family: var(--mono); font-size: 28px; font-weight: 500; color: var(--blue); }
+.score-label { font-size: 14px; color: var(--text2); }
+
+/* ─── EXPORT ─── */
+.tab-bar { display: flex; gap: 4px; margin-bottom: 20px; }
+.tab-btn {
+  padding: 8px 18px; border-radius: 99px; border: 1px solid var(--border2);
+  background: var(--card); color: var(--text2);
+  font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: all 0.2s;
+}
+.tab-btn.active { background: rgba(79,142,247,0.12); border-color: rgba(79,142,247,0.3); color: var(--blue); }
+
+.export-options {
+  background: var(--card); border: 1px solid var(--border2);
+  border-radius: var(--radius); padding: 18px 20px; margin-bottom: 16px;
+  display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+}
+.export-opt { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.export-opt label { color: var(--text2); white-space: nowrap; }
+.export-opt select {
+  background: var(--card2); border: 1px solid var(--border2); color: var(--text);
+  border-radius: 6px; padding: 5px 10px; font-family: var(--sans); font-size: 13px;
+  outline: none; cursor: pointer;
+}
+.export-opt select:focus { border-color: rgba(79,142,247,0.4); }
+.checkbox-opt { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; color: var(--text2); }
+.checkbox-opt input { accent-color: var(--blue); width: 15px; height: 15px; cursor: pointer; }
+
+.latex-preview {
+  background: #0d1520; border: 1px solid var(--border2);
+  border-radius: var(--radius); padding: 20px;
+  font-family: var(--mono); font-size: 12px; line-height: 1.8;
+  max-height: 400px; overflow-y: auto; margin-bottom: 16px;
+  white-space: pre; tab-size: 2;
+}
+.lt-cmd { color: #79b8ff; }
+.lt-env { color: #85e89d; }
+.lt-math { color: #f9c74f; }
+.lt-comment { color: #6a737d; font-style: italic; }
+.lt-brace { color: #ffb347; }
+
+.export-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ─── TOAST ─── */
+#toast {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+  background: rgba(19,29,48,0.9); backdrop-filter: blur(12px);
+  border: 1px solid var(--border); border-left: 3px solid var(--blue);
+  border-radius: var(--radius2); padding: 12px 20px;
+  font-size: 13px; color: var(--text); z-index: 9999;
+  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.35s;
+  opacity: 0; white-space: nowrap;
+}
+#toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+#toast.success { border-left-color: var(--green); }
+#toast.error { border-left-color: var(--red); }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 600px) {
+  .theme-grid { grid-template-columns: 1fr; }
+  .steps { gap: 2px; }
+  .step-pill { padding: 5px 8px; }
+  header { padding: 0 14px; gap: 12px; }
+}
+
+/* ─── FIGURES SVG ─── */
+.fig-wrap {
+  display: flex; justify-content: center; margin: 14px 0;
+}
+.fig-wrap svg {
+  max-width: 100%; height: auto; border-radius: 6px; overflow: visible;
+}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-badge">∑</div>
+    <div class="logo-text">QCM Maths <span>Première</span></div>
+  </div>
+  <div class="steps">
+    <div class="step-pill active" id="step1" onclick="goToView('config')">
+      <div class="step-num">1</div> Configuration
+    </div>
+    <div class="step-sep">›</div>
+    <div class="step-pill" id="step2" onclick="goToView('preview')">
+      <div class="step-num">2</div> Prévisualisation
+    </div>
+    <div class="step-sep">›</div>
+    <div class="step-pill" id="step3" onclick="goToView('export')">
+      <div class="step-num">3</div> Export
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ══ VIEW 1 : CONFIGURATION ══ -->
+  <div class="view active" id="view-config">
+    <div class="section-title">Configurer le QCM</div>
+    <div class="section-sub">Sélectionnez les thèmes, le niveau et le nombre de questions</div>
+    <div class="level-label">Thèmes <span style="font-size:11px;color:var(--text3);text-transform:none;font-weight:400;margin-left:6px;">BO 2025 — session 2027</span></div>
+    <div class="theme-grid" style="grid-template-columns:1fr 1fr 1fr;">
+      <div class="theme-card" data-theme="calcul" style="--accent:#4f8ef7;--icon-bg:rgba(79,142,247,0.15)" onclick="toggleTheme(this)">
+        <div class="theme-icon">🔢</div>
+        <div class="theme-name">Calcul numérique et algébrique</div>
+        <div class="theme-desc">Fractions, puissances, identités, équations, inéquations</div>
+        <div class="theme-check">✓</div>
+      </div>
+      <div class="theme-card" data-theme="proportions" style="--accent:#a78bfa;--icon-bg:rgba(167,139,250,0.15)" onclick="toggleTheme(this)">
+        <div class="theme-icon">⚖️</div>
+        <div class="theme-name">Proportions et pourcentages</div>
+        <div class="theme-desc">Fractions, pourcentages, proportionnalité</div>
+        <div class="theme-check">✓</div>
+      </div>
+      <div class="theme-card" data-theme="evolutions" style="--accent:#f59e0b;--icon-bg:rgba(245,158,11,0.15)" onclick="toggleTheme(this)">
+        <div class="theme-icon">📉</div>
+        <div class="theme-name">Évolutions et variations</div>
+        <div class="theme-desc">Taux d'évolution, coefficient multiplicateur, évolutions successives</div>
+        <div class="theme-check">✓</div>
+      </div>
+      <div class="theme-card" data-theme="fonctions" style="--accent:#34d399;--icon-bg:rgba(52,211,153,0.15)" onclick="toggleTheme(this)">
+        <div class="theme-icon">📈</div>
+        <div class="theme-name">Fonctions et représentations</div>
+        <div class="theme-desc">Fonctions affines, images, antécédents, droites</div>
+        <div class="theme-check">✓</div>
+      </div>
+      <div class="theme-card" data-theme="stats" style="--accent:#f87171;--icon-bg:rgba(248,113,113,0.15)" onclick="toggleTheme(this)">
+        <div class="theme-icon">📊</div>
+        <div class="theme-name">Statistiques</div>
+        <div class="theme-desc">Moyenne, médiane, quartiles, boîtes à moustaches</div>
+        <div class="theme-check">✓</div>
+      </div>
+      <div class="theme-card" data-theme="proba" style="--accent:#38bdf8;--icon-bg:rgba(56,189,248,0.15)" onclick="toggleTheme(this)">
+        <div class="theme-icon">🎲</div>
+        <div class="theme-name">Probabilités</div>
+        <div class="theme-desc">Événements, probabilités conditionnelles, arbres</div>
+        <div class="theme-check">✓</div>
+      </div>
+    </div>
+    <div class="level-section">
+      <div class="level-label">Niveau</div>
+      <div class="level-btns">
+        <button class="level-btn active" data-lvl="techno" onclick="selectLevel(this)">1ère Technologique</button>
+        <button class="level-btn" data-lvl="specifique" onclick="selectLevel(this)">1ère Spécifique</button>
+        <button class="level-btn" data-lvl="specialite" onclick="selectLevel(this)">1ère Spécialité</button>
+      </div>
+    </div>
+    <div class="filter-section">
+      <div class="level-label">Mode de filtrage</div>
+      <div class="filter-row">
+        <div class="toggle-wrap">
+          <div class="toggle on" id="filterToggle" onclick="toggleFilter()"></div>
+          <span class="toggle-label" id="filterLabel">Inclusif</span>
+        </div>
+        <div class="tooltip-wrap">
+          <div class="tooltip-icon">?</div>
+          <div class="tooltip-box"><b>Inclusif :</b> inclut les questions du niveau sélectionné et des niveaux inférieurs.<br><br><b>Strict :</b> uniquement les questions du niveau exact sélectionné.</div>
+        </div>
+        <div class="filter-info" id="filterInfo">Techno ≤ Spécifique</div>
+      </div>
+    </div>
+    <div class="slider-card">
+      <div class="slider-header">
+        <div>
+          <div class="slider-title">Nombre de questions</div>
+          <div class="slider-sub">Questions tirées aléatoirement de la banque filtrée</div>
+        </div>
+        <input type="number" class="slider-num" id="numInput" value="10" min="5" max="30" onchange="syncSlider(this.value)">
+      </div>
+      <input type="range" id="numSlider" min="5" max="30" value="10" oninput="syncNum(this.value)">
+    </div>
+    <button class="btn-generate" id="btnGenerate" onclick="generateQCM()">✨ Générer le QCM</button>
+  </div>
+
+  <!-- ══ VIEW 2 : PRÉVISUALISATION ══ -->
+  <div class="view" id="view-preview">
+    <div class="preview-header">
+      <div>
+        <div class="section-title">Prévisualisation</div>
+        <div class="section-sub" id="previewSub"></div>
+      </div>
+      <div class="preview-meta" id="previewMeta"></div>
+    </div>
+    <div class="preview-actions">
+      <button class="btn" onclick="goToView('config')">← Reconfigurer</button>
+      <button class="btn btn-blue" onclick="regenerate()">🔄 Régénérer</button>
+      <button class="btn btn-green" id="btnSubmit" onclick="submitQCM()">✅ Soumettre</button>
+      <button class="btn" id="btnCorrect" onclick="toggleCorrection()">👁 Afficher le corrigé</button>
+      <button class="btn btn-blue" onclick="goToView('export')">📄 Exporter →</button>
+    </div>
+    <div id="scoreBar" style="display:none" class="score-bar">
+      <div class="score-num" id="scoreNum">—</div>
+      <div class="score-label" id="scoreLabel"></div>
+    </div>
+    <div id="questionsContainer"></div>
+  </div>
+
+  <!-- ══ VIEW 3 : EXPORT ══ -->
+  <div class="view" id="view-export">
+    <div class="section-title">Export LaTeX</div>
+    <div class="section-sub">Téléchargez votre QCM en format LaTeX ou compilez-le en PDF</div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+      <button class="btn" onclick="goToView('preview')">← Prévisualisation</button>
+    </div>
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchExportTab('exam',this)">📝 Document classique</button>
+      <button class="tab-btn" onclick="switchExportTab('beamer',this)">🎞 Diaporama Beamer</button>
+    </div>
+    <div id="opts-exam" class="export-options">
+      <label class="checkbox-opt">
+        <input type="checkbox" id="inclureCorrige"> Inclure le corrigé
+      </label>
+    </div>
+    <div id="opts-beamer" class="export-options" style="display:none">
+      <div class="export-opt">
+        <label>Thème</label>
+        <select id="beamerTheme" onchange="updateExport()">
+          <option value="Singapore" selected>Singapore</option>
+          <option value="Madrid">Madrid</option>
+          <option value="Warsaw">Warsaw</option>
+          <option value="Berlin">Berlin</option>
+          <option value="Copenhagen">Copenhagen</option>
+          <option value="AnnArbor">AnnArbor</option>
+        </select>
+      </div>
+      <div class="export-opt">
+        <label>Couleur</label>
+        <select id="beamerColor" onchange="updateExport()">
+          <option value="default" selected>default</option>
+          <option value="crane">crane</option>
+          <option value="dolphin">dolphin</option>
+          <option value="orchid">orchid</option>
+          <option value="rose">rose</option>
+          <option value="seahorse">seahorse</option>
+        </select>
+      </div>
+      <div class="export-opt">
+        <label>Format diapos</label>
+        <select id="beamerFormat" onchange="updateExport()">
+          <option value="one">1 question = 1 diapo</option>
+          <option value="corrected">1 question + 1 diapo corrigé</option>
+          <option value="allcorr">Toutes questions puis toutes corrections</option>
+        </select>
+      </div>
+    </div>
+    <div class="latex-preview" id="latexPreview"></div>
+    <div class="export-btns">
+      <button class="btn btn-blue" onclick="downloadTex()">⬇️ Télécharger le .tex</button>
+      <button class="btn btn-green" onclick="compilePDF()">🚀 Compiler en PDF</button>
+    </div>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<!-- Fichiers externes : utilitaires, rendu SVG, banques de questions -->
+<script src="questions/utils.js"></script>
+<script src="questions/svg-renderer.js"></script>
+<script src="questions/calcul.js"></script>
+<script src="questions/proportions.js"></script>
+<script src="questions/evolutions.js"></script>
+<script src="questions/fonctions.js"></script>
+<script src="questions/stats.js"></script>
+<script src="questions/proba.js"></script>
+<script src="questions/figures.js"></script>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  ASSEMBLAGE DE LA BANQUE COMPLÈTE
+// ═══════════════════════════════════════════════════════
+const QUESTION_BANK = [
+  ...QUESTIONS_CALCUL,
+  ...QUESTIONS_PROPORTIONS,
+  ...QUESTIONS_EVOLUTIONS,
+  ...QUESTIONS_FONCTIONS,
+  ...QUESTIONS_STATS,
+  ...QUESTIONS_PROBA,
+  ...QUESTIONS_FIGURES,
+];
+</script>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  ÉTAT GLOBAL
+// ═══════════════════════════════════════════════════════
+let state = {
+  selectedThemes: [],
+  selectedLevel: 'techno',
+  filterInclusive: true,
+  numQuestions: 10,
+  generatedQuestions: [],
+  userAnswers: {},
+  submitted: false,
+  showCorrection: false,
+  exportTab: 'exam',
+};
+
+// ═══════════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════════
+function goToView(name) {
+  if (name === 'preview' && !state.generatedQuestions.length) return;
+  if (name === 'export' && !state.generatedQuestions.length) return;
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  ['config','preview','export'].forEach((v,i) => {
+    const pill = document.getElementById('step'+(i+1));
+    pill.classList.remove('active','done');
+    if (v === name) pill.classList.add('active');
+    else if (state.generatedQuestions.length && ['config','preview','export'].indexOf(v) < ['config','preview','export'].indexOf(name)) pill.classList.add('done');
+  });
+  if (name === 'export') updateExport();
+}
+
+// ═══════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════
+function toggleTheme(card) {
+  const t = card.dataset.theme;
+  card.classList.toggle('selected');
+  const idx = state.selectedThemes.indexOf(t);
+  if (idx === -1) state.selectedThemes.push(t);
+  else state.selectedThemes.splice(idx, 1);
+}
+function selectLevel(btn) {
+  document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  state.selectedLevel = btn.dataset.lvl;
+  updateFilterInfo();
+}
+function toggleFilter() {
+  state.filterInclusive = !state.filterInclusive;
+  document.getElementById('filterToggle').classList.toggle('on', state.filterInclusive);
+  document.getElementById('filterLabel').textContent = state.filterInclusive ? 'Inclusif' : 'Strict';
+  updateFilterInfo();
+}
+function updateFilterInfo() {
+  const el = document.getElementById('filterInfo');
+  const lvls = ['techno','specifique','specialite'];
+  const idx = lvls.indexOf(state.selectedLevel);
+  if (state.filterInclusive) {
+    el.textContent = lvls.slice(0,idx+1).map(l=>({techno:'Techno',specifique:'Spéc.',specialite:'Spé.'}[l])).join(' ≤ ');
+  } else {
+    el.textContent = {techno:'Techno uniquement',specifique:'Spécifique uniquement',specialite:'Spécialité uniquement'}[state.selectedLevel];
+  }
+}
+function syncNum(v) { state.numQuestions = +v; document.getElementById('numInput').value = v; }
+function syncSlider(v) {
+  v = Math.max(5, Math.min(30, +v));
+  state.numQuestions = v;
+  document.getElementById('numSlider').value = v;
+  document.getElementById('numInput').value = v;
+}
+
+// ═══════════════════════════════════════════════════════
+//  GÉNÉRATION
+// ═══════════════════════════════════════════════════════
+function filterBank() {
+  const lvls = ['techno','specifique','specialite'];
+  const selIdx = lvls.indexOf(state.selectedLevel);
+  return QUESTION_BANK.filter(q => {
+    if (state.selectedThemes.length && !state.selectedThemes.includes(q.theme)) return false;
+    const qLvls = Array.isArray(q.niveau) ? q.niveau : [q.niveau];
+    if (state.filterInclusive) return qLvls.some(l => lvls.indexOf(l) <= selIdx);
+    else return qLvls.some(l => l === state.selectedLevel);
+  });
+}
+function instantiateQuestion(template) {
+  let vars = {};
+  for (const [k,v] of Object.entries(template.variables||{})) {
+    vars[k] = pickVar(v);
+  }
+  vars = dedupeAnswers(template, vars);
+  const enonce = template.enonce(vars);
+  const bonne  = template.bonneReponse(vars);
+  const dist   = template.distracteurs(vars);
+  const allReponses = shuffle([bonne, ...dist.slice(0,3)]);
+  return { id: template.id+'_'+Math.random().toString(36).slice(2,6),
+    theme: template.theme, cols: template.cols||4,
+    enonce, reponses: allReponses, bonneReponse: bonne };
+}
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i=a.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+function generateQCM() {
+  const pool = filterBank();
+  if (!pool.length) { showToast('Aucune question disponible.','error'); return; }
+  const n = Math.min(state.numQuestions, pool.length);
+  state.generatedQuestions = shuffle(dedupeGroups(pool)).slice(0,n).map(instantiateQuestion);
+  state.userAnswers = {};
+  state.submitted = false;
+  state.showCorrection = false;
+  renderPreview();
+  goToView('preview');
+}
+function regenerate() { generateQCM(); }
+
+function dedupeGroups(pool) {
+  const seen = new Set();
+  return shuffle(pool).filter(q => {
+    if (!q.groupe) return true;
+    if (seen.has(q.groupe)) return false;
+    seen.add(q.groupe);
+    return true;
+  });
+}
+// ═══════════════════════════════════════════════════════
+//  RENDU PRÉVISUALISATION
+// ═══════════════════════════════════════════════════════
+const themeNames = {
+  calcul:'Calcul algébrique', proportions:'Proportions',
+  evolutions:'Évolutions', fonctions:'Fonctions',
+  stats:'Statistiques', proba:'Probabilités', figures:'Figures (TikZ)'
+};
+const levelNames = {techno:'1ère Techno',specifique:'1ère Spécifique',specialite:'1ère Spécialité'};
+
+function renderPreview() {
+  const themes = [...new Set(state.generatedQuestions.map(q=>q.theme))];
+  document.getElementById('previewMeta').innerHTML =
+    `<div class="meta-badge meta-blue">${levelNames[state.selectedLevel]}</div>`+
+    themes.map(t=>`<div class="meta-badge meta-orange">${themeNames[t]||t}</div>`).join('')+
+    `<div class="meta-badge meta-green">${state.generatedQuestions.length} questions</div>`+
+    `<div class="meta-badge meta-gray">${state.filterInclusive?'Inclusif':'Strict'}</div>`+
+    `<div class="meta-badge meta-gray">${new Date().toLocaleDateString('fr-FR')}</div>`;
+  document.getElementById('previewSub').textContent =
+    `${state.generatedQuestions.length} questions — ${themes.map(t=>themeNames[t]||t).join(', ')}`;
+  document.getElementById('scoreBar').style.display = 'none';
+  document.getElementById('btnSubmit').style.display = '';
+  document.getElementById('btnCorrect').textContent = '👁 Afficher le corrigé';
+
+  const container = document.getElementById('questionsContainer');
+  container.innerHTML = '';
+
+  // Rendre toutes les questions (les scripts tikz sont injectés via DOM)
+  state.generatedQuestions.forEach((q,i) => renderQuestion(q,i,container));
+
+  // KaTeX
+  setTimeout(() => {
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters:[{left:'$',right:'$',display:false}], throwOnError:false
+      });
+    }
+  }, 80);
+}
+
+function renderQuestion(q, idx, container) {
+  const letters = ['A','B','C','D'];
+  const cols = Math.min(q.cols||4, q.reponses.length);
+  const gridCols = cols===1?'1fr':cols===2?'1fr 1fr':cols===3?'1fr 1fr 1fr':'1fr 1fr 1fr 1fr';
+
+  const card = document.createElement('div');
+  card.className = 'question-card';
+  card.id = 'qcard_'+idx;
+
+  const header = document.createElement('div');
+  header.className = 'q-header';
+  const num = document.createElement('div');
+  num.className = 'q-num';
+  num.textContent = 'Q'+(idx+1);
+  const enonce = document.createElement('div');
+  enonce.className = 'q-enonce';
+  buildContent(enonce, q.enonce);
+  header.appendChild(num);
+  header.appendChild(enonce);
+  card.appendChild(header);
+
+  const grid = document.createElement('div');
+  grid.className = 'answers-grid';
+  grid.style.gridTemplateColumns = gridCols;
+  grid.id = 'answers_'+idx;
+  q.reponses.forEach((rep, ri) => {
+    const btn = document.createElement('button');
+    btn.className = 'answer-btn';
+    btn.dataset.qi = idx; btn.dataset.ri = ri;
+    btn.onclick = () => selectAnswer(idx, ri);
+    const letter = document.createElement('div');
+    letter.className = 'answer-letter';
+    letter.textContent = letters[ri];
+    const content = document.createElement('div');
+    buildContent(content, rep);
+    btn.appendChild(letter);
+    btn.appendChild(content);
+    grid.appendChild(btn);
+  });
+  card.appendChild(grid);
+  container.appendChild(card);
+}
+
+/**
+ * Construit le contenu mixte texte + figures SVG d'un élément.
+ * Les blocs %%TIKZ...%%ENDTIKZ%% sont rendus en SVG pur JS.
+ */
+function buildContent(container, str) {
+  if (typeof str !== 'string') { container.textContent = String(str); return; }
+  const parts = str.split(/(%%TIKZ[\s\S]*?%%ENDTIKZ%%)/);
+  parts.forEach(part => {
+    if (part.startsWith('%%TIKZ')) {
+      const code = part.replace(/^%%TIKZ/, '').replace(/%%ENDTIKZ%%$/, '').trim();
+      const wrap = document.createElement('div');
+      wrap.className = 'fig-wrap';
+      wrap.innerHTML = tikzToSvg(code);
+      container.appendChild(wrap);
+    } else if (part) {
+      const span = document.createElement('span');
+      span.innerHTML = part;
+      container.appendChild(span);
+    }
+  });
+}
+
+//  INTERACTIONS
+// ═══════════════════════════════════════════════════════
+function selectAnswer(qi, ri) {
+  if (state.submitted || state.showCorrection) return;
+  state.userAnswers[qi] = ri;
+  document.getElementById('answers_'+qi).querySelectorAll('.answer-btn').forEach((btn,i) => {
+    btn.classList.toggle('selected', i===ri);
+  });
+}
+function submitQCM() {
+  state.submitted = true;
+  let correct = 0;
+  state.generatedQuestions.forEach((q,qi) => {
+    const sel = state.userAnswers[qi];
+    document.getElementById('answers_'+qi).querySelectorAll('.answer-btn').forEach((btn,ri) => {
+      const isCorrect = q.reponses[ri] === q.bonneReponse;
+      const isSelected = ri === sel;
+      if (isSelected && isCorrect) { btn.classList.add('correct'); correct++; }
+      else if (isSelected) btn.classList.add('wrong');
+      else if (isCorrect) btn.classList.add('correct');
+    });
+  });
+  const pct = Math.round(correct/state.generatedQuestions.length*100);
+  document.getElementById('scoreNum').textContent = correct+'/'+state.generatedQuestions.length;
+  document.getElementById('scoreLabel').textContent = 'soit '+pct+'% de bonnes réponses';
+  document.getElementById('scoreBar').style.display = 'flex';
+  document.getElementById('btnSubmit').style.display = 'none';
+  setTimeout(()=>{ if(window.renderMathInElement) renderMathInElement(document.body,{delimiters:[{left:'$',right:'$',display:false}],throwOnError:false}); },80);
+}
+function toggleCorrection() {
+  state.showCorrection = !state.showCorrection;
+  document.getElementById('btnCorrect').textContent = state.showCorrection ? '🙈 Masquer le corrigé' : '👁 Afficher le corrigé';
+  state.generatedQuestions.forEach((q,qi) => {
+    const sel = state.userAnswers[qi];
+    document.getElementById('answers_'+qi).querySelectorAll('.answer-btn').forEach((btn,ri) => {
+      btn.classList.remove('selected','correct','wrong');
+      if (state.showCorrection) {
+        const isCorrect = q.reponses[ri] === q.bonneReponse;
+        const isSelected = ri === sel;
+        if (isCorrect) btn.classList.add('correct');
+        if (!isCorrect && isSelected) btn.classList.add('wrong');
+      } else {
+        if (ri === sel) btn.classList.add('selected');
+      }
+    });
+  });
+  setTimeout(()=>{ if(window.renderMathInElement) renderMathInElement(document.body,{delimiters:[{left:'$',right:'$',display:false}],throwOnError:false}); },80);
+}
+
+// ═══════════════════════════════════════════════════════
+//  EXPORT LATEX
+// ═══════════════════════════════════════════════════════
+let currentLatex = '';
+function switchExportTab(tab, btn) {
+  state.exportTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('opts-exam').style.display = tab==='exam'?'flex':'none';
+  document.getElementById('opts-beamer').style.display = tab==='beamer'?'flex':'none';
+  updateExport();
+}
+function updateExport() {
+  if (!state.generatedQuestions.length) return;
+  currentLatex = state.exportTab === 'exam' ? buildExam() : buildBeamer();
+  document.getElementById('latexPreview').innerHTML = highlightLatex(currentLatex);
+}
+function latexifyStr(str) {
+  if (typeof str !== 'string') return str;
+  str = str.replace(/%%TIKZ([\s\S]*?)%%ENDTIKZ%%/g, (_,code) =>
+    '\n\\begin{center}\n'+code.trim()+'\n\\end{center}\n');
+  return str.replace(/<br\s*\/?>/gi,'\\\\\n')
+    .replace(/<b>(.*?)<\/b>/gi,'\\textbf{$1}')
+    .replace(/<i>(.*?)<\/i>/gi,'\\textit{$1}')
+    .replace(/<[^>]+>/g,'');
+}
+function buildExam() {
+  const inclCorrige = document.getElementById('inclureCorrige')?.checked;
+  const letters = ['A','B','C','D'];
+  let out = '\\documentclass[12pt,a4paper]{article}\n'
+    + '\\usepackage[utf8]{inputenc}\n\\usepackage[T1]{fontenc}\n\\usepackage[french]{babel}\n'
+    + '\\usepackage{amsmath,amssymb}\\usepackage{multicol}\\usepackage{enumitem}\n'
+    + '\\usepackage{tikz}\n\\usetikzlibrary{arrows.meta,calc,trees}\n'
+    + '\\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}\n'
+    + '\\usepackage{xcolor}\\definecolor{correct}{RGB}{16,185,129}\n'
+    + '\n\\begin{document}\n\n'
+    + '\\begin{center}{\\Large\\bfseries QCM -- Maths Premi\\`{e}re}\\end{center}\n'
+    + '\\vspace{1em}\n\n';
+  state.generatedQuestions.forEach((q,i) => {
+    out += '% -- Question '+(i+1)+'\n';
+    out += '\\noindent\\textbf{Question '+(i+1)+'.} '+latexifyStr(q.enonce)+'\n\n';
+    const cols = q.cols > 1 ? q.cols : 1;
+    if (cols>1) out += '\\begin{multicols}{'+cols+'}\n';
+    out += '\\begin{enumerate}[label=\\textbf{\\Alph*.},leftmargin=*]\n';
+    q.reponses.forEach(r => { out += '  \\item '+latexifyStr(r)+'\n'; });
+    out += '\\end{enumerate}\n';
+    if (cols>1) out += '\\end{multicols}\n';
+    out += '\\vspace{0.5em}\n\n';
+  });
+  if (inclCorrige) {
+    out += '\\newpage\n\n\\begin{center}{\\Large\\bfseries Corrig\\\'e}\\end{center}\n\\vspace{1em}\n\n';
+    out += '\\begin{enumerate}[leftmargin=*]\n';
+    state.generatedQuestions.forEach((q,i) => {
+      const idx = q.reponses.indexOf(q.bonneReponse);
+      const letter = letters[idx] ?? '?';
+      out += '  \\item \\textbf{Q'+(i+1)+'.} R\\\'eponse~: {\\color{correct}\\textbf{'+letter+'.} '+latexifyStr(q.bonneReponse)+'}\n';
+    });
+    out += '\\end{enumerate}\n';
+  }
+  out += '\n\\end{document}';
+  return out;
+}
+function buildBeamer() {
+  const theme = document.getElementById('beamerTheme')?.value||'Singapore';
+  const color = document.getElementById('beamerColor')?.value||'default';
+  const fmt   = document.getElementById('beamerFormat')?.value||'one';
+  let out = '\\documentclass{beamer}\n'
+    + '\\usepackage[utf8]{inputenc}\\usepackage[T1]{fontenc}\\usepackage[french]{babel}\n'
+    + '\\usepackage{amsmath,amssymb,multicol}\n'
+    + '\\usepackage{tikz}\\usetikzlibrary{arrows.meta,calc,trees}\n'
+    + '\\usetheme{'+theme+'}\\usecolortheme{'+color+'}\n\n\\begin{document}\n\n';
+  const frames = (q,i) => {
+    let f = '\\begin{frame}{Question '+(i+1)+'}\n  \\begin{center}\n    '+latexifyStr(q.enonce)+'\\\\[1em]\n';
+    f += '    \\begin{multicols}{2}\\begin{enumerate}[A)]\n';
+    q.reponses.forEach(r => { f += '      \\item '+latexifyStr(r)+'\n'; });
+    f += '    \\end{enumerate}\\end{multicols}\n  \\end{center}\n\\end{frame}\n\n';
+    return f;
+  };
+  const corr = (q,i) => {
+    let f = '\\begin{frame}{Correction Q'+(i+1)+'}\n  \\begin{center}\n    '+latexifyStr(q.enonce)+'\\\\[0.8em]\n';
+    f += '    {\\large\\color{green!60!black} '+latexifyStr(q.bonneReponse)+'}\n  \\end{center}\n\\end{frame}\n\n';
+    return f;
+  };
+  if (fmt==='allcorr') {
+    state.generatedQuestions.forEach((q,i) => { out+=frames(q,i); });
+    state.generatedQuestions.forEach((q,i) => { out+=corr(q,i); });
+  } else {
+    state.generatedQuestions.forEach((q,i) => {
+      out+=frames(q,i);
+      if (fmt==='corrected') out+=corr(q,i);
+    });
+  }
+  return out+'\\end{document}';
+}
+function highlightLatex(code) {
+  return code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/(\\begin|\\end)\{([^}]+)\}/g,'<span class="lt-env">$1{$2}</span>')
+    .replace(/(\\[a-zA-Z]+)/g,'<span class="lt-cmd">$1</span>')
+    .replace(/(\$[^$]+\$)/g,'<span class="lt-math">$1</span>')
+    .replace(/(%.+)/g,'<span class="lt-comment">$1</span>');
+}
+function downloadTex() {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([currentLatex],{type:'text/plain'}));
+  a.download = 'qcm-maths-'+state.exportTab+'.tex';
+  a.click();
+  showToast('Fichier .tex téléchargé ✓','success');
+}
+async function compilePDF() {
+  showToast('Tentative de compilation…');
+  try {
+    const fd = new FormData();
+    fd.append('filecontents[]', new Blob([currentLatex],{type:'text/plain'}), 'main.tex');
+    fd.append('filename[]','main.tex'); fd.append('engine','pdflatex'); fd.append('return','pdf');
+    const res = await fetch('https://latex.ytotech.com/builds/sync',{method:'POST',body:fd});
+    if (res.ok) { window.open(URL.createObjectURL(await res.blob()),'_blank'); showToast('PDF généré ✓','success'); return; }
+  } catch(e){}
+  window.open('https://www.overleaf.com/docs?snip_uri=data:application/x-tex;base64,'+btoa(unescape(encodeURIComponent(currentLatex))),'_blank');
+  showToast('Ouverture sur Overleaf…');
+}
+
+// ═══════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════
+let _toastTimer;
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'show '+type;
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(()=>{ t.className=''; }, 3200);
+}
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+document.getElementById('inclureCorrige').addEventListener('change', updateExport);
+updateFilterInfo();
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.renderMathInElement)
+    renderMathInElement(document.body,{delimiters:[{left:'$',right:'$',display:false}],throwOnError:false});
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Question — QCM Maths</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0B1120; --card:#131d30; --card2:#162035;
+  --border2:rgba(255,255,255,0.06);
+  --blue:#4f8ef7; --green:#34d399; --orange:#f59e0b;
+  --red:#f87171; --pur:#a78bfa; --cyan:#38bdf8;
+  --text:#e2e8f0; --text2:#94a3b8; --text3:#64748b;
+  --mono:'DM Mono',monospace; --sans:'DM Sans',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body {
+  font-family:var(--sans); background:var(--bg); color:var(--text);
+  min-height:100vh; display:flex; flex-direction:column;
+}
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 5% 5%,rgba(79,142,247,.07) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 40% at 95% 90%,rgba(167,139,250,.06) 0%,transparent 60%);
+}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:rgba(79,142,247,.3);border-radius:99px}
+
+/* ─── HEADER ─── */
+header {
+  position:sticky; top:0; z-index:100;
+  background:rgba(11,17,32,.85); backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border2);
+  padding:0 24px; height:58px;
+  display:flex; align-items:center; gap:16px;
+}
+.logo{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;}
+.logo-badge{
+  width:32px;height:32px;border-radius:8px;
+  background:linear-gradient(135deg,var(--blue),var(--pur));
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+.q-meta{
+  font-family:var(--mono);font-size:12px;color:var(--text3);
+  display:flex;align-items:center;gap:10px;
+}
+.q-meta .id{color:var(--text2);font-weight:500;}
+.q-meta .groupe{color:var(--pur);}
+
+/* ─── MAIN ─── */
+main{
+  position:relative;z-index:1;
+  max-width:760px;margin:0 auto;
+  padding:36px 24px 80px;
+  display:flex;flex-direction:column;gap:20px;
+  flex:1;
+}
+
+/* ─── ACTIONS ─── */
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 14px;border-radius:99px;
+  font-family:var(--sans);font-size:12px;font-weight:500;
+  cursor:pointer;border:1px solid var(--border2);
+  background:var(--card);color:var(--text2);transition:all .2s;
+}
+.btn:hover{border-color:rgba(255,255,255,.15);color:var(--text);}
+.btn-blue{background:rgba(79,142,247,.12);border-color:rgba(79,142,247,.3);color:var(--blue);}
+.btn-blue:hover{background:rgba(79,142,247,.2);}
+
+/* ─── VARIABLES ÉDITABLES ─── */
+.vars-editor{
+  display:flex;flex-wrap:wrap;gap:8px;
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:10px;padding:12px 16px;
+}
+.var-editor-item{display:flex;align-items:center;gap:6px;}
+.var-editor-label{font-family:var(--mono);font-size:12px;color:var(--blue);font-weight:600;}
+.var-editor-range{font-size:10px;color:var(--text3);}
+.var-editor-input{
+  width:56px;padding:4px 8px;
+  background:var(--card2);border:1px solid var(--border2);
+  color:var(--text);border-radius:6px;
+  font-family:var(--mono);font-size:13px;font-weight:500;
+  outline:none;text-align:center;
+}
+.var-editor-input:focus{border-color:rgba(79,142,247,.5);}
+
+/* ─── QUESTION ─── */
+.rendered-q{display:flex;flex-direction:column;gap:20px;}
+.rendered-enonce{font-size:18px;line-height:2.1;}
+.rendered-answers{display:grid;gap:12px;}
+.rendered-answer{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 20px;border-radius:12px;border:1px solid var(--border2);
+  background:var(--card2);font-size:15px;line-height:1.7;
+}
+.rendered-answer.correct{border-color:var(--green);background:rgba(52,211,153,.08);}
+.answer-letter-badge{
+  width:30px;height:30px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:13px;font-weight:600;
+  background:rgba(255,255,255,.06);border:1px solid var(--border2);
+}
+.correct .answer-letter-badge{background:var(--green);border-color:var(--green);color:#000;}
+
+/* ─── TIRAGES ─── */
+.variants-row{
+  display:flex;gap:6px;flex-wrap:wrap;
+  padding-top:20px;border-top:1px solid var(--border2);
+}
+.variant-preview-box{
+  background:var(--card2);border:1px solid var(--border2);
+  border-radius:10px;padding:16px 20px;margin-top:14px;
+}
+.variant-preview-box .rendered-enonce{font-size:15px;line-height:1.9;}
+.variant-preview-box .rendered-answer{font-size:13px;padding:10px 14px;}
+
+/* ─── FIGURES ─── */
+.fig-wrap{display:flex;justify-content:center;margin:12px 0;}
+.fig-wrap svg{max-width:100%;height:auto;border-radius:6px;overflow:visible;}
+
+/* ─── NOT FOUND ─── */
+.not-found{
+  text-align:center;padding:60px 20px;color:var(--text3);
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+}
+.not-found .icon{font-size:48px;opacity:.4;}
+.not-found code{
+  font-family:var(--mono);font-size:14px;
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:6px;padding:4px 12px;color:var(--text2);
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-badge">∑</div>
+    QCM Maths
+  </div>
+  <div class="q-meta" id="qMeta"></div>
+</header>
+
+<main id="main"></main>
+
+<!-- Fichiers externes -->
+<script src="questions/utils.js"></script>
+<script src="questions/svg-renderer.js"></script>
+<script src="questions/calcul.js"></script>
+<script src="questions/proportions.js"></script>
+<script src="questions/evolutions.js"></script>
+<script src="questions/fonctions.js"></script>
+<script src="questions/stats.js"></script>
+<script src="questions/proba.js"></script>
+<script src="questions/figures.js"></script>
+
+<script>
+// ── Banque complète ──
+const ALL_QUESTIONS = [
+  ...QUESTIONS_CALCUL,
+  ...QUESTIONS_PROPORTIONS,
+  ...QUESTIONS_EVOLUTIONS,
+  ...QUESTIONS_FONCTIONS,
+  ...QUESTIONS_STATS,
+  ...QUESTIONS_PROBA,
+  ...QUESTIONS_FIGURES,
+];
+
+// ── Lire l'ID dans l'URL (?id=calc_001) ──
+const params = new URLSearchParams(location.search);
+const targetId = params.get('id');
+const q = ALL_QUESTIONS.find(x => x.id === targetId);
+
+// ── State ──
+let currentVars = {};
+
+// ── Init ──
+if (!q) {
+  document.getElementById('main').innerHTML = `
+    <div class="not-found">
+      <div class="icon">🔍</div>
+      <p>Question introuvable.</p>
+      ${targetId ? `<code>${targetId}</code>` : '<p>Aucun paramètre <code>?id=</code> fourni.</p>'}
+      <p style="font-size:12px;margin-top:8px">
+        Exemple d'URL : <code>question.html?id=calc_001</code>
+      </p>
+    </div>`;
+} else {
+  currentVars = makeVars(q.variables || {});
+  document.title = q.id + ' — QCM Maths';
+
+  // Méta dans le header
+  const THEME_COLORS = {
+    calcul:'var(--blue)', proportions:'var(--pur)', evolutions:'var(--orange)',
+    fonctions:'var(--green)', stats:'var(--red)', proba:'var(--cyan)'
+  };
+  const col = THEME_COLORS[q.theme] || 'var(--text3)';
+  document.getElementById('qMeta').innerHTML =
+    `<span class="id" style="color:${col}">${q.id}</span>` +
+    (q.groupe ? `<span class="groupe">⊂ ${q.groupe}</span>` : '');
+
+  render();
+}
+
+// ── Rendu principal ──
+function render() {
+  let enonce = '', bonne = '', distracteurs = [];
+  try {
+    enonce       = q.enonce(currentVars);
+    bonne        = q.bonneReponse(currentVars);
+    distracteurs = q.distracteurs(currentVars);
+  } catch(e) {
+    enonce = '<span style="color:var(--red)">Erreur: ' + e.message + '</span>';
+  }
+
+  const allAnswers = shuffle([bonne, ...distracteurs.slice(0,3)]);
+  const letters = ['A','B','C','D'];
+  const cols = Math.min(q.cols||4, allAnswers.length);
+  const gridCols = cols===1?'1fr':cols===2?'1fr 1fr':cols===3?'1fr 1fr 1fr':'1fr 1fr 1fr 1fr';
+
+  document.getElementById('main').innerHTML = `
+
+    <!-- Actions -->
+    <div class="actions">
+      <button class="btn" onclick="reroll()">🎲 Nouvelles variables</button>
+    </div>
+
+    <!-- Variables éditables -->
+    ${Object.keys(currentVars).length ? `
+    <div class="vars-editor">
+      ${Object.entries(q.variables||{}).map(([k,cfg]) => `
+        <div class="var-editor-item">
+          <label class="var-editor-label">${k}</label>
+          <span class="var-editor-range">[${cfg.min ?? ''}${cfg.values ? cfg.values.join(',') : ('–'+cfg.max)}]</span>
+          <input
+            type="number"
+            class="var-editor-input"
+            id="var-input-${k}"
+            value="${currentVars[k]}"
+            ${cfg.min !== undefined ? `min="${cfg.min}" max="${cfg.max}"` : ''}
+            oninput="updateVar('${k}', this.value)"
+          >
+        </div>
+      `).join('')}
+    </div>` : ''}
+
+    <!-- Question rendue -->
+    <div class="rendered-q" id="renderedQ">
+      <div class="rendered-enonce" id="renderedEnonce">${display(enonce)}</div>
+      <div class="rendered-answers" style="grid-template-columns:${gridCols}" id="renderedAnswers">
+        ${allAnswers.map((r,i) => `
+          <div class="rendered-answer${r===bonne?' correct':''}">
+            <div class="answer-letter-badge">${letters[i]}</div>
+            <div>${display(r)}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <!-- Tirages alternatifs -->
+    <div class="variants-row">
+      ${[1,2,3,4,5].map(i=>`<button class="btn" onclick="showVariant(${i})">Tirage ${i}</button>`).join('')}
+    </div>
+    <div id="variantPreview" style="display:none" class="variant-preview-box"></div>
+  `;
+
+  katexRender('main');
+}
+
+// ── Mise à jour partielle (sans re-render complet) ──
+function reRender() {
+  let enonce = '', bonne = '', distracteurs = [];
+  try {
+    enonce       = q.enonce(currentVars);
+    bonne        = q.bonneReponse(currentVars);
+    distracteurs = q.distracteurs(currentVars);
+  } catch(e) { enonce = '<span style="color:var(--red)">Erreur</span>'; }
+
+  const allAnswers = shuffle([bonne, ...distracteurs.slice(0,3)]);
+  const letters = ['A','B','C','D'];
+  const cols = Math.min(q.cols||4, allAnswers.length);
+  const gridCols = cols===1?'1fr':cols===2?'1fr 1fr':cols===3?'1fr 1fr 1fr':'1fr 1fr 1fr 1fr';
+
+  const eEl = document.getElementById('renderedEnonce');
+  const aEl = document.getElementById('renderedAnswers');
+  if (eEl) eEl.innerHTML = display(enonce);
+  if (aEl) {
+    aEl.style.gridTemplateColumns = gridCols;
+    aEl.innerHTML = allAnswers.map((r,i) => `
+      <div class="rendered-answer${r===bonne?' correct':''}">
+        <div class="answer-letter-badge">${letters[i]}</div>
+        <div>${display(r)}</div>
+      </div>`).join('');
+  }
+  katexRender('renderedQ');
+}
+
+// ── Actions ──
+function reroll() {
+  currentVars = makeVars(q.variables || {});
+  render();
+}
+
+function updateVar(key, rawVal) {
+  const cfg = (q.variables || {})[key];
+  if (!cfg) return;
+  let val = parseFloat(rawVal);
+  if (isNaN(val)) return;
+  if (cfg.min !== undefined) val = Math.max(cfg.min, Math.min(cfg.max, val));
+  currentVars[key] = val;
+  const input = document.getElementById('var-input-' + key);
+  if (input && parseFloat(input.value) !== val) input.value = val;
+  reRender();
+}
+
+function showVariant(n) {
+  const v = makeVars(q.variables || {});
+  let enonce = '', bonne = '', distracteurs = [];
+  try {
+    enonce       = q.enonce(v);
+    bonne        = q.bonneReponse(v);
+    distracteurs = q.distracteurs(v);
+  } catch(e) { enonce = 'Erreur: ' + e.message; }
+
+  const allAnswers = shuffle([bonne, ...distracteurs.slice(0,3)]);
+  const letters = ['A','B','C','D'];
+  const cols = Math.min(q.cols||4, allAnswers.length);
+  const gridCols = cols===1?'1fr':cols===2?'1fr 1fr':cols===3?'1fr 1fr 1fr':'1fr 1fr 1fr 1fr';
+
+  const box = document.getElementById('variantPreview');
+  box.style.display = 'block';
+  box.innerHTML = `
+    <div style="font-size:11px;color:var(--text3);margin-bottom:12px;font-family:var(--mono)">
+      Tirage ${n} — ${Object.entries(v).map(([k,val])=>k+'='+val).join(', ')}
+    </div>
+    <div class="rendered-enonce">${display(enonce)}</div>
+    <div class="rendered-answers" style="grid-template-columns:${gridCols};margin-top:12px">
+      ${allAnswers.map((r,i) => `
+        <div class="rendered-answer${r===bonne?' correct':''}">
+          <div class="answer-letter-badge">${letters[i]}</div>
+          <div>${display(r)}</div>
+        </div>`).join('')}
+    </div>`;
+  katexRender(box);
+}
+
+// ── Utilitaires ──
+function display(str) {
+  if (typeof str !== 'string') return String(str);
+  return str.replace(/%%TIKZ([\s\S]*?)%%ENDTIKZ%%/g, function(_, code) {
+    try {
+      return '<div style="display:flex;justify-content:center;margin:12px 0">' + tikzToSvg(code.trim()) + '</div>';
+    } catch(e) { return '<span style="color:var(--red);font-size:11px">Erreur SVG</span>'; }
+  });
+}
+
+function makeVars(variables) {
+  const v = {};
+  for (const [k, cfg] of Object.entries(variables)) v[k] = pickVar(cfg);
+  return v;
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i=a.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+
+function katexRender(elOrId) {
+  setTimeout(() => {
+    const el = typeof elOrId === 'string' ? document.getElementById(elOrId) : elOrId;
+    if (el && window.renderMathInElement)
+      renderMathInElement(el, {delimiters:[{left:'$',right:'$',display:false}], throwOnError:false});
+  }, 60);
+}
+</script>
+</body>
+</html>
