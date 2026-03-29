@@ -112,48 +112,48 @@ var QUESTIONS_FIGURES = [
   // ════════════════════════════════════
   // STATS — Boite a moustaches
   // ════════════════════════════════════
-  {
-    id: 'fig_stat_001', theme: 'stats',
-    niveau: ['techno', 'specifique', 'specialite'], cols: 4,
-    variables: {
-      min: { min: 5,  max: 10 },
-      q1:  { min: 12, max: 18 },
-      med: { min: 20, max: 25 },
-      q3:  { min: 28, max: 34 },
-      max: { min: 36, max: 42 }
-    },
-    enonce: function(v) {
-      var gradLine = '';
-      for (var g = 0; g <= 45; g += 5) {
-        gradLine += '  \\draw (' + g + ',0.35)--(' + g + ',-0.35)'
-                 + ' node[below,font=\\tiny]{' + g + '};\n';
-      }
-      var code = '\\begin{tikzpicture}[x=0.19cm,y=0.5cm]\n'
-        + '  \\draw[->,thick] (-1,0)--(48,0);\n'
-        + gradLine
-        + '  \\draw[blue,thick] (' + v.min + ',0)--(' + v.q1 + ',0);\n'
-        + '  \\draw[blue,thick] (' + v.min + ',-0.7)--(' + v.min + ',0.7);\n'
-        + '  \\draw[blue,thick,fill=blue!15] (' + v.q1 + ',-0.7) rectangle (' + v.q3 + ',0.7);\n'
-        + '  \\draw[red,very thick] (' + v.med + ',-0.7)--(' + v.med + ',0.7);\n'
-        + '  \\draw[blue,thick] (' + v.q3 + ',0)--(' + v.max + ',0);\n'
-        + '  \\draw[blue,thick] (' + v.max + ',-0.7)--(' + v.max + ',0.7);\n'
-        + '  \\node[above,font=\\tiny,blue] at (' + v.q1  + ',0.7){$Q_1=' + v.q1  + '$};\n'
-        + '  \\node[above,font=\\tiny,red]  at (' + v.med + ',0.7){$Me=' + v.med  + '$};\n'
-        + '  \\node[above,font=\\tiny,blue] at (' + v.q3  + ',0.7){$Q_3=' + v.q3  + '$};\n'
-        + '\\end{tikzpicture}';
-      return 'Voici la boite a moustaches d\'une serie statistique :\n'
-           + mkTikz(code)
-           + '\n\nQuelle est l\'etendue interquartile ?';
-    },
-    bonneReponse: function(v) { return '$' + (v.q3 - v.q1) + '$'; },
-    distracteurs: function(v) {
-      return [
-        '$' + (v.max - v.min) + '$',
-        '$' + (v.med - v.q1) + '$',
-        '$' + (v.q3 - v.med) + '$'
-      ];
-    }
-  },
+  // {
+  //   id: 'fig_stat_001', theme: 'stats',
+  //   niveau: ['techno', 'specifique', 'specialite'], cols: 4,
+  //   variables: {
+  //     min: { min: 5,  max: 10 },
+  //     q1:  { min: 12, max: 18 },
+  //     med: { min: 20, max: 25 },
+  //     q3:  { min: 28, max: 34 },
+  //     max: { min: 36, max: 42 }
+  //   },
+  //   enonce: function(v) {
+  //     var gradLine = '';
+  //     for (var g = 0; g <= 45; g += 5) {
+  //       gradLine += '  \\draw (' + g + ',0.35)--(' + g + ',-0.35)'
+  //                + ' node[below,font=\\tiny]{' + g + '};\n';
+  //     }
+  //     var code = '\\begin{tikzpicture}[x=0.19cm,y=0.5cm]\n'
+  //       + '  \\draw[->,thick] (-1,0)--(48,0);\n'
+  //       + gradLine
+  //       + '  \\draw[blue,thick] (' + v.min + ',0)--(' + v.q1 + ',0);\n'
+  //       + '  \\draw[blue,thick] (' + v.min + ',-0.7)--(' + v.min + ',0.7);\n'
+  //       + '  \\draw[blue,thick,fill=blue!15] (' + v.q1 + ',-0.7) rectangle (' + v.q3 + ',0.7);\n'
+  //       + '  \\draw[red,very thick] (' + v.med + ',-0.7)--(' + v.med + ',0.7);\n'
+  //       + '  \\draw[blue,thick] (' + v.q3 + ',0)--(' + v.max + ',0);\n'
+  //       + '  \\draw[blue,thick] (' + v.max + ',-0.7)--(' + v.max + ',0.7);\n'
+  //       + '  \\node[above,font=\\tiny,blue] at (' + v.q1  + ',0.7){$Q_1=' + v.q1  + '$};\n'
+  //       + '  \\node[above,font=\\tiny,red]  at (' + v.med + ',0.7){$Me=' + v.med  + '$};\n'
+  //       + '  \\node[above,font=\\tiny,blue] at (' + v.q3  + ',0.7){$Q_3=' + v.q3  + '$};\n'
+  //       + '\\end{tikzpicture}';
+  //     return 'Voici la boite a moustaches d\'une serie statistique :\n'
+  //          + mkTikz(code)
+  //          + '\n\nQuelle est l\'etendue interquartile ?';
+  //   },
+  //   bonneReponse: function(v) { return '$' + (v.q3 - v.q1) + '$'; },
+  //   distracteurs: function(v) {
+  //     return [
+  //       '$' + (v.max - v.min) + '$',
+  //       '$' + (v.med - v.q1) + '$',
+  //       '$' + (v.q3 - v.med) + '$'
+  //     ];
+  //   }
+  // },
 
   // ════════════════════════════════════
   // PROBABILITES — Arbre pondere
@@ -200,82 +200,82 @@ var QUESTIONS_FIGURES = [
   },
 
   // ════════════════════════════════════
-  // CALCUL — Tableau de signes
-  // ════════════════════════════════════
-  {
-    id: 'fig_calc_001', theme: 'calcul',
-    niveau: ['specifique', 'specialite'], cols: 4,
-    variables: { a: { min: 1, max: 4 }, b: { min: 1, max: 8 } },
-    enonce: function(v) {
-      var code = '\\begin{tikzpicture}\n'
-        + '  \\draw[thick] (0,0) rectangle (8,1.8);\n'
-        + '  \\draw[thick] (0,0.9)--(8,0.9);\n'
-        + '  \\draw[thick] (1.6,0)--(1.6,1.8);\n'
-        + '  \\draw[thick] (4.2,0)--(4.2,1.8);\n'
-        + '  \\node at (0.8,1.35){$x$};\n'
-        + '  \\node at (2.9,1.35){$-\\infty$};\n'
-        + '  \\node[blue] at (4.2,1.35){$\\dfrac{' + v.b + '}{' + v.a + '}$};\n'
-        + '  \\node at (6.1,1.35){$+\\infty$};\n'
-        + '  \\node at (0.8,0.45){$' + v.a + 'x-' + v.b + '$};\n'
-        + '  \\node[red!70!black]   at (2.9,0.45){$-$};\n'
-        + '  \\node[blue]           at (4.2,0.45){$0$};\n'
-        + '  \\node[green!50!black] at (6.1,0.45){$+$};\n'
-        + '\\end{tikzpicture}';
-      return 'Voici le tableau de signes de $f(x) = ' + v.a + 'x - ' + v.b + '$ :\n'
-           + mkTikz(code)
-           + '\n\nSur quel intervalle $f(x) > 0$ ?';
-    },
-    bonneReponse: function(v) {
-      return '$\\left]' + frac(v.b, v.a) + ' ; +\\infty\\right[$';
-    },
-    distracteurs: function(v) {
-      return [
-        '$\\left]-\\infty ; ' + frac(v.b, v.a) + '\\right[$',
-        '$\\mathbb{R}$',
-        '$\\left[' + frac(v.b, v.a) + ' ; +\\infty\\right[$'
-      ];
-    }
-  },
+  // // CALCUL — Tableau de signes
+  // // ════════════════════════════════════
+  // {
+  //   id: 'fig_calc_001', theme: 'calcul',
+  //   niveau: ['specifique', 'specialite'], cols: 4,
+  //   variables: { a: { min: 1, max: 4 }, b: { min: 1, max: 8 } },
+  //   enonce: function(v) {
+  //     var code = '\\begin{tikzpicture}\n'
+  //       + '  \\draw[thick] (0,0) rectangle (8,1.8);\n'
+  //       + '  \\draw[thick] (0,0.9)--(8,0.9);\n'
+  //       + '  \\draw[thick] (1.6,0)--(1.6,1.8);\n'
+  //       + '  \\draw[thick] (4.2,0)--(4.2,1.8);\n'
+  //       + '  \\node at (0.8,1.35){$x$};\n'
+  //       + '  \\node at (2.9,1.35){$-\\infty$};\n'
+  //       + '  \\node[blue] at (4.2,1.35){$\\dfrac{' + v.b + '}{' + v.a + '}$};\n'
+  //       + '  \\node at (6.1,1.35){$+\\infty$};\n'
+  //       + '  \\node at (0.8,0.45){$' + v.a + 'x-' + v.b + '$};\n'
+  //       + '  \\node[red!70!black]   at (2.9,0.45){$-$};\n'
+  //       + '  \\node[blue]           at (4.2,0.45){$0$};\n'
+  //       + '  \\node[green!50!black] at (6.1,0.45){$+$};\n'
+  //       + '\\end{tikzpicture}';
+  //     return 'Voici le tableau de signes de $f(x) = ' + v.a + 'x - ' + v.b + '$ :\n'
+  //          + mkTikz(code)
+  //          + '\n\nSur quel intervalle $f(x) > 0$ ?';
+  //   },
+  //   bonneReponse: function(v) {
+  //     return '$\\left]' + frac(v.b, v.a) + ' ; +\\infty\\right[$';
+  //   },
+  //   distracteurs: function(v) {
+  //     return [
+  //       '$\\left]-\\infty ; ' + frac(v.b, v.a) + '\\right[$',
+  //       '$\\mathbb{R}$',
+  //       '$\\left[' + frac(v.b, v.a) + ' ; +\\infty\\right[$'
+  //     ];
+  //   }
+  // },
 
-  // ════════════════════════════════════
-  // EVOLUTIONS — Diagramme en barres
-  // ════════════════════════════════════
-  {
-    id: 'fig_evol_001', theme: 'evolutions',
-    niveau: ['techno', 'specifique', 'specialite'], cols: 4,
-    variables: { v0: { min: 100, max: 200 }, t: { min: 10, max: 40 } },
-    enonce: function(v) {
-      var v1   = Math.round(v.v0 * (1 + v.t / 100));
-      var ymax = Math.ceil(v1 / 50) * 50 + 50;
-      var sc   = 0.015;
-      var gradY = '';
-      for (var y = 0; y <= ymax; y += 50) {
-        gradY += '  \\draw (2pt,' + (y * sc).toFixed(3) + ')--(-2pt,' + (y * sc).toFixed(3) + ')'
-              + ' node[left,font=\\tiny]{' + y + '};\n';
-      }
-      var code = '\\begin{tikzpicture}[x=1.2cm,y=1cm]\n'
-        + '  \\draw[->,thick] (0,0)--(4,0);\n'
-        + '  \\draw[->,thick] (0,0)--(0,' + ((ymax + 30) * sc).toFixed(3) + ');\n'
-        + gradY
-        + '  \\draw[fill=blue!60!black,draw=blue] (0.2,0) rectangle (1.5,' + (v.v0 * sc).toFixed(3) + ');\n'
-        + '  \\node[above,font=\\footnotesize] at (0.85,' + (v.v0 * sc).toFixed(3) + '){' + v.v0 + '};\n'
-        + '  \\node[below,font=\\footnotesize] at (0.85,0){An~1};\n'
-        + '  \\draw[fill=green!50!black,draw=green!70!black] (2.2,0) rectangle (3.5,' + (v1 * sc).toFixed(3) + ');\n'
-        + '  \\node[above,font=\\footnotesize] at (2.85,' + (v1 * sc).toFixed(3) + '){' + v1 + '};\n'
-        + '  \\node[below,font=\\footnotesize] at (2.85,0){An~2};\n'
-        + '\\end{tikzpicture}';
-      return 'Le graphique montre l\'evolution d\'un prix (en euros) :\n'
-           + mkTikz(code)
-           + '\n\nQuel est le taux d\'evolution entre An~1 et An~2 ?';
-    },
-    bonneReponse: function(v) { return '$+' + v.t + '\\%$'; },
-    distracteurs: function(v) {
-      return [
-        '$-' + v.t + '\\%$',
-        '$+' + Math.round(v.t / 2) + '\\%$',
-        '$+' + (v.t + 10) + '\\%$'
-      ];
-    }
-  }
+  // // ════════════════════════════════════
+  // // EVOLUTIONS — Diagramme en barres
+  // // ════════════════════════════════════
+  // {
+  //   id: 'fig_evol_001', theme: 'evolutions',
+  //   niveau: ['techno', 'specifique', 'specialite'], cols: 4,
+  //   variables: { v0: { min: 100, max: 200 }, t: { min: 10, max: 40 } },
+  //   enonce: function(v) {
+  //     var v1   = Math.round(v.v0 * (1 + v.t / 100));
+  //     var ymax = Math.ceil(v1 / 50) * 50 + 50;
+  //     var sc   = 0.015;
+  //     var gradY = '';
+  //     for (var y = 0; y <= ymax; y += 50) {
+  //       gradY += '  \\draw (2pt,' + (y * sc).toFixed(3) + ')--(-2pt,' + (y * sc).toFixed(3) + ')'
+  //             + ' node[left,font=\\tiny]{' + y + '};\n';
+  //     }
+  //     var code = '\\begin{tikzpicture}[x=1.2cm,y=1cm]\n'
+  //       + '  \\draw[->,thick] (0,0)--(4,0);\n'
+  //       + '  \\draw[->,thick] (0,0)--(0,' + ((ymax + 30) * sc).toFixed(3) + ');\n'
+  //       + gradY
+  //       + '  \\draw[fill=blue!60!black,draw=blue] (0.2,0) rectangle (1.5,' + (v.v0 * sc).toFixed(3) + ');\n'
+  //       + '  \\node[above,font=\\footnotesize] at (0.85,' + (v.v0 * sc).toFixed(3) + '){' + v.v0 + '};\n'
+  //       + '  \\node[below,font=\\footnotesize] at (0.85,0){An~1};\n'
+  //       + '  \\draw[fill=green!50!black,draw=green!70!black] (2.2,0) rectangle (3.5,' + (v1 * sc).toFixed(3) + ');\n'
+  //       + '  \\node[above,font=\\footnotesize] at (2.85,' + (v1 * sc).toFixed(3) + '){' + v1 + '};\n'
+  //       + '  \\node[below,font=\\footnotesize] at (2.85,0){An~2};\n'
+  //       + '\\end{tikzpicture}';
+  //     return 'Le graphique montre l\'evolution d\'un prix (en euros) :\n'
+  //          + mkTikz(code)
+  //          + '\n\nQuel est le taux d\'evolution entre An~1 et An~2 ?';
+  //   },
+  //   bonneReponse: function(v) { return '$+' + v.t + '\\%$'; },
+  //   distracteurs: function(v) {
+  //     return [
+  //       '$-' + v.t + '\\%$',
+  //       '$+' + Math.round(v.t / 2) + '\\%$',
+  //       '$+' + (v.t + 10) + '\\%$'
+  //     ];
+  //   }
+  // }
 
 ];
