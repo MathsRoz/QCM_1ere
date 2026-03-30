@@ -4,6 +4,8 @@ Générateur de QCM interactif pour la classe de **Première** (BO 2025, session
 
 Application web statique — aucune installation, aucun serveur requis, fonctionne directement dans le navigateur.
 
+Application hosté en page GitHub : [https://mathsroz.github.io/QCM_1ere/](https://mathsroz.github.io/QCM_1ere/)
+
 ---
 
 ## Fonctionnalités
