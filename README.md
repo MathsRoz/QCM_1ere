@@ -22,7 +22,7 @@ Application web statique — aucune installation, aucun serveur requis, fonction
 ## Structure du projet
 
 ```
-qcm-maths-premiere.html     Application principale
+index.html     Application principale
 editeur-banque.html         Outil d'exploration et d'édition de la banque
 question.html               Affichage d'une question isolée (?id=calc_001)
 questions/
