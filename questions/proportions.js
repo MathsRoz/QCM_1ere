@@ -39,8 +39,11 @@ const QUESTIONS_PROPORTIONS = [
   {
     id: "prop_003", theme: "proportions",
     niveau: ["specialite"], cols: 4,
-    variables: { p: { min: 20, max: 200, step:10 }, t: { values : [10,20,30,40,60,70,80,90]} },
-    enonce: (v) => `$${(v.p*v.t/100).toFixed(0)}$ représente $${v.t}\\%$ de :`,
+    variables: { p: { values: [20,30,40,50,60,70,80,90,110,120,130,140,150,160,170,180,190,200]}, t: { values : [10,20,30,40,60,70,80,90]} },
+    enonce: (v) => {
+  if (!v.p || !v.t) return 'Erreur variables';
+  return `$${(v.p * v.t / 100).toFixed(0)}$ représente $${v.t}\\%$ de :`;
+},
     bonneReponse: (v) => `$${v.p}$`,
     distracteurs: (v) => [
       `$${(v.p*v.t/100+100-v.t).toFixed(0)}$`,
@@ -72,7 +75,7 @@ const QUESTIONS_PROPORTIONS = [
     variables: { a: { min: 3, max: 9 }, b: { min: 3, max: 9 }, c: { min: 2, max: 9 } },
     enonce: (v) => {
       v.c=(v.c>=v.b) ? v.b-1:v.c;
-      return `Un groupe de $${v.a*v.b}$ personnes. $\\dfrac{${v.c}}{${v.b}}$ sont des femmes. Combien de femmes ?`},
+      return `Sur un groupe de $${v.a*v.b}$ personnes, $\\dfrac{${v.c}}{${v.b}}$ sont des femmes. Il y a combien de femmes dans le groupe ?`},
     bonneReponse: (v) => `$${v.a*v.c}$`,
     distracteurs: (v) => [
       `$${v.a*v.c-1}$`,

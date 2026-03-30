@@ -136,11 +136,11 @@ const QUESTIONS_EVOLUTIONS = [
     enonce: (v) => {
       signe = (v.t<0)? "" :"+";
       return `Le taux d'évolution réciproque d'une évolution de $${v.t}\\%$ est :`},
-    bonneReponse: (v) => `$${(1 / (1 + v.t / 100) * 100 - 100).toFixed(2)}\\%$`,
+    bonneReponse: (v) => `$${+parseFloat(1 / (1 + v.t / 100) * 100 - 100).toFixed(2)}\\%$`,
     distracteurs: (v) => [
       (v.t<0)? `$`+ signe + `${-v.t}\\%$`:`$${-v.t}\\%$`,
       `$`+ signe + `${v.t}\\%$`,
-      `$`+ signe + `${(100 / (100 + v.t)).toFixed(2)}\\%$`
+      `$`+ signe + `${+parseFloat(100 / (100 + v.t)).toFixed(2)}\\%$`
     ]
   },
 
