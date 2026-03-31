@@ -186,4 +186,138 @@ const QUESTIONS_FONCTIONS = [
 //       `Dépend de $x$`
 //     ]
 //   },
+
+  // ── Lire f(x₀) graphiquement ──
+  {
+    id: 'fonc_011', theme: 'fonctions',
+    groupe: 'image',
+    niveau: ['techno', 'specifique', 'specialite'], cols: 4,
+    variables: {
+      a:  { values: [-2,-1,-.5,-.25,.25,.5,1,2] },
+      gx : {values : [1,2]},
+      gy : {values : [1,2]},
+      y0:  { min: -3, max: 3 },
+      x0: { min: -3, max: 3 },
+    },
+    enonce: function(v) {
+      v._x0=v.x0*v.gx;
+      v._y0=v.y0*v.gy;
+      v.b = v.y0-v.a*v.x0;
+      v._a=v.a*v.gy/v.gx
+      v._b = v._y0-v.a*v.gy/v.gx*v._x0;
+      // Pendant dedupeAnswers, on calcule juste _y0 — pas de SVG
+      if (v._deduping) return '';
+      var ymax = v.a * 5 + v.b;
+
+      var svg = Fig.svg(-5, 5, -5, 5)
+        .grid(1/Math.max(v.gx,v.gy)).axes().gradX(v.gx).gradY(v.gy).clip()
+        .affine(v.a, v.b, -5, 5, 'red', 'f')
+        .end();
+
+      var tikz = Fig.latex(-5, 5, -5, 5)
+        .grid(1/Math.max(v.gx,v.gy)).axes().gradX(v.gx).gradY(v.gy).clip()
+        .affine(v.a, v.b, -5, 5, 'red', 'f')
+        .end();
+
+      return 'On donne la courbe de $f$ ci-dessous.'
+           + '%%SVG' + svg + '%%ENDSVG%%%%TIKZ' + tikz + '%%ENDTIKZ%%'
+           + 'Quelle est la valeur de $f(' + v._x0+ ')$ ?';
+    },
+    bonneReponse: function(v) { return '$' + v._y0 + '$'; },
+    distracteurs: function(v) {
+      return [
+        '$' + (v._x0-v._b)/v._a + '$',
+        '$' + (v._a) + '$',
+        '$' + (v._x0) + '$'
+      ];
+    }
+  },
+
+  // ── Lire un antécédent graphiquement ──
+  {
+    id: 'fonc_012_affine', theme: 'fonctions',
+    groupe: 'f(x)=k',
+    niveau: ['techno', 'specifique', 'specialite'], cols: 2,
+    variables: {
+      a:  { values: [-2,-1,-.5,-.25,.25,.5,1,2] },
+      gx : {values : [1,2]},
+      gy : {values : [1,2]},
+      y0:  { min: -3, max: 3 },
+      x0: { min: -3, max: 3 },
+    },
+    enonce: function(v) {
+      v._x0=v.x0*v.gx;
+      v._y0=v.y0*v.gy;
+      v.b = v.y0-v.a*v.x0;
+      v._a=v.a*v.gy/v.gx
+      v._b = v._y0-v.a*v.gy/v.gx*v._x0;
+
+      // Pendant dedupeAnswers, on calcule juste _y0 — pas de SVG
+      if (v._deduping) return '';
+
+      var svg = Fig.svg(-5, 5, -5, 5)
+        .grid(1/Math.max(v.gx,v.gy)).axes().gradX(v.gx).gradY(v.gy).clip()
+        .affine(v.a, v.b, -5, 5, 'red', 'f')
+        .end();
+
+      var tikz = Fig.latex(-5, 5, -5, 5)
+        .grid(1/Math.max(v.gx,v.gy)).axes().gradX(v.gx).gradY(v.gy).clip()
+        .affine(v.a, v.b, -5, 5, 'red', 'f')
+        .end();
+
+      return 'On donne la courbe de $f$ ci-dessous.'
+           + '%%SVG' + svg + '%%ENDSVG%%%%TIKZ' + tikz + '%%ENDTIKZ%%'
+           + 'Résoudre $f(x)=' + v._y0 + '$.';
+    },
+    bonneReponse: function(v) { return '$x=' + v._x0 + '$'; },
+    distracteurs: function(v) {
+      return [
+        '$x=' + (v._a*v._y0+v._b) + '$',
+        '$x=' + (v._a) + '$',
+        '$x=' + (v._y0) + '$'
+      ];
+    }
+  },
+
+  {
+    id: 'fonc_013_second_degre', theme: 'fonctions',
+    groupe: 'f(x)=k',
+    niveau: ['techno', 'specifique', 'specialite'], cols: 2,
+    variables: {
+      a:  { values: [-2,-1,1,2] },
+      gx : {values : [1,2]},
+      gy : {values : [1,2]},
+      r1:  { min: -4, max: 4 },
+      r2: { min: -4, max: 4 },
+    },
+    enonce: function(v) {
+      v.y0=(v.r1===v.r2)? 1:(v.r2-v.r1)*(v.r1-v.r2);
+      v.x0=(v.r1+v.r2)/2;
+      v.k=-ri(-3+Math.abs(v.a),3-Math.abs(v.a));
+      // Pendant dedupeAnswers, on calcule juste _y0 — pas de SVG
+      if (v._deduping) return '';
+
+      var svg = Fig.svg(-5, 5, -5, 5)
+        .grid().axes().gradX(v.gx).gradY(v.gy).clip()
+        .curve(simplExpr(v.a+'*4(x-'+v.r1+')(x-'+v.r2+')/('+v.y0+')-'+v.k))
+        .end();
+
+      var tikz = Fig.latex(-5, 5, -5, 5)
+        .grid().axes().gradX(v.gx).gradY(v.gy).clip()
+        .curve(simplExpr(v.a+'*4(x-'+v.r1+')(x-'+v.r2+')/('+v.y0+')'))
+        .end();
+
+      return 'On donne la courbe de $f$ ci-dessous.'
+           + '%%SVG' + svg + '%%ENDSVG%%%%TIKZ' + tikz + '%%ENDTIKZ%%'
+           + 'Résoudre $f(x)=' + (-v.k)*v.gy + '$';
+    },
+    bonneReponse: function(v) { return (v.r1===v.r2)? '$x='+v.r1*v.gx+'$': '$x='+v.r1*v.gx +'$ ou $x='+v.r2*v.gx  + '$'; },
+    distracteurs: function(v) {
+      return [
+        (v.r1===v.r2)? '$x='+(-v.r1*v.gx)+'$' :'$x='+v.r1*v.gx + '$',
+        (v.r1===v.r2)? '$x='+((v.x0+1)*v.gx)+'$' :'$x='+v.r2*v.gx + '$',
+        '$x='+ (fimage(-v.k,simplExpr(v.a+'*4(x-'+v.r1+')(x-'+v.r2+')/('+v.y0+')-'+v.k))*v.gy).toFixed(0) + '$',
+      ];
+    }
+  },
 ];

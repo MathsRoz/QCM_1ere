@@ -599,9 +599,9 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
           <div class="slider-title">Nombre de questions</div>
           <div class="slider-sub">Questions tirées aléatoirement de la banque filtrée</div>
         </div>
-        <input type="number" class="slider-num" id="numInput" value="10" min="5" max="30" onchange="syncSlider(this.value)">
+        <input type="number" class="slider-num" id="numInput" value="12" min="5" max="30" onchange="syncSlider(this.value)">
       </div>
-      <input type="range" id="numSlider" min="5" max="30" value="10" oninput="syncNum(this.value)">
+      <input type="range" id="numSlider" min="5" max="30" value="12" oninput="syncNum(this.value)">
     </div>
     <button class="btn-generate" id="btnGenerate" onclick="generateQCM()">✨ Générer le QCM</button>
   </div>
@@ -924,14 +924,27 @@ function renderQuestion(q, idx, container) {
 }
 
 /**
- * Construit le contenu mixte texte + figures SVG d'un élément.
- * Les blocs %%TIKZ...%%ENDTIKZ%% sont rendus en SVG pur JS.
+ * Construit le contenu mixte texte + figures d'un élément.
+ * Gère deux types de marqueurs :
+ *  %%SVG...%%ENDSVG%%%%TIKZ...%%ENDTIKZ%% → SVG direct (Fig), le TikZ est ignoré à l'affichage
+ *  %%SVG...%%ENDSVG%%                      → SVG direct seul
+ *  %%TIKZ...%%ENDTIKZ%%                    → code TikZ parsé par tikzToSvg() (legacy)
  */
 function buildContent(container, str) {
   if (typeof str !== 'string') { container.textContent = String(str); return; }
-  const parts = str.split(/(%%TIKZ[\s\S]*?%%ENDTIKZ%%)/);
+  // Découper en capturant les blocs figures dans l'ordre de priorité :
+  // 1. paire SVG+TIKZ  2. SVG seul  3. TIKZ seul
+  const parts = str.split(/(%%SVG[\s\S]*?%%ENDSVG%%(?:\s*%%TIKZ[\s\S]*?%%ENDTIKZ%%)?|%%TIKZ[\s\S]*?%%ENDTIKZ%%)/);
   parts.forEach(part => {
-    if (part.startsWith('%%TIKZ')) {
+    if (part.startsWith('%%SVG')) {
+      // Extraire le SVG brut (tout ce qui précède %%ENDSVG%%)
+      const svgCode = part.replace(/^%%SVG/, '').replace(/%%ENDSVG%%[\s\S]*$/, '').trim();
+      const wrap = document.createElement('div');
+      wrap.className = 'fig-wrap';
+      wrap.innerHTML = svgCode;   // injection directe — le SVG est valide HTML5
+      container.appendChild(wrap);
+    } else if (part.startsWith('%%TIKZ')) {
+      // TikZ legacy → SVG via moteur
       const code = part.replace(/^%%TIKZ/, '').replace(/%%ENDTIKZ%%$/, '').trim();
       const wrap = document.createElement('div');
       wrap.className = 'fig-wrap';
@@ -1013,6 +1026,12 @@ function updateExport() {
 }
 function latexifyStr(str) {
   if (typeof str !== 'string') return str;
+  // Cas Fig : %%SVG...%%ENDSVG%%%%TIKZ...%%ENDTIKZ%% — garder le TikZ, supprimer le SVG
+  str = str.replace(/%%SVG[\s\S]*?%%ENDSVG%%\s*%%TIKZ([\s\S]*?)%%ENDTIKZ%%/g, (_,tikz) =>
+    '\n\\begin{center}\n' + tikz.trim() + '\n\\end{center}\n');
+  // Cas SVG seul sans TikZ (pas exportable en LaTeX)
+  str = str.replace(/%%SVG[\s\S]*?%%ENDSVG%%/g, '\n% [figure SVG — non exportable en LaTeX]\n');
+  // Cas TikZ seul legacy
   str = str.replace(/%%TIKZ([\s\S]*?)%%ENDTIKZ%%/g, (_,code) =>
     '\n\\begin{center}\n'+code.trim()+'\n\\end{center}\n');
   return str.replace(/<br\s*\/?>/gi,'\\\\\n')
@@ -1062,21 +1081,132 @@ function buildBeamer() {
   const fmt   = document.getElementById('beamerFormat')?.value||'one';
   let out = '\\documentclass{beamer}\n'
     + '\\usepackage[utf8]{inputenc}\\usepackage[T1]{fontenc}\\usepackage[french]{babel}\n'
-    + '\\usepackage{amsmath,amssymb,multicol}\n'
+    + '\\usepackage{amsmath,amssymb}\n'
     + '\\usepackage{tikz}\\usetikzlibrary{arrows.meta,calc,trees}\n'
-    + '\\usetheme{'+theme+'}\\usecolortheme{'+color+'}\n\n\\begin{document}\n\n';
-  const frames = (q,i) => {
-    let f = '\\begin{frame}{Question '+(i+1)+'}\n  \\begin{center}\n    '+latexifyStr(q.enonce)+'\\\\[1em]\n';
-    f += '    \\begin{multicols}{2}\\begin{enumerate}[A)]\n';
-    q.reponses.forEach(r => { f += '      \\item '+latexifyStr(r)+'\n'; });
-    f += '    \\end{enumerate}\\end{multicols}\n  \\end{center}\n\\end{frame}\n\n';
+    + '\\usepackage{xcolor}\n'
+    + '\\usetheme{'+theme+'}\\usecolortheme{'+color+'}\n'
+    + '\n\\begin{document}\n\n';
+
+  // Convertit une chaîne pour Beamer :
+  // - paire %%SVG%%ENDSVG%%%%TIKZ...%%ENDTIKZ%% → tikzpicture avec scale=0.7
+  // - %%TIKZ legacy → idem
+  // - %%SVG seul → commentaire
+  // Retourne { text, tikz } — tikz est le code figure extrait (ou '' si aucune)
+  function beamerSplit(str) {
+    if (typeof str !== 'string') return { text: String(str), tikz: '' };
+    var tikzCode = '';
+    // Paire SVG+TIKZ : extraire le TikZ
+    str = str.replace(/%%SVG[\s\S]*?%%ENDSVG%%\s*%%TIKZ([\s\S]*?)%%ENDTIKZ%%/g, function(_, t) {
+      tikzCode = t.trim(); return '';
+    });
+    // TIKZ legacy
+    str = str.replace(/%%TIKZ([\s\S]*?)%%ENDTIKZ%%/g, function(_, t) {
+      tikzCode = t.trim(); return '';
+    });
+    // SVG seul (pas exportable)
+    str = str.replace(/%%SVG[\s\S]*?%%ENDSVG%%/g, '');
+    // Nettoyage HTML
+    str = str.replace(/<br\s*\/?>/gi,'\\\\\n')
+      .replace(/<b>(.*?)<\/b>/gi,'\\textbf{$1}')
+      .replace(/<i>(.*?)<\/i>/gi,'\\textit{$1}')
+      .replace(/<[^>]+>/g,'')
+      .trim();
+    return { text: str, tikz: tikzCode };
+  }
+
+  // Construit une frame de question
+  const frames = (q, i) => {
+    const enonceParts = beamerSplit(q.enonce);
+    const hasFig = enonceParts.tikz !== '';
+    const enonceText = enonceParts.text;
+    const tikzCode = enonceParts.tikz;
+
+    // Réponses A) B) C) D) sans enumerate (compatible beamer sans enumitem)
+    const letters = ['A','B','C','D'];
+    const repLines = q.reponses.map((r,j) =>
+      '\\textbf{'+letters[j]+')} '+latexifyStr(r));
+
+    let f = '\\begin{frame}{Question '+(i+1)+'}\n';
+
+    if (hasFig) {
+      // Layout colonnes : texte+réponses à gauche, figure à droite
+      var innerTikz = tikzCode
+        .replace(/^\\begin\{tikzpicture\}[^\n]*\n?/, '')
+        .replace(/\\end\{tikzpicture\}\s*$/, '')
+        .trim();
+      f += '\\begin{columns}[T,totalwidth=\\textwidth]\n';
+      f += '\\begin{column}{0.4\\textwidth}\n';
+      f += '  \\small '+enonceText+'\n  \\vspace{0.4em}\n\n';
+      // Réponses en colonne simple
+      repLines.forEach(r => { f += '  '+r+'\\\\\n'; });
+      f += '\\end{column}\n';
+      f += '\\begin{column}{0.55\\textwidth}\n';
+      f += '  \\begin{center}\n';
+      f += '  \\begin{tikzpicture}[scale=0.55]\n';
+      f += innerTikz + '\n';
+      f += '  \\end{tikzpicture}\n';
+      f += '  \\end{center}\n';
+      f += '\\end{column}\n';
+      f += '\\end{columns}\n';
+    } else {
+      // Pas de figure : énoncé centré, réponses en 2 colonnes
+      f += '\\begin{center}\n';
+      f += '  '+enonceText+'\n\\end{center}\n';
+      f += '\\vspace{0.5em}\n';
+      f += '\\begin{columns}[t]\n';
+      f += '\\begin{column}{0.48\\textwidth}\n';
+      f += '  '+repLines[0]+'\\\\\n';
+      if (repLines[2]) f += '  '+repLines[2]+'\\\\\n';
+      f += '\\end{column}\n';
+      f += '\\begin{column}{0.48\\textwidth}\n';
+      if (repLines[1]) f += '  '+repLines[1]+'\\\\\n';
+      if (repLines[3]) f += '  '+repLines[3]+'\\\\\n';
+      f += '\\end{column}\n';
+      f += '\\end{columns}\n';
+    }
+
+    f += '\\end{frame}\n\n';
     return f;
   };
-  const corr = (q,i) => {
-    let f = '\\begin{frame}{Correction Q'+(i+1)+'}\n  \\begin{center}\n    '+latexifyStr(q.enonce)+'\\\\[0.8em]\n';
-    f += '    {\\large\\color{green!60!black} '+latexifyStr(q.bonneReponse)+'}\n  \\end{center}\n\\end{frame}\n\n';
+
+  // Construit une frame de correction
+  const corr = (q, i) => {
+    const enonceParts = beamerSplit(q.enonce);
+    const hasFig = enonceParts.tikz !== '';
+    const enonceText = enonceParts.text;
+    const tikzCode = enonceParts.tikz;
+
+    let f = '\\begin{frame}{Correction Q'+(i+1)+'}\n';
+
+    if (hasFig) {
+      var innerTikz = tikzCode
+        .replace(/^\\begin\{tikzpicture\}[^\n]*\n?/, '')
+        .replace(/\\end\{tikzpicture\}\s*$/, '')
+        .trim();
+      f += '\\begin{columns}[T,totalwidth=\\textwidth]\n';
+      f += '\\begin{column}{0.4\\textwidth}\n';
+      f += '  \\small '+enonceText+'\n  \\vspace{0.6em}\n\n';
+      f += '  {\\large\\color{green!60!black}\\textbf{'+latexifyStr(q.bonneReponse)+'}}\n';
+      f += '\\end{column}\n';
+      f += '\\begin{column}{0.55\\textwidth}\n';
+      f += '  \\begin{center}\n';
+      f += '  \\begin{tikzpicture}[scale=0.55]\n';
+      f += innerTikz + '\n';
+      f += '  \\end{tikzpicture}\n';
+      f += '  \\end{center}\n';
+      f += '\\end{column}\n';
+      f += '\\end{columns}\n';
+    } else {
+      f += '\\begin{center}\n';
+      f += '  '+enonceText+'\n  \\vspace{0.8em}\n\n';
+      f += '  {\\large\\color{green!60!black}\\textbf{'+latexifyStr(q.bonneReponse)+'}}\n';
+      f += '\\end{center}\n';
+    }
+
+    f += '\\end{frame}\n\n';
     return f;
   };
+
   if (fmt==='allcorr') {
     state.generatedQuestions.forEach((q,i) => { out+=frames(q,i); });
     state.generatedQuestions.forEach((q,i) => { out+=corr(q,i); });

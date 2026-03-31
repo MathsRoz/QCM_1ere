@@ -548,7 +548,16 @@ function renderDetail(q) {
 
 function cleanForDisplay(str) {
   if (typeof str !== 'string') return String(str);
-  // Remplacer les marqueurs %%TIKZ...%%ENDTIKZ%% par du vrai SVG
+  // %%SVG...%%ENDSVG%% : SVG direct depuis Fig (le %%TIKZ qui suit est pour LaTeX, on le saute)
+  // Paire SVG+TIKZ (Fig) : garder le SVG, ignorer le TIKZ (qui est pour LaTeX)
+  str = str.replace(/%%SVG([\s\S]*?)%%ENDSVG%%\s*%%TIKZ[\s\S]*?%%ENDTIKZ%%/g, function(_, svg) {
+    return '<div style="display:flex;justify-content:center;margin:12px 0">' + svg.trim() + '</div>';
+  });
+  // SVG seul
+  str = str.replace(/%%SVG([\s\S]*?)%%ENDSVG%%/g, function(_, svg) {
+    return '<div style="display:flex;justify-content:center;margin:12px 0">' + svg.trim() + '</div>';
+  });
+  // TIKZ legacy → SVG via tikzToSvg
   return str.replace(/%%TIKZ([\s\S]*?)%%ENDTIKZ%%/g, function(_, code) {
     var svg = '';
     try { svg = tikzToSvg(code.trim()); } catch(e) { svg = '<span style="color:var(--red);font-size:11px">Erreur SVG</span>'; }

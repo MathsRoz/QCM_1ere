@@ -5,14 +5,14 @@
 
 // ── Palette thème sombre ────────────────────────────────
 var TC = {
-  bg:    '#0d1a2d',
-  grid:  '#1e2d45',
-  axis:  '#94a3b8',
-  text:  '#e2e8f0',
-  dim:   '#64748b',
+  bg:    '#ffffff',
+  grid:  '#adadad',
+  axis:  '#000c1d',
+  text:  '#022757',
+  dim:   '#000000',
   blue:  '#93c5fd',
   green: '#86efac',
-  red:   '#fca5a5',
+  red:   '#9e3333',
   yel:   '#fde68a',
   pur:   '#c4b5fd'
 };
@@ -242,3 +242,391 @@ function renderTree(code) {
   out += '</svg>';
   return out;
 }
+// ═══════════════════════════════════════════════════════
+//  OBJET Fig — API fluente SVG + TikZ
+//  Coordonnées mathématiques directes, pas de ox/oy/sc.
+//
+//  Usage :
+//    var svg  = Fig.svg(xmin, xmax, ymin, ymax)
+//                  .grid(1).axes().gradX(1).gradY(1)
+//                  .line(2,1,'blue','f').point(3,7,'red')
+//                  .dashes(3,7).end();
+//    var tikz = Fig.latex(xmin, xmax, ymin, ymax)
+//                  .grid(1).axes().gradX(1).gradY(1)
+//                  .line(2,1,'blue','f').point(3,7,'red')
+//                  .dashes(3,7).end();
+//    return '%%SVG'+svg+'%%ENDSVG%%%%TIKZ'+tikz+'%%ENDTIKZ%%';
+// ═══════════════════════════════════════════════════════
+var Fig = {
+
+  // ── Constantes de mise en page (px) ─────────────────
+  _PAD:  { l:28, r:24, t:18, b:22 },  // marges autour du repère
+  _SC:   30,                            // pixels par unité mathématique
+  _FS:   12,                            // font-size labels
+  _ARR:  'arr' + Math.random().toString(36).slice(2,6), // id marqueur flèche
+
+  // ── Init SVG ─────────────────────────────────────────
+  // Fig.svg(xmin, xmax, ymin, ymax, bg)
+  svg: function(xmin, xmax, ymin, ymax, bg) {
+    this._ctx = 'svg';
+    this._xmin = xmin; this._xmax = xmax;
+    this._ymin = ymin; this._ymax = ymax;
+    var p = this._PAD;
+    // Échelle adaptative : hauteur cible ~180px de zone utile
+    var scY = Math.max(12, Math.min(28, Math.floor(300 / (ymax - ymin))));
+    var scX = Math.max(12, Math.min(28, Math.floor(300 / (xmax - xmin))));
+    var sc  = Math.min(scX, scY);
+    this._SC = sc;
+    this._W  = p.l + (xmax - xmin) * sc + p.r;
+    this._H  = p.t + (ymax - ymin) * sc + p.b;
+    this._ox = p.l - xmin * sc;   // pixel de x=0
+    this._oy = p.t + ymax * sc;   // pixel de y=0
+    var aid = this._ARR;
+    var cid = 'clip' + aid;   // id unique pour le clipPath
+    this._clipId = cid;
+    this._out = '<svg xmlns="http://www.w3.org/2000/svg"'
+      + ' viewBox="0 0 ' + this._W + ' ' + this._H + '"'
+      + ' width="' + this._W + '" height="' + this._H + '"'
+      + ' style="background:' + (bg || TC.bg) + ';border-radius:8px;display:block;margin:0 auto">'
+      + '<defs>'
+      + '<marker id="' + aid + '" markerWidth="7" markerHeight="7"'
+      + ' refX="5" refY="3" orient="auto">'
+      + '<path d="M0,0 L0,6 L7,3 z" fill="' + TC.axis + '"/>'
+      + '</marker>'
+      // clipPath exactement aux bornes du repère mathématique
+      + '<clipPath id="' + cid + '">'
+      + '<rect x="' + this._px(xmin) + '" y="' + this._py(ymax)
+      + '" width="' + ((xmax - xmin) * sc) + '" height="' + ((ymax - ymin) * sc) + '"/>'
+      + '</clipPath>'
+      + '</defs>';
+    return this;
+  },
+
+  // ── Init LaTeX ────────────────────────────────────────
+  // Fig.latex(xmin, xmax, ymin, ymax)
+  latex: function(xmin, xmax, ymin, ymax) {
+    this._ctx  = 'latex';
+    this._xmin = xmin; this._xmax = xmax;
+    this._ymin = ymin; this._ymax = ymax;
+    this._out  = '\\begin{tikzpicture}[scale=0.75]\n';
+    return this;
+  },
+
+  end: function() {
+    return this._out + (this._ctx === 'svg' ? '</svg>' : '\\end{tikzpicture}');
+  },
+
+  // ── Conversion coordonnées math → pixels ─────────────
+  _px: function(x) { return this._ox + x * this._SC; },
+  _py: function(y) { return this._oy - y * this._SC; },
+
+  _add: function(svgStr, tikzStr) {
+    this._out += this._ctx === 'svg' ? svgStr : tikzStr;
+    return this;
+  },
+
+  // ── Clipping ──────────────────────────────────────────
+  // .clip()     → ouvre un groupe SVG coupé aux bornes du repère
+  //               / ajoute \clip en TikZ
+  // .endClip()  → ferme le groupe SVG (no-op en TikZ)
+  clip: function() {
+    return this._add(
+      '<g clip-path="url(#' + this._clipId + ')">',
+      '\\clip (' + this._xmin + ',' + this._ymin + ') rectangle ('
+        + this._xmax + ',' + this._ymax + ');\n'
+    );
+  },
+
+  endClip: function() {
+    return this._add('</g>', '');
+  },
+
+  // ── Grille ────────────────────────────────────────────
+  // .grid(step)   step par défaut = 1
+  grid: function(stepx,stepy) {
+    stepx = stepx || 1;
+    stepy= stepy || stepx ||1;
+    var xmin = this._xmin, xmax = this._xmax;
+    var ymin = this._ymin, ymax = this._ymax;
+    var svg  = '';
+    if (this._ctx === 'svg') {
+      for (var x = xmin; x <= xmax; x += stepx) {
+        svg += '<line x1="' + this._px(x) + '" y1="' + this._py(ymax)
+             + '" x2="' + this._px(x) + '" y2="' + this._py(ymin)
+             + '" stroke="' + TC.grid + '" stroke-width=".5"/>';
+      }
+      for (var y = ymin; y <= ymax; y += stepy) {
+        svg += '<line x1="' + this._px(xmin) + '" y1="' + this._py(y)
+             + '" x2="' + this._px(xmax) + '" y2="' + this._py(y)
+             + '" stroke="' + TC.grid + '" stroke-width=".5"/>';
+      }
+    }
+    return this._add(svg,
+      '\\draw[very thin,gray!30] (' + xmin + ',' + ymin + ') grid [xstep=' + stepx + ',ystep=' + stepy + '] ('
+      + xmax + ',' + ymax + ');\n');
+  },
+
+  // ── Axes avec flèches ─────────────────────────────────
+  // .axes()
+  axes: function() {
+    var xmin = this._xmin, xmax = this._xmax;
+    var ymin = this._ymin, ymax = this._ymax;
+    var ox = this._px(0), oy = this._py(0);
+    var aid = this._ARR, fs = this._FS;
+    var svg =
+      // axe x
+      '<line x1="' + this._px(xmin) + '" y1="' + oy
+        + '" x2="' + (this._px(xmax) + 12) + '" y2="' + oy
+        + '" stroke="' + TC.axis + '" stroke-width="1.8" marker-end="url(#' + aid + ')"/>'
+      // axe y
+      + '<line x1="' + ox + '" y1="' + this._py(ymin)
+        + '" x2="' + ox + '" y2="' + (this._py(ymax) - 8)
+        + '" stroke="' + TC.axis + '" stroke-width="1.8" marker-end="url(#' + aid + ')"/>'
+      // label x
+      + '<text x="' + (this._px(xmax)+4) + '" y="' + (oy -10)
+        + '" fill="' + TC.axis + '" font-size="' + (fs + 2) + '" font-style="italic">x</text>'
+      // label y
+      + '<text x="' + (ox +10) + '" y="' + (this._py(ymax) - 4)
+        + '" fill="' + TC.axis + '" font-size="' + (fs + 2) + '" font-style="italic">y</text>'
+      // O
+      + '<text x="' + (ox - 4) + '" y="' + (oy + fs + 2)
+        + '" fill="' + TC.dim + '" font-size="' + fs + '" text-anchor="end">O</text>';
+    return this._add(svg,
+      '\\draw[-stealth] (' + xmin + ',0) -- (' + (xmax + 0.4) + ',0) node[above]{$x$};\n'
+      + '\\draw[-stealth] (0,' + ymin + ') -- (0,' + (ymax + 0.4) + ') node[right]{$y$};\n'
+      + '\\node[below left,fontsize=small] {O};\n');
+  },
+
+  // ── Graduations ───────────────────────────────────────
+  // .gradX(step)   .gradY(step)
+  gradX: function(step) {
+    step = step || 1;
+    var oy = this._py(0), fs = this._FS;
+    var svg = '', tikz = '';
+    for (var x = this._xmin; x <= this._xmax; x += 1) {
+      if (x === 0) continue;
+      var px = this._px(x);
+      svg  += '<line x1="' + px + '" y1="' + (oy - 3) + '" x2="' + px + '" y2="' + (oy + 3)
+            + '" stroke="' + TC.axis + '" stroke-width="1"/>'
+            + '<text x="' + px + '" y="' + (oy + fs + 4) + '" fill="' + TC.dim
+            + '" font-size="' + fs + '" text-anchor="middle">' + x*step + '</text>';
+      tikz += '\\draw (' + x + ',2pt) -- (' + x + ',-2pt) node[below,font=\\small]{$' + x*step + '$};\n';
+    }
+    return this._add(svg, tikz);
+  },
+
+  gradY: function(step) {
+    step = step || 1;
+    var ox = this._px(0), fs = this._FS;
+    var svg = '', tikz = '';
+    for (var y = this._ymin; y <= this._ymax; y += 1) {
+      if (y === 0) continue;
+      var py = this._py(y);
+      svg  += '<line x1="' + (ox - 3) + '" y1="' + py + '" x2="' + (ox + 3) + '" y2="' + py
+            + '" stroke="' + TC.axis + '" stroke-width="1"/>'
+            + '<text x="' + (ox - 8) + '" y="' + (py + fs / 2) + '" fill="' + TC.dim
+            + '" font-size="' + fs + '" text-anchor="end">' + y*step + '</text>';
+      tikz += '\\draw (2pt,' + y + ') -- (-2pt,' + y + ') node[left,font=\\small]{$' + y*step + '$};\n';
+    }
+    return this._add(svg, tikz);
+  },
+
+  // ── Droite affine  y = a*x + b ───────────────────────
+  // .line(a, b, xmin, xmax, color, label)
+  affine: function(a, b, xmin, xmax, color, label) {
+    var col = color === 'red' ? TC.red : color === 'green' ? TC.green : TC.blue;
+    var lbl = label || '';
+    var x1 = xmin, y1 = a * xmin + b, x2 = xmax, y2 = a * xmax + b;
+    return this._add(
+      '<line x1="' + this._px(x1) + '" y1="' + this._py(y1)
+        + '" x2="' + this._px(x2) + '" y2="' + this._py(y2)
+        + '" stroke="' + col + '" stroke-width="2.5"/>'
+        + (lbl ? '<text x="' + (this._px(x2) + 4) + '" y="' + (this._py(y2) + 4)
+            + '" fill="' + col + '" font-size="12" font-style="italic">' + lbl + '</text>' : ''),
+      '\\draw[' + (color || 'red') + ',very thick] (' + x1 + ',' + y1 + ') -- ('
+        + x2 + ',' + y2 + ')' + (lbl ? ' node[right]{$' + lbl + '$}' : '') + ';\n'
+    );
+  },
+
+  // ── Point (disque plein) ──────────────────────────────
+  // .point(x, y, color)
+  point: function(x, y, color) {
+    var col = color === 'red' ? TC.red : color === 'green' ? TC.green : TC.blue;
+    return this._add(
+      '<circle cx="' + this._px(x) + '" cy="' + this._py(y) + '" r="4" fill="' + col + '"/>',
+      '\\filldraw[' + (color || 'blue') + '] (' + x + ',' + y + ') circle (2pt);\n'
+    );
+  },
+
+  // ── Tirets de lecture ────────────────────────────────
+  // .dashes(x0, y0, labelX, labelY, color)
+  //   labelX / labelY : texte affiché (défaut = valeur numérique)
+  //   color : 'red' | 'gray' (défaut)
+  dashes: function(x0, y0, labelX, labelY, color) {
+    var col  = color === 'red' ? TC.red : TC.dim;
+    var lx   = (labelX !== undefined && labelX !== null) ? labelX : x0;
+    var ly   = (labelY !== undefined && labelY !== null) ? labelY : y0;
+    var pxs  = this._px(x0), pys = this._py(y0);
+    var ox   = this._px(0),  oy  = this._py(0);
+    var fs   = this._FS;
+    return this._add(
+      // vertical x0 → point
+      '<line x1="' + pxs + '" y1="' + oy + '" x2="' + pxs + '" y2="' + pys
+        + '" stroke="' + col + '" stroke-width="1" stroke-dasharray="4 3"/>'
+      // horizontal 0 → point
+      + '<line x1="' + ox + '" y1="' + pys + '" x2="' + pxs + '" y2="' + pys
+        + '" stroke="' + col + '" stroke-width="1" stroke-dasharray="4 3"/>'
+      // label sur axe x
+      + '<text x="' + pxs + '" y="' + (oy + fs + 4) + '" fill="' + col
+        + '" font-size="' + fs + '" text-anchor="middle">' + lx + '</text>'
+      // label sur axe y
+      + '<text x="' + (ox - 5) + '" y="' + (pys + fs / 2) + '" fill="' + col
+        + '" font-size="' + fs + '" text-anchor="end">' + ly + '</text>',
+      '\\draw[dashed,' + (color || 'gray') + '] (' + x0 + ',0) -- ('
+        + x0 + ',' + y0 + ') -- (0,' + y0 + ');\n'
+        + (String(lx) !== String(x0)
+            ? '\\node[below,' + (color||'gray') + '] at (' + x0 + ',0){$' + lx + '$};\n' : '')
+    );
+  },
+  // ── Courbe d'une fonction quelconque ─────────────────
+  // .curve(expr, xmin, xmax, color, label, steps)
+  //
+  // expr  : chaîne mathématique, ex: "3x^2-2x+6", "sin(x)", "sqrt(x+1)"
+  // xmin/xmax : bornes de tracé (défaut = bornes du repère)
+  // color : 'blue' | 'red' | 'green'
+  // label : étiquette affichée en bout de courbe
+  // steps : nombre de segments (défaut 120)
+  //
+  // Fonctions supportées dans l'expression :
+  //   sin, cos, tan, asin, acos, atan, sqrt, abs, exp, log, ln, pi, e
+  //   ^ pour la puissance, implicite multiplication (2x, 3(x+1), x(x-1))
+  curve: function(expr, xmin, xmax, color, label, steps) {
+    xmin  = (xmin  !== undefined && xmin  !== null) ? xmin  : this._xmin;
+    xmax  = (xmax  !== undefined && xmax  !== null) ? xmax  : this._xmax;
+    steps = steps || 120;
+    color = color || 'red';
+ 
+    // ── Parser : str → fonction JS f(x) ──────────────
+    var fn = Fig._parseExpr(expr);
+ 
+    var col = color === 'red' ? TC.red : color === 'green' ? TC.green : TC.blue;
+    var lbl = label || '';
+ 
+    // ── SVG : polyline par segments ───────────────────
+    var svg = '';
+    if (this._ctx === 'svg') {
+      var dx = (xmax - xmin) / steps;
+      // Construire des segments continus en coupant aux discontinuités
+      var segments = [];  // chaque segment = tableau de points [px,py]
+      var seg = [];
+      for (var i = 0; i <= steps; i++) {
+        var x = xmin + i * dx;
+        var y;
+        try { y = fn(x); } catch(e) { y = NaN; }
+        if (!isFinite(y) || isNaN(y)) {
+          if (seg.length > 1) segments.push(seg);
+          seg = [];
+        } else {
+          seg.push([this._px(x), this._py(y)]);
+        }
+      }
+      if (seg.length > 1) segments.push(seg);
+ 
+      segments.forEach(function(s) {
+        var pts = s.map(function(p) { return p[0].toFixed(2) + ',' + p[1].toFixed(2); }).join(' ');
+        svg += '<polyline points="' + pts + '" fill="none" stroke="' + col
+          + '" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+      });
+ 
+      // Label en bout de courbe
+      if (lbl && segments.length) {
+        var last = segments[segments.length - 1];
+        var lp   = last[last.length - 1];
+        svg += '<text x="' + (lp[0] + 4) + '" y="' + (lp[1] + 4)
+          + '" fill="' + col + '" font-size="12" font-style="italic">' + lbl + '</text>';
+      }
+    }
+ 
+    // ── TikZ : \draw plot ─────────────────────────────
+    // On génère une liste de points TikZ (50 suffit pour LaTeX)
+    var tikz = '\\draw[' + color + ',very  thick] plot coordinates{';
+    var dxT  = (xmax - xmin) / 200;
+    var pts_tikz = [];
+    for (var j = 0; j <= 200; j++) {
+      var xt = xmin + j * dxT;
+      var yt;
+      try { yt = fn(xt); } catch(e) { yt = NaN; }
+      if (isFinite(yt) && !isNaN(yt)) {
+        pts_tikz.push('(' + xt.toFixed(3) + ',' + yt.toFixed(3) + ')');
+      }
+    }
+    tikz += pts_tikz.join(' ') + '}';
+    tikz += lbl ? ' node[right]{$' + lbl + '$}' : '';
+    tikz += ';\n';
+ 
+    return this._add(svg, tikz);
+  },
+};
+ 
+  // ── Parseur d'expression mathématique ────────────────────
+// Convertit une chaîne comme "3x^2 - 2x + 6" en fonction JS.
+// Appelé en interne par Fig.curve().
+Fig._parseExpr = function(expr) {
+  var s = expr.trim();
+ 
+  // Étape 1 — remplacer les noms de fonctions par des placeholders
+  // pour éviter qu'une regex suivante ne les re-traite
+  // ex: sin → __SIN__ puis __SIN__ → Math.sin en fin
+  var fns = [
+    ['sqrt',  'Math.sqrt'],
+    ['abs',   'Math.abs'],
+    ['asin',  'Math.asin'],
+    ['acos',  'Math.acos'],
+    ['atan',  'Math.atan'],
+    ['sin',   'Math.sin'],
+    ['cos',   'Math.cos'],
+    ['tan',   'Math.tan'],
+    ['exp',   'Math.exp'],
+    ['log10', 'Math.log10'],
+    ['log',   'Math.log10'],
+    ['ln',    'Math.log'],
+  ];
+  // Remplace chaque nom par un token unique qu'aucune autre règle ne touchera
+  var tokens = [];
+  fns.forEach(function(pair, i) {
+    var re = new RegExp('\\b' + pair[0] + '\\b', 'gi');
+    if (re.test(s)) {
+      var tok = '__F' + i + '__';
+      s = s.replace(new RegExp('\\b' + pair[0] + '\\b', 'gi'), tok);
+      tokens.push([tok, pair[1]]);
+    }
+  });
+ 
+  s = s
+    // Constantes
+    .replace(/\bpi\b/gi, '(Math.PI)')
+    .replace(/(?<![a-zA-Z_])e(?![a-zA-Z_\d])/g, '(Math.E)')
+    // Puissance
+    .replace(/\^/g, '**')
+    // Multiplication implicite (ordre important : plus long d'abord)
+    .replace(/(\d)\s*\(/g,   '$1*(')
+    .replace(/(\d)\s*(x)/gi, '$1*$2')
+    .replace(/\)\s*\(/g,     ')*(')
+    .replace(/\)\s*(x)/gi,   ')*$1')
+    .replace(/(x)\s*\(/gi,   '$1*(')
+    // -x seul → (-1)*x
+    .replace(/(^|[+\-\*(,])\s*-\s*(x)/g, '$1(-1)*$2');
+ 
+  // Étape 2 — remplacer les tokens par les vrais noms Math.xxx
+  tokens.forEach(function(pair) {
+    s = s.split(pair[0]).join(pair[1]);
+  });
+ 
+  try {
+    return new Function('x', '"use strict"; return (' + s + ');');
+  } catch(e) {
+    console.warn('Fig._parseExpr: cannot parse "' + expr + '" → "' + s + '"', e.message);
+    return function() { return NaN; };
+  }
+
+};

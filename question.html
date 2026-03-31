@@ -355,6 +355,15 @@ function showVariant(n) {
 // ── Utilitaires ──
 function display(str) {
   if (typeof str !== 'string') return String(str);
+  // Paire SVG+TIKZ (Fig) : garder le SVG, ignorer le TIKZ
+  str = str.replace(/%%SVG([\s\S]*?)%%ENDSVG%%\s*%%TIKZ[\s\S]*?%%ENDTIKZ%%/g, function(_, svg) {
+    return '<div style="display:flex;justify-content:center;margin:12px 0">' + svg.trim() + '</div>';
+  });
+  // SVG seul
+  str = str.replace(/%%SVG([\s\S]*?)%%ENDSVG%%/g, function(_, svg) {
+    return '<div style="display:flex;justify-content:center;margin:12px 0">' + svg.trim() + '</div>';
+  });
+  // TIKZ legacy
   return str.replace(/%%TIKZ([\s\S]*?)%%ENDTIKZ%%/g, function(_, code) {
     try {
       return '<div style="display:flex;justify-content:center;margin:12px 0">' + tikzToSvg(code.trim()) + '</div>';
