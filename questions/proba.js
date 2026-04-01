@@ -146,4 +146,48 @@ const QUESTIONS_PROBA = [
       `$\\dfrac{${v.den - v.p1 - v.p2}}{${v.den}}$`
     ]
   },
+  
+    {
+    id: "proba_009", theme: "proba",
+    niveau: ["techno", "specifique", "specialite"], cols: 4,
+    variables: { p1: { min: 1, max: 9 }, p2: { min: 1, max: 9 }, p3: { min: 1, max: 9 } },
+    enonce: function(v) {
+     
+      // Pendant dedupeAnswers, on calcule juste _y0 — pas de SVG
+      if (v._deduping) return '';
+      
+
+      var svg = Fig.svg(0, 7, -2.5, 2.5)
+        .arbre()
+        .text(7/4,3/4+.3,'0,'+v.p1)
+        .text(7/4,-3/4-.3,'0,'+(10-v.p1))
+        .text(7*3/4,-3/4+.2,'0,'+v.p2)
+        .text(7*3/4,-2,'0,'+(10-v.p2))
+        .text(7*3/4,+3/4-.2,'0,'+(10-v.p3))
+        .text(7*3/4,+2,'0,'+v.p3)
+        .end();
+
+      var tikz = Fig.latex(0, 8, -3, 3)
+        .arbre().
+        text(8/4,3/4+.5,'0,'+v.p1)
+        .text(8/4,-3/4-.5,'0,'+(10-v.p1))
+        .text(8*3/4,-.8,'0,'+v.p2)
+        .text(8*3/4,-2.3,'0,'+(10-v.p2))
+        .text(8*3/4,.7,'0,'+(10-v.p3))
+        .text(8*3/4,2.2,'0,'+v.p3).end();
+
+      return 'On donne l\'arbre de probabilité ci-contre. '
+           + '%%SVG' + svg + '%%ENDSVG%%%%TIKZ' + tikz + '%%ENDTIKZ%%'
+           + '$P(A\\cap B)$ est égale à :';
+    },
+    bonneReponse: function(v) { return '$ 0,'+ v.p1*v.p3  + '$'; },
+    distracteurs: function(v) {
+      return [
+        '$ 0,'+ (v.p1+v.p3)  + '$',
+        '$ 0,'+ v.p3  + '$',
+        '$ 0,'+ v.p1  + '$',
+      ];
+    }
+  },
+  
 ];

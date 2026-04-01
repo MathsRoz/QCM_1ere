@@ -96,24 +96,10 @@ const QUESTIONS_FONCTIONS = [
     ]
   },
 
-  // ── Zéro d'une fonction affine ──
-  // {
-  //   id: "fonc_007", theme: "fonctions",
-  //   niveau: ["techno", "specifique", "specialite"], cols: 4,
-  //   variables: { a: { min: 2, max: 7 }, b: { min: 2, max: 14 } },
-  //   enonce: (v) => `Zéro de la fonction $f(x) = ${v.a}x - ${v.b}$`,
-  //   bonneReponse: (v) => `$x = ${frac(v.b, v.a)}$`,
-  //   distracteurs: (v) => [
-  //     `$x = ${frac(-v.b, v.a)}$`,
-  //     `$x = ${v.a}$`,
-  //     `Pas de zéro`
-  //   ]
-  // },
-
   // ── Appartenance d'un point à une courbe ── done
   {
     id: "fonc_008", theme: "fonctions",
-    niveau: ["specifique", "specialite"], cols: 2,
+    niveau: ["specifique", "specialite"], cols: 4,
     variables: { a: { min: -5, max: 5 }, b: { min: -6, max: 6 }, c: { min: 1, max: 8 } },
     enonce: (v) => {
       if(v.a==0){v.a=3}
@@ -126,66 +112,6 @@ const QUESTIONS_FONCTIONS = [
     ]
   },
 
-  // ── Résoudre graphiquement f(x) = k ──
-  // {
-  //   id: "fonc_009", theme: "fonctions",
-  //   niveau: ["techno", "specifique", "specialite"], cols: 4,
-  //   variables: { a: { min: 1, max: 5 }, b: { min: -6, max: 6 }, k: { min: -5, max: 10 } },
-  //   enonce: (v) => `$f(x) = ${v.a}x + ${v.b}$. Résoudre $f(x) = ${v.k}$`,
-  //   bonneReponse: (v) => `$x = ${frac(v.k - v.b, v.a)}$`,
-  //   distracteurs: (v) => [
-  //     `$x = ${frac(v.k + v.b, v.a)}$`,
-  //     `$x = ${v.k}$`,
-  //     `$x = ${v.a + v.k}$`
-  //   ]
-  // },
-// ── lecture equation de droite ── done
-  // {
-  //   id: 'fonc_009b', theme: 'fonctions',
-  //   niveau: ['techno', 'specifique', 'specialite'], cols: 2,
-  //   variables: { a: {values:[-2,-1.5,-1,-.5,-.25,.25,.5,1,1.5,2] }, b: {values : [-2,-1,1,2] } },
-  //   enonce: function(v) {
-  //     var ymax = 3;
-  //     var code = '\\begin{tikzpicture}[scale=0.6]\n'
-  //       + '  \\draw[very thin,gray!30] (-3,-3) grid (3,3);\n'
-  //       + '  \\draw[->,thick] (-3.1,0)--(3.1,0) node[above]{$x$};\n'
-  //       + '  \\draw[->,thick] (0,-3.1)--(0,3.1) node[right]{$y$};\n'
-  //       + gradX(-3,3)
-  //       + '\\node[below left,font=\\small] (0,0) {0}'
-  //       + gradY(-3,3)
-  //       +`\\clip (-3,-3) rectangle (3,3);`
-  //       + '  \\draw[blue,very thick] (-3,' + (v.a * -3 + v.b) + ')--(3,' + (v.a * 3 + v.b) + ')'
-  //       + ' node[right,font=\\small]{$f$};\n'
-  //       + '\\end{tikzpicture}';
-  //     return mkTikz(code)
-  //          + '\n\nQuel est l\'équation de la droite représenté ci-dessus ?';
-  //   },
-  //   bonneReponse: function(v) { 
-  //     s=(v.b<0) ? '':'+';
-  //     return simplExpr('$y='+ v.a + 'x+' + (v.b) + '$'); },
-  //   distracteurs: function(v) {
-  //     return [
-  //       simplExpr('$y='+(+parseFloat(-v.b/v.a).toFixed(2)) + 'x+' + (v.b) + '$'),
-  //       simplExpr('$y=' + (v.b) + 'x+' + (v.a) + '$'),
-  //       simplExpr('$y='+(v.b)  + 'x+'+(+parseFloat(-v.b/v.a).toFixed(2)) + '$')
-  //     ];
-  //   }
-  // },
-
-
-  // ── Sens de variation d'une fonction affine ──
-//   {
-//     id: "fonc_010", theme: "fonctions",
-//     niveau: ["techno", "specifique", "specialite"], cols: 4,
-//     variables: { a: { min: 1, max: 8 }, b: { min: -8, max: 8 } },
-//     enonce: (v) => `Sens de variation de $f(x) = -${v.a}x + ${v.b}$ sur $\\mathbb{R}$`,
-//     bonneReponse: (v) => `Strictement décroissante`,
-//     distracteurs: (v) => [
-//       `Strictement croissante`,
-//       `Constante`,
-//       `Dépend de $x$`
-//     ]
-//   },
 
   // ── Lire f(x₀) graphiquement ──
   {
@@ -207,19 +133,19 @@ const QUESTIONS_FONCTIONS = [
       v._b = v._y0-v.a*v.gy/v.gx*v._x0;
       // Pendant dedupeAnswers, on calcule juste _y0 — pas de SVG
       if (v._deduping) return '';
-      var ymax = v.a * 5 + v.b;
+      
 
-      var svg = Fig.svg(-5, 5, -5, 5)
-        .grid(1/Math.max(v.gx,v.gy)).axes().gradX(v.gx).gradY(v.gy).clip()
-        .affine(v.a, v.b, -5, 5, 'red', 'f')
+      var svg = Fig.svg(-4, 4, -4, 4)
+        .grid().axes().gradX(v.gx).gradY(v.gy).clip()
+        .affine(v.a, v.b, -4, 4, 'red', 'f')
         .end();
 
-      var tikz = Fig.latex(-5, 5, -5, 5)
-        .grid(1/Math.max(v.gx,v.gy)).axes().gradX(v.gx).gradY(v.gy).clip()
-        .affine(v.a, v.b, -5, 5, 'red', 'f')
+      var tikz = Fig.latex(-4, 4, -4, 4)
+        .grid().axes().gradX(v.gx).gradY(v.gy).clip()
+        .affine(v.a, v.b, -4, 4, 'red', 'f')
         .end();
 
-      return 'On donne la courbe de $f$ ci-dessous.'
+      return 'On donne la courbe de $f$ ci-dessous. '
            + '%%SVG' + svg + '%%ENDSVG%%%%TIKZ' + tikz + '%%ENDTIKZ%%'
            + 'Quelle est la valeur de $f(' + v._x0+ ')$ ?';
     },
@@ -233,7 +159,7 @@ const QUESTIONS_FONCTIONS = [
     }
   },
 
-  // ── Lire un antécédent graphiquement ──
+  // ── Résoudre une équation f(x)=k ──
   {
     id: 'fonc_012_affine', theme: 'fonctions',
     groupe: 'f(x)=k',
@@ -255,17 +181,17 @@ const QUESTIONS_FONCTIONS = [
       // Pendant dedupeAnswers, on calcule juste _y0 — pas de SVG
       if (v._deduping) return '';
 
-      var svg = Fig.svg(-5, 5, -5, 5)
-        .grid(1/Math.max(v.gx,v.gy)).axes().gradX(v.gx).gradY(v.gy).clip()
-        .affine(v.a, v.b, -5, 5, 'red', 'f')
+      var svg = Fig.svg(-4, 4, -4, 4)
+        .grid().axes().gradX(v.gx).gradY(v.gy).clip()
+        .affine(v.a, v.b, -4, 4, 'red', 'f')
         .end();
 
-      var tikz = Fig.latex(-5, 5, -5, 5)
-        .grid(1/Math.max(v.gx,v.gy)).axes().gradX(v.gx).gradY(v.gy).clip()
-        .affine(v.a, v.b, -5, 5, 'red', 'f')
+      var tikz = Fig.latex(-4, 4, -4, 4)
+        .grid().axes().gradX(v.gx).gradY(v.gy).clip()
+        .affine(v.a, v.b, -4, 4, 'red', 'f')
         .end();
 
-      return 'On donne la courbe de $f$ ci-dessous.'
+      return 'On donne la courbe de $f$ ci-dessous. '
            + '%%SVG' + svg + '%%ENDSVG%%%%TIKZ' + tikz + '%%ENDTIKZ%%'
            + 'Résoudre $f(x)=' + v._y0 + '$.';
     },
@@ -287,8 +213,8 @@ const QUESTIONS_FONCTIONS = [
       a:  { values: [-2,-1,1,2] },
       gx : {values : [1,2]},
       gy : {values : [1,2]},
-      r1:  { min: -4, max: 4 },
-      r2: { min: -4, max: 4 },
+      r1:  { min: -3, max: 3 },
+      r2: { min: -3, max: 3 },
     },
     enonce: function(v) {
       v.y0=(v.r1===v.r2)? 1:(v.r2-v.r1)*(v.r1-v.r2);
@@ -297,17 +223,17 @@ const QUESTIONS_FONCTIONS = [
       // Pendant dedupeAnswers, on calcule juste _y0 — pas de SVG
       if (v._deduping) return '';
 
-      var svg = Fig.svg(-5, 5, -5, 5)
+      var svg = Fig.svg(-4, 4, -4, 4)
         .grid().axes().gradX(v.gx).gradY(v.gy).clip()
         .curve(simplExpr(v.a+'*4(x-'+v.r1+')(x-'+v.r2+')/('+v.y0+')-'+v.k))
         .end();
 
-      var tikz = Fig.latex(-5, 5, -5, 5)
+      var tikz = Fig.latex(-4, 4, -4, 4)
         .grid().axes().gradX(v.gx).gradY(v.gy).clip()
         .curve(simplExpr(v.a+'*4(x-'+v.r1+')(x-'+v.r2+')/('+v.y0+')'))
         .end();
 
-      return 'On donne la courbe de $f$ ci-dessous.'
+      return 'On donne la courbe de $f$ ci-dessous. '
            + '%%SVG' + svg + '%%ENDSVG%%%%TIKZ' + tikz + '%%ENDTIKZ%%'
            + 'Résoudre $f(x)=' + (-v.k)*v.gy + '$';
     },
@@ -320,4 +246,62 @@ const QUESTIONS_FONCTIONS = [
       ];
     }
   },
+
+   // ── Reconnaître la courbe d'une fonction affine ──
+  // Les 4 réponses sont des petits graphiques (SVG web + TikZ export)
+  {
+    id: 'fonc_014', theme: 'fonctions',
+    groupe: 'reconnaitre_courbe',
+    niveau: ['techno', 'specifique', 'specialite'], cols: 2,
+    variables: {
+      a: { values: [-3,-2, -1, 1, 2,3] },
+      b: { values: [-3,-2, -1, 1, 2,3] },
+    },
+    enonce: function(v) {
+      v._a = v.a; v._b = v.b;
+      const expr = v.a + 'x+' +v.b;
+      return 'Laquelle de ces courbes représente $f(x) = ' + simplExpr(expr) + '$' + ' ?';
+    },
+ 
+    bonneReponse: function(v) {
+      if (v._deduping) return 'bonne:' + v._a + ',' + v._b;
+      return fonc013Fig(v._a, v._b);
+    },
+ 
+    distracteurs: function(v) {
+      if (v._deduping) return [
+        'dist1:' + (-v._a) + ',' + v._b,
+        'dist2:' + v._a    + ',' + (-v._b),
+        'dist3:' + (-v._a) + ',' + (-v._b),
+      ];
+      return [
+        fonc013Fig(-v._a,  v._b),   // pente opposée
+        fonc013Fig( v._a, -v._b),   // ordonnée opposée
+        fonc013Fig(-v._a, -v._b),   // les deux inversés
+      ];
+    }
+  },
 ];
+ 
+
+
+
+// ── Helper : génère la réponse SVG+TikZ pour fonc_013 ──
+function fonc013Fig(a, b) {
+  var svg = Fig.svg(-2, 2, -2, 2)
+    .axes()
+    .clip()
+    .affine(a/Math.abs(a), b/Math.abs(b), -3, 3)
+    .endClip()
+    .end();
+ 
+  var tikz = Fig.latex(-2, 2, -2, 2)
+    .axes()
+    .clip()
+    .affine(a/Math.abs(a), b/Math.abs(b), -3, 3)
+    .endClip()
+    .end();
+ 
+  return '%%SVG' + svg + '%%ENDSVG%%%%TIKZ' + tikz + '%%ENDTIKZ%%';
+}
+

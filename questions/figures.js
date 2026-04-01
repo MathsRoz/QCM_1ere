@@ -157,47 +157,47 @@ var QUESTIONS_FIGURES = [
 
   // ════════════════════════════════════
   // PROBABILITES — Arbre pondere
-  // ════════════════════════════════════
-  {
-    id: 'fig_proba_001', theme: 'proba',
-    niveau: ['specifique', 'specialite'], cols: 4,
-    variables: { p: { min: 2, max: 7 } },
-    enonce: function(v) {
-      var pA  = (v.p / 10).toFixed(1);
-      var pnA = ((10 - v.p) / 10).toFixed(1);
-      var pAB  = (v.p / 10 * 0.6).toFixed(2);
-      var code = '\\begin{tikzpicture}[\n'
-        + '  grow=right,level distance=27mm,\n'
-        + '  level 1/.style={sibling distance=22mm},\n'
-        + '  level 2/.style={sibling distance=11mm},\n'
-        + '  every node/.style={font=\\small},\n'
-        + '  edge from parent/.style={draw,thick}\n'
-        + ']\n'
-        + '\\node{}\n'
-        + '  child{ node{$\\bar{A}$}\n'
-        + '    child{ node{$B$}            edge from parent node[below,font=\\tiny]{$0{,}3$}}\n'
-        + '    child{ node{$\\bar{B}$}     edge from parent node[above,font=\\tiny]{$0{,}7$}}\n'
-        + '    edge from parent node[below]{$' + pnA + '$}\n'
-        + '  }\n'
-        + '  child{ node{$A$}\n'
-        + '    child{ node{$B$}            edge from parent node[below,font=\\tiny]{$0{,}6$}}\n'
-        + '    child{ node{$\\bar{B}$}     edge from parent node[above,font=\\tiny]{$0{,}4$}}\n'
-        + '    edge from parent node[above]{$' + pA + '$}\n'
-        + '  };\n'
-        + '\\end{tikzpicture}';
-      return 'On donne l\'arbre de probabilites :\n'
-           + mkTikz(code)
-           + '\n\nCalculer $P(A \\cap B)$.';
-    },
-    bonneReponse: function(v) { return '$' + (v.p / 10 * 0.6).toFixed(2) + '$'; },
-    distracteurs: function(v) {
-      return [
-        '$' + (v.p / 10 * 0.4).toFixed(2) + '$',
-        '$' + ((10 - v.p) / 10 * 0.3).toFixed(2) + '$',
-        '$' + (v.p / 10).toFixed(1) + '$'
-      ];
-    }
-  },
+  // // ════════════════════════════════════
+  // {
+  //   id: 'fig_proba_001', theme: 'proba',
+  //   niveau: ['specifique', 'specialite'], cols: 4,
+  //   variables: { p: { min: 2, max: 7 } },
+  //   enonce: function(v) {
+  //     var pA  = (v.p / 10).toFixed(1);
+  //     var pnA = ((10 - v.p) / 10).toFixed(1);
+  //     var pAB  = (v.p / 10 * 0.6).toFixed(2);
+  //     var code = '\\begin{tikzpicture}[\n'
+  //       + '  grow=right,level distance=27mm,\n'
+  //       + '  level 1/.style={sibling distance=22mm},\n'
+  //       + '  level 2/.style={sibling distance=11mm},\n'
+  //       + '  every node/.style={font=\\small},\n'
+  //       + '  edge from parent/.style={draw,thick}\n'
+  //       + ']\n'
+  //       + '\\node{}\n'
+  //       + '  child{ node{$\\bar{A}$}\n'
+  //       + '    child{ node{$B$}            edge from parent node[below,font=\\tiny]{$0{,}3$}}\n'
+  //       + '    child{ node{$\\bar{B}$}     edge from parent node[above,font=\\tiny]{$0{,}7$}}\n'
+  //       + '    edge from parent node[below]{$' + pnA + '$}\n'
+  //       + '  }\n'
+  //       + '  child{ node{$A$}\n'
+  //       + '    child{ node{$B$}            edge from parent node[below,font=\\tiny]{$0{,}6$}}\n'
+  //       + '    child{ node{$\\bar{B}$}     edge from parent node[above,font=\\tiny]{$0{,}4$}}\n'
+  //       + '    edge from parent node[above]{$' + pA + '$}\n'
+  //       + '  };\n'
+  //       + '\\end{tikzpicture}';
+  //     return 'On donne l\'arbre de probabilites :\n'
+  //          + mkTikz(code)
+  //          + '\n\nCalculer $P(A \\cap B)$.';
+  //   },
+  //   bonneReponse: function(v) { return '$' + (v.p / 10 * 0.6).toFixed(2) + '$'; },
+  //   distracteurs: function(v) {
+  //     return [
+  //       '$' + (v.p / 10 * 0.4).toFixed(2) + '$',
+  //       '$' + ((10 - v.p) / 10 * 0.3).toFixed(2) + '$',
+  //       '$' + (v.p / 10).toFixed(1) + '$'
+  //     ];
+  //   }
+  // },
 
   // ════════════════════════════════════
   // // CALCUL — Tableau de signes

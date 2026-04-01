@@ -10,11 +10,12 @@ var TC = {
   axis:  '#000c1d',
   text:  '#022757',
   dim:   '#000000',
-  blue:  '#93c5fd',
+  blue:  '#002b5c',
   green: '#86efac',
   red:   '#9e3333',
   yel:   '#fde68a',
-  pur:   '#c4b5fd'
+  pur:   '#c4b5fd',
+  black:'#000000' ,
 };
 
 /**
@@ -194,54 +195,6 @@ function renderSignTable(code) {
   return out;
 }
 
-// ── Arbre de probabilités ───────────────────────────────
-function renderTree(code) {
-  var W = 310, H = 180;
-  var probs = [...code.matchAll(/\$([\d]+\{,\}[\d]+|\d+\.\d+|\d+\/\d+)\$/g)].map(m => m[1].replace('{,}', '.'));
-  var pA = probs[0] || '0.5', pnA = probs[1] || '0.5';
-  var pB1 = probs[2] || '0.6', pnB1 = probs[3] || '0.4';
-  var pB2 = probs[4] || '0.3', pnB2 = probs[5] || '0.7';
-
-  var out = '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '" style="background:' + TC.bg + ';border-radius:8px" font-family="serif">';
-
-  function branch(x1, y1, x2, y2, label, above) {
-    var mx = (x1 + x2) / 2, my = (y1 + y2) / 2, dy = above ? -8 : 10;
-    return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + TC.axis + '" stroke-width="1.5"/>'
-         + '<text x="' + mx + '" y="' + (my + dy) + '" fill="' + TC.dim + '" font-size="10" text-anchor="middle">' + label + '</text>';
-  }
-  function node(x, y, label, col) {
-    return '<text x="' + x + '" y="' + (y + 4) + '" fill="' + col + '" font-size="13" text-anchor="middle" font-weight="bold">' + label + '</text>';
-  }
-
-  var rx = 22, ry = 90;
-  var n1x = 110, n1y = 45, n2x = 110, n2y = 135;
-  var b1x = 220, b1y = 20, b2x = 220, b2y = 70, b3x = 220, b3y = 110, b4x = 220, b4y = 160;
-
-  out += branch(rx, ry, n1x, n1y, pA, true);
-  out += branch(rx, ry, n2x, n2y, pnA, false);
-  out += branch(n1x, n1y, b1x, b1y, pB1, true);
-  out += branch(n1x, n1y, b2x, b2y, pnB1, false);
-  out += branch(n2x, n2y, b3x, b3y, pB2, true);
-  out += branch(n2x, n2y, b4x, b4y, pnB2, false);
-  out += node(n1x, n1y, 'A', TC.blue);
-  out += node(n2x, n2y, 'Ā', TC.blue);
-  out += node(b1x, b1y, 'B', TC.green);
-  out += node(b2x, b2y, 'B̄', TC.red);
-  out += node(b3x, b3y, 'B', TC.green);
-  out += node(b4x, b4y, 'B̄', TC.red);
-
-  var pAB   = (parseFloat(pA)  * parseFloat(pB1)).toFixed(2);
-  var pAnB  = (parseFloat(pA)  * parseFloat(pnB1)).toFixed(2);
-  var pnAB  = (parseFloat(pnA) * parseFloat(pB2)).toFixed(2);
-  var pnAnB = (parseFloat(pnA) * parseFloat(pnB2)).toFixed(2);
-  out += '<text x="' + (W - 4) + '" y="' + (b1y + 4) + '" fill="' + TC.dim + '" font-size="9" text-anchor="end">' + pAB + '</text>';
-  out += '<text x="' + (W - 4) + '" y="' + (b2y + 4) + '" fill="' + TC.dim + '" font-size="9" text-anchor="end">' + pAnB + '</text>';
-  out += '<text x="' + (W - 4) + '" y="' + (b3y + 4) + '" fill="' + TC.dim + '" font-size="9" text-anchor="end">' + pnAB + '</text>';
-  out += '<text x="' + (W - 4) + '" y="' + (b4y + 4) + '" fill="' + TC.dim + '" font-size="9" text-anchor="end">' + pnAnB + '</text>';
-
-  out += '</svg>';
-  return out;
-}
 // ═══════════════════════════════════════════════════════
 //  OBJET Fig — API fluente SVG + TikZ
 //  Coordonnées mathématiques directes, pas de ox/oy/sc.
@@ -260,56 +213,64 @@ function renderTree(code) {
 var Fig = {
 
   // ── Constantes de mise en page (px) ─────────────────
-  _PAD:  { l:28, r:24, t:18, b:22 },  // marges autour du repère
-  _SC:   30,                            // pixels par unité mathématique
-  _FS:   12,                            // font-size labels
-  _ARR:  'arr' + Math.random().toString(36).slice(2,6), // id marqueur flèche
+  _PAD:  { l:28, r:24, t:18, b:22 },
+  _FS:   12,
+  _COUNT: 0,                            // compteur global → ids uniques garantis
+
+  // ── Usine : crée un objet de rendu indépendant ───────
+  _make: function(ctx) {
+    var f = Object.create(Fig);
+    f._ctx = ctx;
+    f._out = '';
+    Fig._COUNT += 1;
+    f._ARR = 'figArr' + Fig._COUNT;
+    return f;
+  },
 
   // ── Init SVG ─────────────────────────────────────────
   // Fig.svg(xmin, xmax, ymin, ymax, bg)
   svg: function(xmin, xmax, ymin, ymax, bg) {
-    this._ctx = 'svg';
-    this._xmin = xmin; this._xmax = xmax;
-    this._ymin = ymin; this._ymax = ymax;
+    var f = this._make('svg');
+    f._xmin = xmin; f._xmax = xmax;
+    f._ymin = ymin; f._ymax = ymax;
     var p = this._PAD;
-    // Échelle adaptative : hauteur cible ~180px de zone utile
     var scY = Math.max(12, Math.min(28, Math.floor(300 / (ymax - ymin))));
     var scX = Math.max(12, Math.min(28, Math.floor(300 / (xmax - xmin))));
     var sc  = Math.min(scX, scY);
-    this._SC = sc;
-    this._W  = p.l + (xmax - xmin) * sc + p.r;
-    this._H  = p.t + (ymax - ymin) * sc + p.b;
-    this._ox = p.l - xmin * sc;   // pixel de x=0
-    this._oy = p.t + ymax * sc;   // pixel de y=0
-    var aid = this._ARR;
-    var cid = 'clip' + aid;   // id unique pour le clipPath
-    this._clipId = cid;
-    this._out = '<svg xmlns="http://www.w3.org/2000/svg"'
-      + ' viewBox="0 0 ' + this._W + ' ' + this._H + '"'
-      + ' width="' + this._W + '" height="' + this._H + '"'
+    f._SC = sc;
+    f._W  = p.l + (xmax - xmin) * sc + p.r;
+    f._H  = p.t + (ymax - ymin) * sc + p.b;
+    f._ox = p.l - xmin * sc;
+    f._oy = p.t + ymax * sc;
+    var aid = f._ARR;
+    var cid = 'clip' + aid;
+    f._clipId = cid;
+    f._out = '<svg xmlns="http://www.w3.org/2000/svg"'
+      + ' viewBox="0 0 ' + f._W + ' ' + f._H + '"'
+      + ' width="' + f._W + '" height="' + f._H + '"'
       + ' style="background:' + (bg || TC.bg) + ';border-radius:8px;display:block;margin:0 auto">'
       + '<defs>'
       + '<marker id="' + aid + '" markerWidth="7" markerHeight="7"'
       + ' refX="5" refY="3" orient="auto">'
       + '<path d="M0,0 L0,6 L7,3 z" fill="' + TC.axis + '"/>'
       + '</marker>'
-      // clipPath exactement aux bornes du repère mathématique
       + '<clipPath id="' + cid + '">'
-      + '<rect x="' + this._px(xmin) + '" y="' + this._py(ymax)
+      + '<rect x="' + f._px(xmin) + '" y="' + f._py(ymax)
       + '" width="' + ((xmax - xmin) * sc) + '" height="' + ((ymax - ymin) * sc) + '"/>'
       + '</clipPath>'
       + '</defs>';
-    return this;
+    return f;
   },
 
   // ── Init LaTeX ────────────────────────────────────────
   // Fig.latex(xmin, xmax, ymin, ymax)
   latex: function(xmin, xmax, ymin, ymax) {
-    this._ctx  = 'latex';
-    this._xmin = xmin; this._xmax = xmax;
-    this._ymin = ymin; this._ymax = ymax;
-    this._out  = '\\begin{tikzpicture}[scale=0.75]\n';
-    return this;
+    var f = this._make('latex');
+    f._xmin = xmin; f._xmax = xmax;
+    f._ymin = ymin; f._ymax = ymax;
+    f._SC = 1; f._ox = 0; f._oy = 0;
+    f._out = '\\begin{tikzpicture}[scale=0.75, baseline=(current bounding box.west)]\n';
+    return f;
   },
 
   end: function() {
@@ -317,18 +278,17 @@ var Fig = {
   },
 
   // ── Conversion coordonnées math → pixels ─────────────
-  _px: function(x) { return this._ox + x * this._SC; },
-  _py: function(y) { return this._oy - y * this._SC; },
+  // En mode latex, retourne les coordonnées mathématiques directement
+  _px: function(x) { return this._ctx === 'latex' ? x : (this._ox + x * this._SC); },
+  _py: function(y) { return this._ctx === 'latex' ? y : (this._oy - y * this._SC); },
 
   _add: function(svgStr, tikzStr) {
+    if (typeof this._out !== 'string') this._out = '';
     this._out += this._ctx === 'svg' ? svgStr : tikzStr;
     return this;
   },
 
   // ── Clipping ──────────────────────────────────────────
-  // .clip()     → ouvre un groupe SVG coupé aux bornes du repère
-  //               / ajoute \clip en TikZ
-  // .endClip()  → ferme le groupe SVG (no-op en TikZ)
   clip: function() {
     return this._add(
       '<g clip-path="url(#' + this._clipId + ')">',
@@ -392,8 +352,8 @@ var Fig = {
       + '<text x="' + (ox - 4) + '" y="' + (oy + fs + 2)
         + '" fill="' + TC.dim + '" font-size="' + fs + '" text-anchor="end">O</text>';
     return this._add(svg,
-      '\\draw[-stealth] (' + xmin + ',0) -- (' + (xmax + 0.4) + ',0) node[above]{$x$};\n'
-      + '\\draw[-stealth] (0,' + ymin + ') -- (0,' + (ymax + 0.4) + ') node[right]{$y$};\n'
+      '\\draw[-stealth] (' + xmin + ',0) -- (' + (xmax) + ',0) node[above]{$x$};\n'
+      + '\\draw[-stealth] (0,' + ymin + ') -- (0,' + (ymax) + ') node[right]{$y$};\n'
       + '\\node[below left,fontsize=small] {O};\n');
   },
 
@@ -431,10 +391,114 @@ var Fig = {
     return this._add(svg, tikz);
   },
 
+
+
+  // ── Segment entre deux points ────────────────────────
+  // .line(x1, y1, x2, y2, color, style, arrows)
+  // color  : 'black' | 'red' | 'green' (défaut 'black')
+  // style  : 'solid' | 'dashed' | 'dotted' (défaut 'solid')
+  // arrows : '' | '->' | '<-' | '<->' (défaut '')
+  line: function(x1, y1, x2, y2, color, style, arrows) {
+    var col   = color === 'red' ? TC.red : color === 'green' ? TC.green : TC.black;
+    var dash  = style === 'dashed' ? ' stroke-dasharray="5 3"'
+              : style === 'dotted' ? ' stroke-dasharray="2 3"' : '';
+    var tikzS = style === 'dashed' ? 'dashed,' : style === 'dotted' ? 'dotted,' : '';
+    var aid   = this._ARR;
+    arrows = arrows || '';
+ 
+    // Marqueurs SVG selon le sens des flèches
+    var smEnd = 'smE' + aid, smStart = 'smS' + aid;
+    var defsExtra = '';
+    if (arrows && !this._smArr) {
+      this._smArr = true;
+      defsExtra = '<defs>'
+        + '<marker id="' + smEnd + '" markerWidth="4" markerHeight="4" refX="3" refY="2" orient="auto">'
+        + '<path d="M0,0 L0,4 L4,2 z" fill="' + col + '"/></marker>'
+        + '<marker id="' + smStart + '" markerWidth="4" markerHeight="4" refX="1" refY="2" orient="auto">'
+        + '<path d="M4,0 L4,4 L0,2 z" fill="' + col + '"/></marker>'
+        + '</defs>';
+    }
+ 
+    var markerStart = (arrows === '<-' || arrows === '<->') ? ' marker-start="url(#' + smStart + ')"' : '';
+    var markerEnd   = (arrows === '->' || arrows === '<->') ? ' marker-end="url(#' + smEnd + ')"' : '';
+// TikZ : style de flèche
+    var tikzArr = arrows === '->'  ? '-stealth,'
+                : arrows === '<-'  ? 'stealth-,'
+                : arrows === '<->' ? 'stealth-stealth,' : '';
+    if (markerStart && !this._revArr) {
+      this._revArr = true;
+      defsExtra = '<defs><marker id="rev' + aid + '" markerWidth="7" markerHeight="7"'
+        + ' refX="2" refY="3" orient="auto">'
+        + '<path d="M7,0 L7,6 L0,3 z" fill="' + col + '"/>'
+        + '</marker></defs>';
+    }
+ 
+    // TikZ : style de flèche
+    var tikzArr = arrows === '->'  ? '-stealth,'
+                : arrows === '<-'  ? 'stealth-,'
+                : arrows === '<->' ? 'stealth-stealth,' : '';
+ 
+    return this._add(
+      defsExtra
+      + '<line x1="' + this._px(x1) + '" y1="' + this._py(y1)
+        + '" x2="' + this._px(x2) + '" y2="' + this._py(y2)
+        + '" stroke="' + col + '" stroke-width="1.5"' + dash
+        + markerStart + markerEnd + '/>',
+      '\\draw[' + tikzArr + tikzS + (color || 'blue') + ',thick] ('
+        + x1 + ',' + y1 + ') -- (' + x2 + ',' + y2 + ');\n'
+    );
+  },
+
+
+
+  // ── Texte à une position mathématique ───────────────
+  // .text(x, y, t, color, anchor, tikzT)
+  // x, y   : coordonnées mathématiques
+  // t      : texte SVG. Préfixe '~' → barre au-dessus : '~A' affiche Ā
+  // color  : 'black' | 'blue' | 'red' | 'green' (défaut 'black')
+  // anchor : 'middle' | 'start' | 'end' (défaut 'middle')
+  // tikzT  : texte TikZ si différent (ex: '\\bar{A}').
+  //          Si omis et t commence par '~', génère \\bar{X} automatiquement.
+  //
+  // Exemples :
+  //   .text(2,  1,  'A')                    → SVG: A     / TikZ: $A$
+  //   .text(2, -1,  '~A')                   → SVG: Ā     / TikZ: $\bar{A}$
+  //   .text(4,  0.5,'~B', 'red', 'start')   → SVG: B̄     / TikZ: $\bar{B}$
+  //   .text(1,  0.7,'0,3')                  → SVG: 0,3   / TikZ: $0,3$
+  text: function(x, y, t, color, anchor, tikzT) {
+    var col = color === 'red'   ? TC.red
+            : color === 'blue'  ? TC.blue
+            : color === 'green' ? TC.green
+            : TC.black;
+    var anch = anchor || 'middle';
+    var fs   = this._FS;
+    var tikzAnch = anchor === 'start' ? 'anchor=west,'
+                 : anchor === 'end'   ? 'anchor=east,' : '';
+ 
+    // Notation ~X → barre au-dessus via text-decoration SVG
+    var svgContent, tikzContent;
+    if (typeof t === 'string' && t.charAt(0) === '~') {
+      var letter = t.slice(1);
+      svgContent  = '<tspan text-decoration="overline">' + letter + '</tspan>';
+      tikzContent = tikzT !== undefined ? tikzT : '\\bar{' + letter + '}';
+    } else {
+      svgContent  = t;
+      tikzContent = tikzT !== undefined ? tikzT : t;
+    }
+ 
+    return this._add(
+      '<text x="' + this._px(x) + '" y="' + this._py(y) + '"'
+        + ' fill="' + col + '" font-size="' + fs + '" font-weight="bold"'
+        + ' text-anchor="' + anch + '" dominant-baseline="central">' + svgContent + '</text>',
+      '\\node[' + tikzAnch + 'font=\\small] at (' + x + ',' + y + '){$' + tikzContent + '$};\n'
+    );
+  },
+
+
   // ── Droite affine  y = a*x + b ───────────────────────
   // .line(a, b, xmin, xmax, color, label)
   affine: function(a, b, xmin, xmax, color, label) {
-    var col = color === 'red' ? TC.red : color === 'green' ? TC.green : TC.blue;
+    var col = color === 'blue' ? TC.blue : color === 'green' ? TC.green : TC.red;
     var lbl = label || '';
     var x1 = xmin, y1 = a * xmin + b, x2 = xmax, y2 = a * xmax + b;
     return this._add(
@@ -548,7 +612,7 @@ var Fig = {
     }
  
     // ── TikZ : \draw plot ─────────────────────────────
-    // On génère une liste de points TikZ (50 suffit pour LaTeX)
+    // On génère une liste de points TikZ (200 suffit pour LaTeX)
     var tikz = '\\draw[' + color + ',very  thick] plot coordinates{';
     var dxT  = (xmax - xmin) / 200;
     var pts_tikz = [];
@@ -566,8 +630,38 @@ var Fig = {
  
     return this._add(svg, tikz);
   },
+
+  arbre : function(xmin,xmax,ymin,ymax){
+    var col = 'black';
+    var style ='';
+    var arrow = '->'
+    xmin  = (xmin  !== undefined && xmin  !== null) ? xmin  : this._xmin;
+    xmax  = (xmax  !== undefined && xmax  !== null) ? xmax  : this._xmax;
+    ymin  = (ymin  !== undefined && ymin  !== null) ? ymin  : this._ymin;
+    ymax  = (ymax  !== undefined && ymax  !== null) ? ymax  : this._ymax;
+    return this
+    .line(0,0,xmax/2,ymax/2,col,style,arrow)
+    .line(0,0,xmax/2,-ymax/2,col,style,arrow)
+    .line(xmax/2+.5,ymax/2,xmax-.25,ymax*3/4,col,style,arrow)
+    .line(xmax/2+.5,ymax/2,xmax-.25,ymax/4,col,style,arrow)
+    .line(xmax/2+.5,-ymax/2,xmax-.25,-ymax/4,col,style,arrow)
+    .line(xmax/2+.5,-ymax/2,xmax-.25,-ymax*3/4,col,style,arrow)
+    .text(xmax/2+.25,ymax/2,'A')
+    .text(xmax/2+.25,-ymax/2,'~A','black','middle','\\overline{A}')
+    .text(xmax,ymax*3/4,'B')
+    .text(xmax,ymax/4,'~B','black','middle','\\overline{B}')
+    .text(xmax,-ymax/4,'B')
+    .text(xmax,-ymax*3/4,'~B','black','middle','\\overline{B}');
+  },
+
+
+
 };
  
+// fin Fig 
+
+
+
   // ── Parseur d'expression mathématique ────────────────────
 // Convertit une chaîne comme "3x^2 - 2x + 6" en fonction JS.
 // Appelé en interne par Fig.curve().
@@ -630,3 +724,4 @@ Fig._parseExpr = function(expr) {
   }
 
 };
+

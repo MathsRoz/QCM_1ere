@@ -509,7 +509,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
 <header>
   <div class="logo">
-    <div class="logo-badge">∑</div>
+    <div class="logo-badge">Q</div>
     <div class="logo-text">QCM Maths <span>Première</span></div>
   </div>
   <div class="steps">
@@ -532,7 +532,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
   <div class="view active" id="view-config">
     <div class="section-title">Configurer le QCM</div>
     <div class="section-sub">Sélectionnez les thèmes, le niveau et le nombre de questions</div>
-    <div class="level-label">Thèmes <span style="font-size:11px;color:var(--text3);text-transform:none;font-weight:400;margin-left:6px;">BO 2025 — session 2027</span></div>
+    <div class="level-label">Thèmes <span style="font-size:11px;color:var(--text3);text-transform:none;font-weight:400;margin-left:6px;"> Si aucun thème n’est sélectionné, tous les thèmes seront automatiquement pris en compte. </span></div>
     <div class="theme-grid" style="grid-template-columns:1fr 1fr 1fr;">
       <div class="theme-card" data-theme="calcul" style="--accent:#4f8ef7;--icon-bg:rgba(79,142,247,0.15)" onclick="toggleTheme(this)">
         <div class="theme-icon">🔢</div>
@@ -574,9 +574,9 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
     <div class="level-section">
       <div class="level-label">Niveau</div>
       <div class="level-btns">
-        <button class="level-btn active" data-lvl="techno" onclick="selectLevel(this)">1ère Technologique</button>
+        <button class="level-btn " data-lvl="techno" onclick="selectLevel(this)">1ère Technologique</button>
         <button class="level-btn" data-lvl="specifique" onclick="selectLevel(this)">1ère Spécifique</button>
-        <button class="level-btn" data-lvl="specialite" onclick="selectLevel(this)">1ère Spécialité</button>
+        <button class="level-btn active" data-lvl="specialite" onclick="selectLevel(this)">1ère Spécialité</button>
       </div>
     </div>
     <div class="filter-section">
@@ -590,7 +590,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
           <div class="tooltip-icon">?</div>
           <div class="tooltip-box"><b>Inclusif :</b> inclut les questions du niveau sélectionné et des niveaux inférieurs.<br><br><b>Strict :</b> uniquement les questions du niveau exact sélectionné.</div>
         </div>
-        <div class="filter-info" id="filterInfo">Techno ≤ Spécifique</div>
+        <div class="filter-info" id="filterInfo">Techno et Spécifique</div>
       </div>
     </div>
     <div class="slider-card">
@@ -603,7 +603,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
       </div>
       <input type="range" id="numSlider" min="5" max="30" value="12" oninput="syncNum(this.value)">
     </div>
-    <button class="btn-generate" id="btnGenerate" onclick="generateQCM()">✨ Générer le QCM</button>
+    <button class="btn-generate" id="btnGenerate" onclick="generateQCM()"> Générer le QCM</button>
   </div>
 
   <!-- ══ VIEW 2 : PRÉVISUALISATION ══ -->
@@ -719,9 +719,9 @@ const QUESTION_BANK = [
 // ═══════════════════════════════════════════════════════
 let state = {
   selectedThemes: [],
-  selectedLevel: 'techno',
+  selectedLevel: 'specialite',
   filterInclusive: true,
-  numQuestions: 10,
+  numQuestions: 12,
   generatedQuestions: [],
   userAnswers: {},
   submitted: false,
@@ -773,7 +773,7 @@ function updateFilterInfo() {
   const lvls = ['techno','specifique','specialite'];
   const idx = lvls.indexOf(state.selectedLevel);
   if (state.filterInclusive) {
-    el.textContent = lvls.slice(0,idx+1).map(l=>({techno:'Techno',specifique:'Spéc.',specialite:'Spé.'}[l])).join(' ≤ ');
+    el.textContent = lvls.slice(0,idx+1).map(l=>({techno:'Techno',specifique:'Spéc.',specialite:'Spé.'}[l])).join(' et ');
   } else {
     el.textContent = {techno:'Techno uniquement',specifique:'Spécifique uniquement',specialite:'Spécialité uniquement'}[state.selectedLevel];
   }
@@ -1051,17 +1051,65 @@ function buildExam() {
     + '\n\\begin{document}\n\n'
     + '\\begin{center}{\\Large\\bfseries QCM -- Maths Premi\\`{e}re}\\end{center}\n'
     + '\\vspace{1em}\n\n';
+
+  // Extrait le TikZ et le texte d'une chaîne (même logique que beamerSplit)
+  function examSplit(str) {
+    if (typeof str !== 'string') return { text: String(str), tikz: '' };
+    var tikzCode = '';
+    str = str.replace(/%%SVG[\s\S]*?%%ENDSVG%%\s*%%TIKZ([\s\S]*?)%%ENDTIKZ%%/g, function(_, t) {
+      tikzCode = t.trim(); return '';
+    });
+    str = str.replace(/%%TIKZ([\s\S]*?)%%ENDTIKZ%%/g, function(_, t) {
+      tikzCode = t.trim(); return '';
+    });
+    str = str.replace(/%%SVG[\s\S]*?%%ENDSVG%%/g, '');
+    str = str.replace(/<br\s*\/?>/gi,'\\\\\n')
+      .replace(/<b>(.*?)<\/b>/gi,'\\textbf{$1}')
+      .replace(/<i>(.*?)<\/i>/gi,'\\textit{$1}')
+      .replace(/<[^>]+>/g,'').trim();
+    return { text: str, tikz: tikzCode };
+  }
+
   state.generatedQuestions.forEach((q,i) => {
+    const p = examSplit(q.enonce);
+    const hasFig = p.tikz !== '';
     out += '% -- Question '+(i+1)+'\n';
-    out += '\\noindent\\textbf{Question '+(i+1)+'.} '+latexifyStr(q.enonce)+'\n\n';
-    const cols = q.cols > 1 ? q.cols : 1;
-    if (cols>1) out += '\\begin{multicols}{'+cols+'}\n';
-    out += '\\begin{enumerate}[label=\\textbf{\\Alph*.},leftmargin=*]\n';
-    q.reponses.forEach(r => { out += '  \\item '+latexifyStr(r)+'\n'; });
-    out += '\\end{enumerate}\n';
-    if (cols>1) out += '\\end{multicols}\n';
-    out += '\\vspace{0.5em}\n\n';
+    out += '\\begin{minipage}{\\linewidth}\n';
+
+    if (hasFig) {
+      // Layout minipage : réponses à gauche (0.45) | figure à droite (0.50)
+      var innerTikz = p.tikz
+        .replace(/^\\begin\{tikzpicture\}[^\n]*\n?/, '')
+        .replace(/\\end\{tikzpicture\}\s*$/, '')
+        .trim();
+      out += '\\noindent\\textbf{Question '+(i+1)+'.} ' + p.text + '\n\n';
+      out += '\\noindent\\begin{minipage}{0.45\\textwidth}\n'+'\n\\vspace{1em}\n';
+      out += '\\begin{enumerate}[label=\\textbf{\\Alph*.},leftmargin=*]\n';
+      q.reponses.forEach(r => { out += '  \\item '+latexifyStr(r)+'\n\n\\vspace{1em}'; });
+      out += '\\end{enumerate}\n';
+      out += '\\end{minipage}\\hfill\n';
+      out += '\\begin{minipage}{0.50\\textwidth}\n';
+      out += '  \\begin{center}\n';
+      out += '  \\begin{tikzpicture}[scale=0.8]\n';
+      out += innerTikz + '\n';
+      out += '  \\end{tikzpicture}\n';
+      out += '  \\end{center}\n';
+      out += '\\end{minipage}\n';
+    } else {
+      // Pas de figure : layout classique
+      out += '\\noindent\\textbf{Question '+(i+1)+'.} '+latexifyStr(q.enonce)+'\n\n';
+      const cols = q.cols > 1 ? q.cols : 1;
+      if (cols>1) out += '\\begin{multicols}{'+cols+'}\n';
+      out += '\\begin{enumerate}[label=\\textbf{\\Alph*.},leftmargin=*]\n';
+      q.reponses.forEach(r => { out += '  \\item '+latexifyStr(r)+'\n\n\\vspace{1em}'; });
+      out += '\\end{enumerate}\n';
+      if (cols>1) out += '\\end{multicols}\n';
+    }
+
+    out += '\\end{minipage}\n';
+    out += '\\vspace{1em}\n\n';
   });
+
   if (inclCorrige) {
     out += '\\newpage\n\n\\begin{center}{\\Large\\bfseries Corrig\\\'e}\\end{center}\n\\vspace{1em}\n\n';
     out += '\\begin{enumerate}[leftmargin=*]\n';
@@ -1083,6 +1131,7 @@ function buildBeamer() {
     + '\\usepackage[utf8]{inputenc}\\usepackage[T1]{fontenc}\\usepackage[french]{babel}\n'
     + '\\usepackage{amsmath,amssymb}\n'
     + '\\usepackage{tikz}\\usetikzlibrary{arrows.meta,calc,trees}\n'
+    + '\\usefonttheme[onlymath]{serif}'
     + '\\usepackage{xcolor}\n'
     + '\\usetheme{'+theme+'}\\usecolortheme{'+color+'}\n'
     + '\n\\begin{document}\n\n';
@@ -1124,7 +1173,7 @@ function buildBeamer() {
     // Réponses A) B) C) D) sans enumerate (compatible beamer sans enumitem)
     const letters = ['A','B','C','D'];
     const repLines = q.reponses.map((r,j) =>
-      '\\textbf{'+letters[j]+')} '+latexifyStr(r));
+      '\\textbf{'+letters[j]+')} '+latexifyStr(r)+'\n\n\\vspace{1em}');
 
     let f = '\\begin{frame}{Question '+(i+1)+'}\n';
 
@@ -1136,13 +1185,13 @@ function buildBeamer() {
         .trim();
       f += '\\begin{columns}[T,totalwidth=\\textwidth]\n';
       f += '\\begin{column}{0.4\\textwidth}\n';
-      f += '  \\small '+enonceText+'\n  \\vspace{0.4em}\n\n';
+      f += '  \\small '+enonceText+'\n  \\vspace{1em}\n\n';
       // Réponses en colonne simple
       repLines.forEach(r => { f += '  '+r+'\\\\\n'; });
       f += '\\end{column}\n';
       f += '\\begin{column}{0.55\\textwidth}\n';
       f += '  \\begin{center}\n';
-      f += '  \\begin{tikzpicture}[scale=0.55]\n';
+      f += '  \\begin{tikzpicture}[scale=0.55, baseline=(current bounding box.west)]\n';
       f += innerTikz + '\n';
       f += '  \\end{tikzpicture}\n';
       f += '  \\end{center}\n';
@@ -1153,7 +1202,7 @@ function buildBeamer() {
       f += '\\begin{center}\n';
       f += '  '+enonceText+'\n\\end{center}\n';
       f += '\\vspace{0.5em}\n';
-      f += '\\begin{columns}[t]\n';
+      f += '\\begin{columns}\n';
       f += '\\begin{column}{0.48\\textwidth}\n';
       f += '  '+repLines[0]+'\\\\\n';
       if (repLines[2]) f += '  '+repLines[2]+'\\\\\n';
