@@ -8,7 +8,7 @@ const QUESTIONS_PROPORTIONS = [
   // ── Calculer p% d'une valeur ── done
   {
     id: "prop_001", theme: "proportions",
-    niveau: ["techno", "specifique"], cols: 2,
+    niveau: ["techno", "specifique"], cols: 4,
     variables: { total: { min: 20, max: 200}, taux: { min: 10, max: 90, step:10 } },
     enonce: (v) => `Pour calculer $${v.taux}\\%$ de $${v.total}$, il faut faire :`,
     bonneReponse: (v) => `$${v.total} \\times \\dfrac{${v.taux}}{ 100}$`,
@@ -41,7 +41,7 @@ const QUESTIONS_PROPORTIONS = [
     niveau: ["specialite"], cols: 4,
     variables: { p: { values: [20,30,40,50,60,70,80,90,110,120,130,140,150,160,170,180,190,200]}, t: { values : [10,20,30,40,60,70,80,90]} },
     enonce: (v) => {
-  if (!v.p || !v.t) return 'Erreur variables';
+  
   return `$${(v.p * v.t / 100).toFixed(0)}$ représente $${v.t}\\%$ de :`;
 },
     bonneReponse: (v) => `$${v.p}$`,

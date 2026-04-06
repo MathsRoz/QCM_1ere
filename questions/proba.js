@@ -90,7 +90,7 @@ const QUESTIONS_PROBA = [
     id: "proba_005", theme: "proba",
     niveau: ["techno", "specifique", "specialite"], cols: 4,
     variables: { a: { min: 2, max: 7 }, b: { min: 2, max: 7 }, c: { min: 2, max: 7 } },
-    enonce: (v) => `Un sac contient $${v.a}$ billes rouges, $${v.b}$ bleues, $${v.c}$ vertes.  On tire une bille. \n \\\\ Quelle est la probabilité de tirer une boule rouge ?$`,
+    enonce: (v) => `Un sac contient $${v.a}$ billes rouges, $${v.b}$ bleues, $${v.c}$ vertes.  On tire une bille. \n \\\\ Quelle est la probabilité de tirer une boule rouge ?`,
     bonneReponse: (v) => {
       const tot = v.a + v.b + v.c;
       return `$${frac(v.a,tot)}$`;
@@ -161,31 +161,117 @@ const QUESTIONS_PROBA = [
         .arbre()
         .text(7/4,3/4+.3,'0,'+v.p1)
         .text(7/4,-3/4-.3,'0,'+(10-v.p1))
-        .text(7*3/4,-3/4+.2,'0,'+v.p2)
-        .text(7*3/4,-2,'0,'+(10-v.p2))
-        .text(7*3/4,+3/4-.2,'0,'+(10-v.p3))
-        .text(7*3/4,+2,'0,'+v.p3)
+        .text(7*3/4,-3/4+.2,'0,'+v.p3)
+        .text(7*3/4,-2,'0,'+(10-v.p3))
+        .text(7*3/4,+3/4-.2,'0,'+(10-v.p2))
+        .text(7*3/4,+2,'0,'+v.p2)
         .end();
 
       var tikz = Fig.latex(0, 8, -3, 3)
         .arbre().
         text(8/4,3/4+.5,'0,'+v.p1)
         .text(8/4,-3/4-.5,'0,'+(10-v.p1))
-        .text(8*3/4,-.8,'0,'+v.p2)
-        .text(8*3/4,-2.3,'0,'+(10-v.p2))
-        .text(8*3/4,.7,'0,'+(10-v.p3))
-        .text(8*3/4,2.2,'0,'+v.p3).end();
+        .text(8*3/4,-.8,'0,'+v.p3)
+        .text(8*3/4,-2.3,'0,'+(10-v.p3))
+        .text(8*3/4,.7,'0,'+(10-v.p2))
+        .text(8*3/4,2.2,'0,'+v.p2).end();
 
       return 'On donne l\'arbre de probabilité ci-contre. '
            + '%%SVG' + svg + '%%ENDSVG%%%%TIKZ' + tikz + '%%ENDTIKZ%%'
            + '$P(A\\cap B)$ est égale à :';
     },
-    bonneReponse: function(v) { return '$ 0,'+ v.p1*v.p3  + '$'; },
+    bonneReponse: function(v) { return '$ 0,'+ v.p1*v.p2  + '$'; },
     distracteurs: function(v) {
       return [
-        '$ 0,'+ (v.p1+v.p3)  + '$',
-        '$ 0,'+ v.p3  + '$',
+        '$ 0,'+ (v.p1+v.p2)  + '$',
+        '$ 0,'+ v.p2  + '$',
         '$ 0,'+ v.p1  + '$',
+      ];
+    }
+  },
+
+  {
+    id: "proba_010", theme: "proba",groupe:"proba_totale",
+    niveau: ["techno", "specifique", "specialite"], cols: 4,
+    variables: { p1: { min: 1, max: 9 }, p2: { min: 1, max: 9 }, p3: { min: 1, max: 9 } },
+    enonce: function(v) {
+     
+      // Pendant dedupeAnswers, on calcule juste _y0 — pas de SVG
+      if (v._deduping) return '';
+      
+
+      var svg = Fig.svg(0, 7, -2.5, 2.5)
+        .arbre()
+        .text(7/4,3/4+.3,'0,'+v.p1)
+        .text(7/4,-3/4-.3,'0,'+(10-v.p1))
+        .text(7*3/4,-3/4+.2,'0,'+v.p3)
+        .text(7*3/4,-2,'0,'+(10-v.p3))
+        .text(7*3/4,+3/4-.2,'0,'+(10-v.p2))
+        .text(7*3/4,+2,'0,'+v.p2)
+        .end();
+
+      var tikz = Fig.latex(0, 8, -3, 3)
+        .arbre().
+        text(8/4,3/4+.5,'0,'+v.p1)
+        .text(8/4,-3/4-.5,'0,'+(10-v.p1))
+        .text(8*3/4,-.8,'0,'+v.p3)
+        .text(8*3/4,-2.3,'0,'+(10-v.p3))
+        .text(8*3/4,.7,'0,'+(10-v.p2))
+        .text(8*3/4,2.2,'0,'+v.p2).end();
+
+      return 'On donne l\'arbre de probabilité ci-contre. '
+           + '%%SVG' + svg + '%%ENDSVG%%%%TIKZ' + tikz + '%%ENDTIKZ%%'
+           + '$P(B)$ est égale à :';
+    },
+    bonneReponse: function(v) { return '$ 0,'+ (v.p1*v.p2 +(10-v.p1)*v.p3)  + '$'; },
+    distracteurs: function(v) {
+      return [
+        '$ 0,'+ (v.p3+v.p2)  + '$',
+        '$ 0,'+ v.p2  + '$',
+        '$ 0,'+ v.p3  + '$',
+      ];
+    }
+  },
+
+  {
+    id: "proba_010b", theme: "proba", groupe:"proba_totale",
+    niveau: ["techno", "specifique", "specialite"], cols: 4,
+    variables: { p1: { min: 1, max: 9 }, p2: { min: 1, max: 9 }, p3: { min: 1, max: 9 } },
+    enonce: function(v) {
+     
+      // Pendant dedupeAnswers, on calcule juste _y0 — pas de SVG
+      if (v._deduping) return '';
+      
+
+      var svg = Fig.svg(0, 7, -2.5, 2.5)
+        .arbre()
+        .text(7/4,3/4+.3,'0,'+v.p1)
+        .text(7/4,-3/4-.3,' ')
+        .text(7*3/4,-3/4+.2,' ')
+        .text(7*3/4,-2,'0,'+(10-v.p3))
+        .text(7*3/4,+3/4-.2,' ')
+        .text(7*3/4,+2,'0,'+v.p2)
+        .end();
+
+      var tikz = Fig.latex(0, 8, -3, 3)
+        .arbre().
+        text(8/4,3/4+.5,'0,'+v.p1)
+        .text(8/4,-3/4-.5,' ')
+        .text(8*3/4,-.8,' ')
+        .text(8*3/4,-2.3,'0,'+(10-v.p3))
+        .text(8*3/4,.7,'0,'+(10-v.p2))
+        .text(8*3/4,2.2,'0,'+v.p2).end();
+
+      return 'On donne l\'arbre de probabilité ci-contre. '
+           + '%%SVG' + svg + '%%ENDSVG%%%%TIKZ' + tikz + '%%ENDTIKZ%%'
+           + '$P(B)$ est égale à :';
+    },
+    bonneReponse: function(v) { return '$ 0,'+ (v.p1*v.p2 +(10-v.p1)*v.p3)  + '$'; },
+    distracteurs: function(v) {
+      return [
+        '$ 0,'+ (v.p3+v.p2)  + '$',
+        '$ 0,'+ v.p2  + '$',
+        '$ 0,'+ v.p3  + '$',
       ];
     }
   },

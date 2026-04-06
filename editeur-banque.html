@@ -8,35 +8,12 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 <style>
-:root {
-  --bg:    #0B1120; --card:  #131d30; --card2: #162035;
-  --border:#1e2d45; --border2:rgba(255,255,255,0.06);
-  --blue:  #4f8ef7; --green: #34d399; --orange:#f59e0b;
-  --red:   #f87171; --pur:   #a78bfa; --cyan:  #38bdf8;
-  --text:  #e2e8f0; --text2: #94a3b8; --text3: #64748b;
-  --mono:  'DM Mono', monospace; --sans: 'DM Sans', sans-serif;
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: var(--sans); background: var(--bg); color: var(--text);
-  min-height: 100vh; display: flex; flex-direction: column;
-}
-body::before {
-  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-  background:
-    radial-gradient(ellipse 60% 50% at 5% 5%, rgba(79,142,247,.07) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 40% at 95% 90%, rgba(167,139,250,.06) 0%, transparent 60%);
-}
-::-webkit-scrollbar { width:5px; height:5px; }
-::-webkit-scrollbar-track { background:transparent; }
-::-webkit-scrollbar-thumb { background:rgba(79,142,247,.3); border-radius:99px; }
-
 /* ─── LAYOUT ─── */
 header {
   position:sticky; top:0; z-index:100;
-  background:rgba(11,17,32,.85); backdrop-filter:blur(16px);
+  background:var(--card); backdrop-filter:blur(16px);
   border-bottom:1px solid var(--border2);
   padding:0 24px; height:58px;
   display:flex; align-items:center; gap:16px;
@@ -44,12 +21,13 @@ header {
 .logo { display:flex; align-items:center; gap:10px; font-size:15px; font-weight:700; }
 .logo-badge {
   width:32px; height:32px; border-radius:8px;
-  background:linear-gradient(135deg,var(--blue),var(--pur));
+  background:linear-gradient(135deg, var(--accent), var(--accent2));
   display:flex; align-items:center; justify-content:center; font-size:16px;
 }
 .header-stats {
   margin-left:auto; display:flex; gap:16px; align-items:center;
   font-size:12px; color:var(--text3); font-family:var(--mono);
+  
 }
 .header-stats strong { color:var(--text2); }
 
@@ -68,8 +46,9 @@ header {
 
 .search-box {
   display:flex; align-items:center; gap:8px;
-  background:var(--card2); border:1px solid var(--border2); border-radius:8px;
+  background:var(--card2);  border-radius:8px;
   padding:8px 12px;
+  
 }
 .search-box input {
   border:none; background:transparent; color:var(--text);
@@ -86,32 +65,126 @@ header {
 }
 .filter-btn:hover { border-color:rgba(255,255,255,.15); color:var(--text2); }
 .filter-btn.active { color:#fff; border-color:transparent; }
-.filter-btn[data-theme="all"].active     { background:rgba(79,142,247,.25); color:var(--blue); border-color:var(--blue); }
-.filter-btn[data-theme="calcul"].active  { background:rgba(79,142,247,.2); color:var(--blue); border-color:var(--blue); }
-.filter-btn[data-theme="proportions"].active { background:rgba(167,139,250,.2); color:var(--pur); border-color:var(--pur); }
-.filter-btn[data-theme="evolutions"].active  { background:rgba(245,158,11,.2); color:var(--orange); border-color:var(--orange); }
-.filter-btn[data-theme="fonctions"].active   { background:rgba(52,211,153,.2); color:var(--green); border-color:var(--green); }
-.filter-btn[data-theme="stats"].active       { background:rgba(248,113,113,.2); color:var(--red); border-color:var(--red); }
-.filter-btn[data-theme="proba"].active       { background:rgba(56,189,248,.2); color:var(--cyan); border-color:var(--cyan); }
-.filter-btn[data-theme="figures"].active     { background:rgba(167,139,250,.2); color:var(--pur); border-color:var(--pur); }
+.filter-btn[data-theme="all"].active     { background:rgba(249, 251, 255, 0.1); color:var(--text); border-color:var(--text); }
+.filter-btn[data-theme="calcul"].active  { background:rgba(60, 144, 193, 0.1); color:var(--blue); border-color:var(--blue); }
+.filter-btn[data-theme="proportions"].active { background:rgba(167,139,250,.1); color:var(--pur); border-color:var(--pur); }
+.filter-btn[data-theme="evolutions"].active  { background:rgba(245,158,11,.1); color:var(--yellow); border-color:var(--yellow); }
+.filter-btn[data-theme="fonctions"].active   { background:rgba(52,211,153,.1); color:var(--green); border-color:var(--green); }
+.filter-btn[data-theme="stats"].active       { background:rgba(248,113,113,.1); color:var(--red); border-color:var(--red); }
+.filter-btn[data-theme="proba"].active       { background:rgba(56,189,248,.1); color:var(--cyan); border-color:var(--cyan); }
+.filter-btn[data-theme="figures"].active     { background:rgba(167,139,250,.1); color:var(--pur); border-color:var(--pur); }
+.filter-btn[data-theme="Non répertoriées"].active     { background:rgba(127, 219, 127, 0.1); color:var(--autre); color:var(--autre); }
 
 .q-list { flex:1; overflow-y:auto; padding:8px; }
 .q-item {
   padding:10px 12px; border-radius:8px; cursor:pointer;
   border:1px solid transparent; transition:all .18s;
-  margin-bottom:4px;
+  margin-bottom:4px; display:flex; align-items:flex-start; gap:8px;
 }
 .q-item:hover { background:var(--card2); border-color:var(--border2); }
-.q-item.active { background:rgba(79,142,247,.1); border-color:rgba(79,142,247,.3); }
+.q-item.active { background:var(--card2); border-color:var(--card); }
+.q-item.selected { border-color:rgba(137,175,200,0.4); background:rgba(137,175,200,0.06); }
+.q-item-check {
+  flex-shrink:0; margin-top:2px;
+  width:15px; height:60px; border-radius:4px;
+  
+  border:2px solid var(--card); background:var(--card2);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; transition:all .15s; font-size:10px;
+}
+.q-item-check:hover{
+  transform: scale(1.2);
+  background-color: var(--text3);
+}
+.q-item.selected .q-item-check { background:var(--blue); border-color:var(--blue); color:var(--text); }
+.q-item-content { flex:1; min-width:0; }
 .q-item-id { font-family:var(--mono); font-size:11px; color:var(--text3); margin-bottom:3px; }
 .q-item-preview { font-size:12px; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .q-item-tags { display:flex; gap:4px; margin-top:5px; flex-wrap:wrap; }
+
+/* Barre de sélection bas de sidebar */
+.selection-bar {
+  padding:10px 14px; border-top:1px solid var(--border2);
+  background:var(--card); display:flex; align-items:center; gap:8px;
+  flex-shrink:0;
+}
+.sel-count { font-size:12px; color:var(--text2); font-family:var(--mono); flex:1; }
+.sel-count span { color:var(--blue); font-weight:600; }
+.btn-compile-sel {
+  padding:6px 14px; border-radius:99px; border:2px solid rgba(137,175,200,0.35);
+  background:rgba(137,175,200,0.1); color:var(--blue);
+  font-size:12px; font-weight:500; cursor:pointer; transition:all .2s;
+  font-family:var(--sans);
+}
+.btn-compile-sel:hover { background:rgba(137,175,200,0.2); }
+.btn-compile-sel:disabled { opacity:0.4; cursor:not-allowed; }
+
+/* Modale de compilation */
+.compile-modal-bg {
+  position:fixed; inset:0; z-index:9999;
+  background:rgba(0,0,0,0.7); backdrop-filter:blur(4px);
+  display:flex; align-items:center; justify-content:center; padding:20px;
+}
+.compile-modal {
+  background:var(--card); border:1px solid var(--border2);
+  border-radius:12px; padding:0; max-width:700px; width:100%;
+  max-height:85vh; display:flex; flex-direction:column; overflow:hidden;
+}
+.compile-modal-header {
+  padding:16px 20px; border-bottom:1px solid var(--border2);
+  display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
+}
+.compile-modal-title { font-weight:600; font-size:14px; }
+.compile-modal-body { flex:1; overflow-y:auto; padding:16px 20px; display:flex; flex-direction:column; gap:14px; }
+.compile-modal-footer {
+  padding:12px 20px; border-top:1px solid var(--border2);
+  display:flex; gap:8px; justify-content:flex-end; flex-shrink:0;
+}
+.compile-q-row {
+  background:var(--card2); border-radius:8px; padding:12px 14px;
+  display:flex; flex-direction:column; gap:8px;
+  border:1px solid transparent; transition:border-color .15s, opacity .15s;
+  user-select:none;
+  cursor:grab;
+}
+.compile-q-row.drag-over { border-color:var(--blue); background:rgba(137,175,200,0.1); }
+.compile-q-row.dragging  { opacity:0.35;  }
+.compile-q-row:active{ cursor: grabbing;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;}
+.drag-handle {
+  color:var(--text3); font-size:16px; cursor:grab;
+  padding:0 2px; line-height:1; flex-shrink:0;
+}
+.drag-handle:active { cursor: grabbing;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;}
+.compile-q-id { font-family:var(--mono); font-size:11px; color:var(--text3); }
+.compile-q-enonce { font-size:13px; color:var(--text2); line-height:1.5; }
+.compile-q-vars { display:flex; flex-wrap:wrap; gap:6px; margin-top:2px; }
+.compile-var-item { display:flex; align-items:center; gap:4px; }
+.compile-var-label { font-family:var(--mono); font-size:11px; color:var(--blue); }
+.compile-var-input {
+  width:52px; padding:3px 6px; border-radius:5px;
+  background:var(--card); border:1px solid var(--border2);
+  color:var(--text); font-family:var(--mono); font-size:12px;
+  outline:none; text-align:center;
+}
+.compile-var-input:focus { border-color:rgba(137,175,200,0.5); }
+.btn-order {
+  padding:2px 8px; border-radius:4px; border:1px solid var(--border2);
+  background:var(--card); color:var(--text3); font-size:11px; cursor:pointer;
+  transition: all .15s;
+}
+.btn-order:hover { color:var(--text);
+transform: scale(1.2); }
+
+.no-results { padding:24px; text-align:center; color:var(--text3); font-size:13px; }
 .tag {
+  
   font-size:10px; font-family:var(--mono); padding:2px 7px;
   border-radius:99px; border:1px solid; white-space:nowrap;
 }
-
-.no-results { padding:24px; text-align:center; color:var(--text3); font-size:13px; }
 
 /* ─── MAIN PANEL ─── */
 .main-panel {
@@ -170,13 +243,13 @@ header {
   display:inline-flex; align-items:center; gap:6px;
   padding:7px 14px; border-radius:99px;
   font-family:var(--sans); font-size:12px; font-weight:500;
-  cursor:pointer; border:1px solid var(--border2);
+  cursor:pointer; 
   background:var(--card); color:var(--text2); transition:all .2s;
 }
-.btn:hover { border-color:rgba(255,255,255,.15); color:var(--text); }
-.btn-blue { background:rgba(79,142,247,.12); border-color:rgba(79,142,247,.3); color:var(--blue); }
-.btn-blue:hover { background:rgba(79,142,247,.2); }
-.btn-green { background:rgba(52,211,153,.1); border-color:rgba(52,211,153,.3); color:var(--green); }
+.btn:hover { color:var(--text); }
+.btn-blue { background:rgba(60, 84, 193, 0.12);  color:var(--text); }
+.btn-blue:hover { background:rgba(60, 133, 193, 0.2); }
+.btn-green { background:rgba(109,184,146,.1);  color:var(--green); }
 .btn-green:hover { background:rgba(52,211,153,.18); }
 
 
@@ -191,8 +264,8 @@ header {
 }
 .var-pill {
   font-family: var(--mono); font-size: 11px; padding: 3px 9px;
-  border-radius: 99px; border: 1px solid rgba(79,142,247,.3);
-  background: rgba(79,142,247,.08); color: var(--blue);
+  border-radius: 99px; 
+  background: rgba(79,142,247,.08); color: var(--text2);
 }
 
 .rendered-q { display: flex; flex-direction: column; gap: 20px; }
@@ -200,15 +273,17 @@ header {
 .rendered-answers { display: grid; gap: 12px; }
 .rendered-answer {
   display: flex; align-items: center; gap: 14px;
-  padding: 14px 20px; border-radius: 12px; border: 1px solid var(--border2);
+  padding: 14px 20px; border-radius: 12px; 
   background: var(--card2); font-size: 15px; line-height: 1.7;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.103);
 }
 .rendered-answer.correct { border-color: var(--green); background: rgba(52,211,153,.08); }
 .answer-letter-badge {
   width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
   font-family: var(--mono); font-size: 13px; font-weight: 600;
-  background: rgba(255,255,255,.06); border: 1px solid var(--border2);
+  color:var(--bg);
+  background: var(--text); 
 }
 .correct .answer-letter-badge { background: var(--green); border-color: var(--green); color: #000; }
 
@@ -219,29 +294,13 @@ header {
 }
 .variant-preview-box .rendered-enonce { font-size: 15px; line-height: 1.9; }
 .variant-preview-box .rendered-answer { font-size: 13px; padding: 10px 14px; }
-
-/* ─── FIGURES SVG ─── */
-.fig-wrap { display:flex; justify-content:center; margin:12px 0; }
-.fig-wrap svg, .rendered-q svg { max-width:100%; height:auto; border-radius:6px; }
-
-
-/* ─── TOAST ─── */
-#toast {
-  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(60px);
-  background:rgba(19,29,48,.95); backdrop-filter:blur(12px);
-  border:1px solid var(--border2); border-left:3px solid var(--blue);
-  border-radius:8px; padding:10px 18px; font-size:13px; z-index:9999;
-  transition:transform .3s cubic-bezier(.16,1,.3,1), opacity .3s; opacity:0; white-space:nowrap;
-}
-#toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
-#toast.success { border-left-color:var(--green); }
 </style>
 </head>
 <body>
 
 <header>
   <div class="logo">
-    <div class="logo-badge">📚</div>
+    <!-- <div class="logo-badge">📁</div> -->
     Banque de questions
   </div>
   <div class="header-stats" id="headerStats">Chargement…</div>
@@ -263,10 +322,14 @@ header {
         <button class="filter-btn" data-theme="fonctions" onclick="setTheme('fonctions',this)">Fonctions</button>
         <button class="filter-btn" data-theme="stats" onclick="setTheme('stats',this)">Stats</button>
         <button class="filter-btn" data-theme="proba" onclick="setTheme('proba',this)">Proba</button>
-        <button class="filter-btn" data-theme="figures" onclick="setTheme('figures',this)">Figures</button>
+        <button class="filter-btn" data-theme="Autre" onclick="setTheme('Non répertoriées',this)">Autre</button>
       </div>
     </div>
     <div class="q-list" id="qList"></div>
+    <div class="selection-bar">
+      <div class="sel-count"><span id="selCount">0</span> sélectionnée(s)</div>
+      <button class="btn-compile-sel" id="btnCompileSel" onclick="openCompileModal()" disabled>📄 Compiler</button>
+    </div>
   </aside>
 
   <!-- ── MAIN PANEL ── -->
@@ -289,7 +352,8 @@ header {
 <script src="questions/fonctions.js"></script>
 <script src="questions/stats.js"></script>
 <script src="questions/proba.js"></script>
-<script src="questions/figures.js"></script>
+<script src="questions/autre.js"></script>
+<script src="compiler.js"></script>
 
 <script>
 // ═══════════════════════════════════════════════════
@@ -304,7 +368,7 @@ const SOURCES = {
   QUESTIONS_FONCTIONS:   'questions/fonctions.js',
   QUESTIONS_STATS:       'questions/stats.js',
   QUESTIONS_PROBA:       'questions/proba.js',
-  QUESTIONS_FIGURES:     'questions/figures.js',
+  QUESTIONS_NON_REPERTORIEES:       'questions/autre.js',
 };
 
 const BANKS = [
@@ -314,7 +378,7 @@ const BANKS = [
   { name:'QUESTIONS_FONCTIONS',   list: typeof QUESTIONS_FONCTIONS   !== 'undefined' ? QUESTIONS_FONCTIONS   : [] },
   { name:'QUESTIONS_STATS',       list: typeof QUESTIONS_STATS       !== 'undefined' ? QUESTIONS_STATS       : [] },
   { name:'QUESTIONS_PROBA',       list: typeof QUESTIONS_PROBA       !== 'undefined' ? QUESTIONS_PROBA       : [] },
-  { name:'QUESTIONS_FIGURES',     list: typeof QUESTIONS_FIGURES     !== 'undefined' ? QUESTIONS_FIGURES     : [] },
+  { name:'QUESTIONS_NON_REPERTORIEES',list: typeof QUESTIONS_NON_REPERTORIEES       !== 'undefined' ? QUESTIONS_NON_REPERTORIEES       : [] },
 ];
 
 // Banque complète avec référence au fichier source
@@ -327,11 +391,11 @@ BANKS.forEach(bank => {
 
 const THEME_NAMES = {
   calcul:'Calcul', proportions:'Proportions', evolutions:'Évolutions',
-  fonctions:'Fonctions', stats:'Statistiques', proba:'Probabilités', figures:'Figures'
+  fonctions:'Fonctions', stats:'Statistiques', proba:'Probabilités', autre:'Non répertoriées'
 };
 const THEME_COLORS = {
-  calcul:'var(--blue)', proportions:'var(--pur)', evolutions:'var(--orange)',
-  fonctions:'var(--green)', stats:'var(--red)', proba:'var(--cyan)', figures:'var(--pur)'
+  calcul:'var(--blue)', proportions:'var(--pur)', evolutions:'var(--yellow)',
+  fonctions:'var(--green)', stats:'var(--red)', proba:'var(--cyan)', autre:'var(--autre)', 
 };
 const LEVEL_LABELS = { techno:'Techno', specifique:'Spéc.', specialite:'Spé.' };
 
@@ -341,7 +405,9 @@ const LEVEL_LABELS = { techno:'Techno', specifique:'Spéc.', specialite:'Spé.' 
 let activeTheme   = 'all';
 let activeId      = null;
 let currentVars   = {};
-let variantIdx    = 0; // index de la variante affichée
+let selectedQuestions = new Map();
+let variantIdx    = 0;
+let dedupGroups   = false;
 
 // ═══════════════════════════════════════════════════
 //  INIT
@@ -349,6 +415,7 @@ let variantIdx    = 0; // index de la variante affichée
 function init() {
   updateStats();
   renderList(ALL_QUESTIONS);
+  updateSelCount();
 }
 
 function updateStats() {
@@ -385,7 +452,6 @@ function renderList(items) {
     return;
   }
   list.innerHTML = items.map(q => {
-    // Aperçu de l'énoncé : évaluer avec des variables par défaut
     let preview = '—';
     try {
       const sampleVars = makeSampleVars(q.variables || {});
@@ -394,16 +460,21 @@ function renderList(items) {
 
     const niveaux = Array.isArray(q.niveau) ? q.niveau : [q.niveau];
     const col = THEME_COLORS[q.theme] || 'var(--text3)';
+    const isSel = selectedQuestions.has(q.id);
 
-    return `<div class="q-item${q.id===activeId?' active':''}" onclick="selectQuestion('${q.id}')" id="item-${q.id}">
-      <div class="q-item-id">${q.id}</div>
-      <div class="q-item-preview">${preview}</div>
-      <div class="q-item-tags">
-        <span class="tag" style="border-color:${col};color:${col}">${THEME_NAMES[q.theme]||q.theme}</span>
-        ${niveaux.map(n=>`<span class="tag" style="border-color:var(--text3);color:var(--text3)">${LEVEL_LABELS[n]||n}</span>`).join('')}
-        <span class="tag" style="border-color:var(--text3);color:var(--text3)">${q.cols||4} col.</span>
-        ${q.groupe ? `<span class="tag" style="border-color:rgba(167,139,250,.4);color:var(--pur)"> ${q.groupe}</span>` : ''}
+    return `<div class="q-item${q.id===activeId?' active':''}${isSel?' selected':''}" id="item-${q.id}">
+      
+      <div class="q-item-content" onclick="selectQuestion('${q.id}')">
+        <div class="q-item-id">${q.id}</div>
+        <div class="q-item-preview">${preview}</div>
+        <div class="q-item-tags">
+          <span class="tag" style="border-color:${col};color:${col}">${THEME_NAMES[q.theme]||q.theme}</span>
+          ${(niveaux.length===3)?`<span class="tag" style="border-color:var(--text3);color:var(--text3)"> Tous </span>` :  niveaux.map(n=>`<span class="tag" style="border-color:var(--text3);color:var(--text3)">${LEVEL_LABELS[n]||n}</span>`).join('')}
+          
+          ${q.groupe ? `<span class="tag" style="border-color:rgba(167,139,250,.4);color:var(--pur)"> ${q.groupe}</span>` : ''}
         </div>
+      </div>
+      <div class="q-item-check" onclick="toggleSelect('${q.id}',event)">${isSel ? '✓' : ''}</div>
     </div>`;
   }).join('');
 }
@@ -452,9 +523,234 @@ function makeVars(variables) {
 function makeSampleVars(variables) {
   const v = {};
   for (const [k, cfg] of Object.entries(variables)) {
-    v[k] = Math.round((cfg.min + cfg.max) / 2);
+    v[k] = pickVar(cfg);
   }
   return v;
+}
+
+// ═══════════════════════════════════════════════════
+//  SÉLECTION MULTIPLE
+// ═══════════════════════════════════════════════════
+function toggleSelect(id, event) {
+  event.stopPropagation();
+  const q = ALL_QUESTIONS.find(x => x.id === id);
+  if (!q) return;
+  if (selectedQuestions.has(id)) {
+    selectedQuestions.delete(id);
+  } else {
+    // Capturer les variables courantes si c'est la question active, sinon en générer
+    const vars = (id === activeId) ? {...currentVars} : makeVars(q.variables || {});
+    selectedQuestions.set(id, vars);
+  }
+  updateSelCount();
+  filterList();
+}
+
+function updateSelCount() {
+  const n = selectedQuestions.size;
+  document.getElementById('selCount').textContent = n;
+  document.getElementById('btnCompileSel').disabled = (n === 0);
+}
+
+function openCompileModal() {
+  if (!selectedQuestions.size) return;
+
+  // Construire la liste des questions dans l'ordre de sélection
+  const selIds = [...selectedQuestions.keys()];
+
+  const modal = document.createElement('div');
+  modal.className = 'compile-modal-bg';
+  modal.id = 'compileModal';
+
+  const rows = selIds.map((id, idx) => {
+    const q = ALL_QUESTIONS.find(x => x.id === id);
+    if (!q) return '';
+    const vars = selectedQuestions.get(id);
+
+    // Aperçu énoncé (nettoyé)
+    let preview = '';
+    try {
+      preview = q.enonce({...vars, _deduping:true})
+        .replace(/%%SVG[\s\S]*?%%ENDSVG%%[\s\S]*?%%ENDTIKZ%%/g,'[figure]')
+        .replace(/%%TIKZ[\s\S]*?%%ENDTIKZ%%/g,'[figure]')
+        .replace(/<[^>]+>/g,'').substring(0,80);
+    } catch(e) { preview = q.id; }
+
+    // Variables éditables
+    const varInputs = '';
+
+
+    return `
+      <div class="compile-q-row" id="crow_${idx}" data-qid="${id}">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="drag-handle" title="Glisser pour réordonner">⠿</span>
+            <div class="compile-q-id">${idx+1}. ${id}</div>
+          </div>
+          <button class="btn-order" onclick="removeSelQ('${id}')" title="Retirer" style="color:var(--red)">✕</button>
+        </div>
+        <div class="compile-q-enonce">${preview}</div>
+        ${varInputs ? `<div class="compile-q-vars">${varInputs}</div>` : ''}
+      </div>`;
+  }).join('');
+
+  modal.innerHTML = `
+    <div class="compile-modal">
+      <div class="compile-modal-header">
+        <span class="compile-modal-title">📄 Compiler ${selIds.length} question(s)</span>
+        <button onclick="document.getElementById('compileModal').remove()"
+          style="background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer">✕</button>
+      </div>
+      <div class="compile-modal-body" id="compileModalBody">${rows}</div>
+      <div class="compile-modal-footer">
+        <button class="btn" onclick="shuffleCompileModal()">🔀 Mélanger</button>
+        <button class="btn" onclick="document.getElementById('compileModal').remove()">Annuler</button>
+        <button class="btn btn-blue" onclick="compileSelection()">📄 Compiler</button>
+        <button class="btn btn-green" onclick="overleafSelection()">📄 Overleaf</button>
+      </div>
+    </div>`;
+
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+  // ── Drag & Drop ──────────────────────────────────────
+  initDragDrop(document.getElementById('compileModalBody'));
+
+  // KaTeX sur les aperçus
+  setTimeout(() => {
+    if (window.renderMathInElement)
+      renderMathInElement(modal, {delimiters:[{left:'$',right:'$',display:false}], throwOnError:false});
+  }, 60);
+}
+
+function updateSelVar(id, key, rawVal) {
+  const vars = selectedQuestions.get(id);
+  if (!vars) return;
+  const q = ALL_QUESTIONS.find(x => x.id === id);
+  const cfg = (q?.variables||{})[key];
+  let val = parseFloat(rawVal);
+  if (isNaN(val)) return;
+  if (cfg?.min !== undefined) val = Math.max(cfg.min, Math.min(cfg.max, val));
+  vars[key] = val;
+}
+
+function shuffleCompileModal() {
+  const entries = [...selectedQuestions.entries()];
+  for (let i = entries.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [entries[i], entries[j]] = [entries[j], entries[i]];
+  }
+  selectedQuestions = new Map(entries);
+  const body = document.getElementById('compileModalBody');
+  if (!body) return;
+  const rows = [...body.querySelectorAll('.compile-q-row')];
+  const ordered = entries.map(([id]) => rows.find(r => r.dataset.qid === id)).filter(Boolean);
+  ordered.forEach(r => body.appendChild(r));
+  body.querySelectorAll('.compile-q-id').forEach((el, i) => {
+    const id = el.closest('.compile-q-row').dataset.qid;
+    el.textContent = (i+1) + '. ' + id;
+  });
+}
+
+function initDragDrop(container) {
+  var dragged = null;
+
+  container.querySelectorAll('.compile-q-row').forEach(function(row) {
+    row.setAttribute('draggable', 'true');
+
+    row.addEventListener('dragstart', function(e) {
+      dragged = row;
+      setTimeout(function(){ row.classList.add('dragging'); }, 0);
+      e.dataTransfer.effectAllowed = 'move';
+    });
+
+    row.addEventListener('dragend', function() {
+      row.classList.remove('dragging');
+      container.querySelectorAll('.compile-q-row').forEach(function(r){
+        r.classList.remove('drag-over');
+      });
+      var newMap = new Map();
+      container.querySelectorAll('.compile-q-row').forEach(function(r) {
+        var id = r.dataset.qid;
+        if (id && selectedQuestions.has(id)) newMap.set(id, selectedQuestions.get(id));
+      });
+      selectedQuestions = newMap;
+      container.querySelectorAll('.compile-q-id').forEach(function(el, i) {
+        var id = el.closest('.compile-q-row').dataset.qid;
+        el.textContent = (i+1) + '. ' + id;
+      });
+      dragged = null;
+    });
+
+    row.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      if (row !== dragged) {
+        container.querySelectorAll('.compile-q-row').forEach(function(r){ r.classList.remove('drag-over'); });
+        row.classList.add('drag-over');
+      }
+    });
+
+    row.addEventListener('dragleave', function() {
+      row.classList.remove('drag-over');
+    });
+
+    row.addEventListener('drop', function(e) {
+      e.preventDefault();
+      if (dragged && row !== dragged) {
+        var rows = [...container.querySelectorAll('.compile-q-row')];
+        var fromIdx = rows.indexOf(dragged);
+        var toIdx   = rows.indexOf(row);
+        if (fromIdx < toIdx) container.insertBefore(dragged, row.nextSibling);
+        else container.insertBefore(dragged, row);
+      }
+    });
+  });
+}
+
+function removeSelQ(id) {
+  selectedQuestions.delete(id);
+  updateSelCount();
+  filterList();
+  document.getElementById('compileModal')?.remove();
+  if (selectedQuestions.size > 0) openCompileModal();
+}
+
+function buildQuestionsFromSelection() {
+  const questions = [];
+  selectedQuestions.forEach((vars, id) => {
+    const q = ALL_QUESTIONS.find(x => x.id === id);
+    if (!q) return;
+    let enonce = '', bonne = '', reponses = [];
+    try {
+      vars = dedupeAnswers(q, {...vars});
+      enonce   = q.enonce({...vars});
+      bonne    = q.bonneReponse({...vars});
+      reponses = q.distracteurs({...vars});
+    } catch(e) { enonce = '% Erreur: ' + e.message; }
+    questions.push({
+      enonce, reponses: shuffle([bonne, ...reponses.slice(0,3)]),
+      bonneReponse: bonne, cols: q.cols
+    });
+  });
+  return questions;
+}
+
+function compileSelection() {
+  if (!selectedQuestions.size) return;
+  const questions = buildQuestionsFromSelection();
+  const latex = buildExamDoc(questions, {});
+  document.getElementById('compileModal')?.remove();
+  compilePDF(latex, showToast);
+}
+
+function overleafSelection() {
+  if (!selectedQuestions.size) return;
+  const questions = buildQuestionsFromSelection();
+  const latex = buildExamDoc(questions, {});
+  document.getElementById('compileModal')?.remove();
+  openInOverleaf(latex);
+  showToast('Ouverture sur Overleaf (' + questions.length + ' questions)', 'success');
 }
 
 // ═══════════════════════════════════════════════════
@@ -466,9 +762,10 @@ function renderDetail(q) {
 
   const col = THEME_COLORS[q.theme] || 'var(--text3)';
 
-  // Évaluer la question avec les variables courantes
+  // Évaluer la question avec les variables courantes — dédupliquer les réponses
   let enonce = '', bonne = '', distracteurs = [];
   try {
+    currentVars = dedupeAnswers(q, currentVars);
     enonce       = q.enonce(currentVars);
     bonne        = q.bonneReponse(currentVars);
     distracteurs = q.distracteurs(currentVars);
@@ -494,6 +791,7 @@ function renderDetail(q) {
         <button class="btn" onclick="rerollVars()">🎲 Nouvelles variables</button>
         <button class="btn btn-blue" onclick="copySource()">📋 Copier le code</button>
         <button class="btn btn-green" onclick="openFile()">📂 ${q._source}</button>
+        <button class="btn" onclick="compileQuestion()" style="border-color:rgba(201,165,90,.3);color:var(--text2)">📄 Compiler</button>
       </div>
     </div>
 
@@ -510,7 +808,7 @@ function renderDetail(q) {
         <!-- Pills des variables -->
         ${Object.keys(currentVars).length ? `
         <div class="vars-pill-row">
-          ${Object.entries(currentVars).map(([k,v])=>`<span class="var-pill">${k} = ${v}</span>`).join('')}
+          ${Object.entries(currentVars).map(([k,v])=> (k[0]==='_') ? ' ' :  `<span class="var-pill">${k} = ${v}</span>`).join('')}
         </div>` : ''}
 
         <!-- Question rendue -->
@@ -525,12 +823,6 @@ function renderDetail(q) {
             `).join('')}
           </div>
         </div>
-
-        <!-- Tirages alternatifs -->
-        <div class="variants-row">
-          ${[1,2,3,4,5].map(i=>`<button class="btn" onclick="showVariant(${i})">Tirage ${i}</button>`).join('')}
-        </div>
-        <div id="variantPreview" style="display:none" class="variant-preview-box"></div>
 
       </div>
     </div>
@@ -558,11 +850,13 @@ function cleanForDisplay(str) {
     return '<div style="display:flex;justify-content:center;margin:12px 0">' + svg.trim() + '</div>';
   });
   // TIKZ legacy → SVG via tikzToSvg
-  return str.replace(/%%TIKZ([\s\S]*?)%%ENDTIKZ%%/g, function(_, code) {
+  str = str.replace(/%%TIKZ([\s\S]*?)%%ENDTIKZ%%/g, function(_, code) {
     var svg = '';
     try { svg = tikzToSvg(code.trim()); } catch(e) { svg = '<span style="color:var(--red);font-size:11px">Erreur SVG</span>'; }
     return '<div style="display:flex;justify-content:center;margin:12px 0">' + svg + '</div>';
   });
+  // \\\\ → retour à la ligne
+  return str.replace(/\\\\\s*/g, '<br>');
 }
 
 // ═══════════════════════════════════════════════════
@@ -627,6 +921,84 @@ function openFile() {
   showToast('Fichier : ' + q._source + ' — ouvrez-le dans votre éditeur');
 }
 
+function compileQuestion() {
+  const q = ALL_QUESTIONS.find(x => x.id === activeId);
+  if (!q) return;
+
+  let enonce = '', bonne = '', reponses = [];
+  try {
+    currentVars = dedupeAnswers(q, {...currentVars});
+    enonce   = q.enonce(currentVars);
+    bonne    = q.bonneReponse(currentVars);
+    reponses = q.distracteurs(currentVars);
+  } catch(e) { showToast('Erreur: ' + e.message, 'error'); return; }
+
+  const allReponses = shuffle([bonne, ...reponses.slice(0,3)]);
+  const qObj = { enonce, reponses: allReponses, bonneReponse: bonne, cols: q.cols };
+  const latex = buildExamDoc([qObj], {});
+  openInOverleaf(latex);
+}
+
+function showLatexModal(latex) {
+  // Supprimer une modale existante
+  const existing = document.getElementById('latexModal');
+  if (existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'latexModal';
+  modal.style.cssText = `
+    position:fixed; inset:0; z-index:9999;
+    background:rgba(0,0,0,0.7); backdrop-filter:blur(4px);
+    display:flex; align-items:center; justify-content:center; padding:20px;
+  `;
+  modal.innerHTML = `
+    <div style="
+      background:var(--card); border:1px solid var(--border2);
+      border-radius:12px; padding:24px; max-width:680px; width:100%;
+      display:flex; flex-direction:column; gap:14px;
+      max-height:80vh;
+    ">
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <span style="font-weight:600; font-size:14px;">📄 LaTeX généré</span>
+        <div style="display:flex; gap:8px;">
+          <button onclick="navigator.clipboard.writeText(document.getElementById('latexOutput').value); showToast('Copié ✓','success')"
+            style="padding:6px 14px; border-radius:99px; border:1px solid var(--border2);
+                   background:var(--card2); color:var(--text2); font-size:12px; cursor:pointer;">
+            📋 Copier
+          </button>
+          <a href="https://www.overleaf.com/project" target="_blank"
+            style="padding:6px 14px; border-radius:99px; border:1px solid rgba(94,184,138,0.3);
+                   background:rgba(94,184,138,0.1); color:var(--green); font-size:12px;
+                   text-decoration:none; display:inline-flex; align-items:center;">
+            🌿 Overleaf
+          </a>
+          <button onclick="document.getElementById('latexModal').remove()"
+            style="padding:6px 12px; border-radius:99px; border:1px solid var(--border2);
+                   background:var(--card2); color:var(--text3); font-size:12px; cursor:pointer;">
+            ✕
+          </button>
+        </div>
+      </div>
+      <p style="font-size:11px; color:var(--text3); margin-top:-6px;">
+        Le code a été copié dans le presse-papiers. Ouvrez Overleaf, créez un nouveau projet et collez.
+      </p>
+      <textarea id="latexOutput" readonly
+        style="flex:1; min-height:340px; background:var(--card2); border:1px solid var(--border2);
+               border-radius:8px; padding:12px; font-family:var(--mono); font-size:11px;
+               color:var(--text2); line-height:1.6; resize:vertical; outline:none;
+               white-space:pre;"
+      ></textarea>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  document.getElementById('latexOutput').value = latex;
+
+  // Fermer en cliquant dehors
+  modal.addEventListener('click', e => {
+    if (e.target === modal) modal.remove();
+  });
+}
+
 // ═══════════════════════════════════════════════════
 //  CODE SOURCE
 // ═══════════════════════════════════════════════════
@@ -675,5 +1047,3 @@ init();
 </script>
 </body>
 </html>
-
-

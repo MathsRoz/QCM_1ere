@@ -20,98 +20,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="style.css">
 <style>
-:root {
-  --bg: #0B1120;
-  --card: #131d30;
-  --card2: #162035;
-  --border: rgba(79,142,247,0.15);
-  --border2: rgba(255,255,255,0.06);
-  --blue: #4f8ef7;
-  --blue2: #3b7de8;
-  --green: #34d399;
-  --green2: #10b981;
-  --orange: #f59e0b;
-  --red: #f87171;
-  --text: #e2e8f0;
-  --text2: #94a3b8;
-  --text3: #64748b;
-  --mono: 'DM Mono', monospace;
-  --sans: 'DM Sans', sans-serif;
-  --radius: 12px;
-  --radius2: 8px;
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: var(--sans);
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background:
-    radial-gradient(ellipse 60% 50% at 10% 10%, rgba(79,142,247,0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at 90% 85%, rgba(52,211,153,0.07) 0%, transparent 60%);
-  pointer-events: none; z-index: 0;
-}
-/* Scrollbar */
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(79,142,247,0.3); border-radius: 99px; }
-
-/* ─── HEADER ─── */
-header {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(11,17,32,0.75);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border2);
-  padding: 0 24px;
-  height: 62px;
-  display: flex; align-items: center; gap: 24px;
-}
-.logo {
-  display: flex; align-items: center; gap: 10px;
-  font-size: 15px; font-weight: 600; letter-spacing: -0.3px; white-space: nowrap;
-}
-.logo-badge {
-  background: linear-gradient(135deg, var(--blue), var(--green));
-  border-radius: 8px; width: 32px; height: 32px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px;
-}
-.logo-text span { color: var(--text2); font-weight: 400; }
-.steps {
-  display: flex; align-items: center; gap: 4px; margin-left: auto;
-}
-.step-pill {
-  display: flex; align-items: center; gap: 7px;
-  padding: 5px 13px; border-radius: 99px;
-  font-size: 13px; font-weight: 500; cursor: pointer;
-  border: 1px solid transparent;
-  color: var(--text3); transition: all 0.25s;
-}
-.step-pill .step-num {
-  width: 20px; height: 20px; border-radius: 50%;
-  background: rgba(255,255,255,0.07);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-family: var(--mono); font-weight: 500;
-  transition: all 0.25s;
-}
-.step-pill.active {
-  color: var(--blue);
-  border-color: rgba(79,142,247,0.3);
-  background: rgba(79,142,247,0.08);
-  box-shadow: 0 0 16px rgba(79,142,247,0.15);
-}
-.step-pill.active .step-num { background: var(--blue); color: #fff; }
-.step-pill.done { color: var(--text2); }
-.step-pill.done .step-num { background: rgba(52,211,153,0.2); color: var(--green); }
-.step-sep { color: var(--text3); font-size: 16px; }
-
 /* ─── MAIN ─── */
 main { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
 
@@ -121,17 +31,24 @@ main { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding
 @keyframes slideIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
 /* ─── SECTION TITLE ─── */
-.section-title {
-  font-size: 22px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px;
-}
+.section-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
 .section-sub { font-size: 14px; color: var(--text2); margin-bottom: 28px; }
+
+.warning {color:var(--red); 
+  font-size: 22px; font-weight: 700; 
+  letter-spacing: -0.5px; padding: 10px; 
+  margin-bottom: 30px; 
+  border-radius: 15px;
+  border: 2px solid var(--red);}
+
 
 /* ─── THEME CARDS ─── */
 .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
 .theme-card {
-  background: var(--card); border: 1px solid var(--border2);
+  background: var(--card); border: 2px solid var(--border2);border-color: var(--card); 
   border-radius: var(--radius); padding: 18px 20px;
   cursor: pointer; position: relative; overflow: hidden;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.103);
   transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
 }
 .theme-card::after {
@@ -140,13 +57,13 @@ main { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding
   transform: scaleX(0); transform-origin: left;
   transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
 }
-.theme-card:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-2px); }
+.theme-card:hover {  transform: translateY(-2px); }
 .theme-card:hover::after { transform: scaleX(0.5); }
-.theme-card.selected { border-color: var(--accent, var(--blue)); background: var(--card2); }
+.theme-card.selected { border: 2px solid var(--border2); border-color: var(--accent, var(--blue)); background: var(--card2); }
 .theme-card.selected::after { transform: scaleX(1); }
 .theme-icon {
   width: 36px; height: 36px; border-radius: 9px;
-  background: var(--icon-bg, rgba(79,142,247,0.15));
+  background: var(--icon-bg, rgba(217,119,87,0.15));
   display: flex; align-items: center; justify-content: center;
   font-size: 18px; margin-bottom: 12px;
 }
@@ -168,15 +85,16 @@ main { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding
 .level-label { font-size: 13px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
 .level-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
 .level-btn {
-  padding: 9px 20px; border-radius: 99px; border: 1px solid var(--border2);
+  padding: 9px 20px; border-radius: 99px; border: 2px solid var(--card);
   background: var(--card); color: var(--text2);
   font-family: var(--sans); font-size: 13px; font-weight: 500;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.103);
   cursor: pointer; transition: all 0.25s;
 }
-.level-btn:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
-.level-btn.active[data-lvl="techno"] { background: rgba(52,211,153,0.1); border-color: var(--green); color: var(--green); box-shadow: 0 0 14px rgba(52,211,153,0.2); }
-.level-btn.active[data-lvl="specifique"] { background: rgba(245,158,11,0.1); border-color: var(--orange); color: var(--orange); box-shadow: 0 0 14px rgba(245,158,11,0.2); }
-.level-btn.active[data-lvl="specialite"] { background: rgba(248,113,113,0.1); border-color: var(--red); color: var(--red); box-shadow: 0 0 14px rgba(248,113,113,0.2); }
+.level-btn:hover { border-color: rgba(255,255,255,0.12); color: var(--text);transform: translateY(-2px);}
+.level-btn.active[data-lvl="techno"]    { background: rgba(94,184,138,0.1);  border-color: var(--green);  color: var(--green);   }
+.level-btn.active[data-lvl="specifique"]{ background: rgba(212,175,110,0.1); border-color: var(--amber);  color: var(--amber);   }
+.level-btn.active[data-lvl="specialite"]{ background: rgba(217,119,87,0.1);  border-color: var(--orange); color: var(--orange); }
 
 /* ─── FILTER TOGGLE ─── */
 .filter-section { margin-bottom: 28px; }
@@ -184,14 +102,13 @@ main { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding
 .toggle-wrap { display: flex; align-items: center; gap: 10px; }
 .toggle {
   width: 44px; height: 24px; border-radius: 99px;
-  background: var(--card2); border: 1px solid var(--border2);
-  position: relative; cursor: pointer; transition: background 0.25s;
-  flex-shrink: 0;
+  background: var(--card2); border: 0px solid var(--border2);
+  position: relative; cursor: pointer; transition: background 0.25s; flex-shrink: 0;
 }
-.toggle.on { background: var(--blue); border-color: var(--blue); }
+.toggle.on { background: var(--blue2); border-color: var(--blue); }
 .toggle::after {
   content: ''; position: absolute; top: 3px; left: 3px;
-  width: 16px; height: 16px; border-radius: 50%; background: #fff;
+  width: 16px; height: 16px; border-radius: 50%; background: var(--text);
   transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
   box-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
@@ -199,21 +116,21 @@ main { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding
 .toggle-label { font-size: 13px; font-weight: 500; }
 .filter-info {
   font-size: 12px; color: var(--text3);
-  background: var(--card2); border: 1px solid var(--border2);
+  background: var(--card2); border: 0px solid var(--border2);
   border-radius: 99px; padding: 4px 11px; font-family: var(--mono);
   transition: all 0.25s;
 }
 .tooltip-wrap { position: relative; display: inline-block; }
 .tooltip-icon {
   width: 18px; height: 18px; border-radius: 50%;
-  background: var(--card2); border: 1px solid var(--border2);
+  background: var(--card2); border: 0px solid var(--border2);
   display: flex; align-items: center; justify-content: center;
   font-size: 10px; color: var(--text3); cursor: help;
 }
 .tooltip-box {
   position: absolute; bottom: calc(100% + 8px); left: 50%;
   transform: translateX(-50%);
-  background: var(--card2); border: 1px solid var(--border);
+  background: var(--card2); border: 0px solid var(--border);
   border-radius: var(--radius2); padding: 10px 14px;
   font-size: 12px; color: var(--text2); line-height: 1.5;
   width: 240px; z-index: 99;
@@ -224,8 +141,9 @@ main { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding
 
 /* ─── SLIDER CARD ─── */
 .slider-card {
-  background: var(--card); border: 1px solid var(--border2);
+  background: var(--card); border: 0px solid var(--border2);
   border-radius: var(--radius); padding: 20px 22px; margin-bottom: 28px;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.103);
 }
 .slider-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; }
 .slider-title { font-size: 14px; font-weight: 600; }
@@ -238,14 +156,13 @@ main { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding
 input[type=range] {
   -webkit-appearance: none; appearance: none;
   width: 100%; height: 4px; border-radius: 99px;
-  background: var(--card2); outline: none;
-  cursor: pointer;
+  background: var(--card2); outline: none; cursor: pointer;
 }
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none; appearance: none;
   width: 18px; height: 18px; border-radius: 50%;
   background: var(--blue); cursor: pointer;
-  box-shadow: 0 0 10px rgba(79,142,247,0.4);
+  
   transition: transform 0.2s;
 }
 input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
@@ -254,91 +171,73 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 .btn-generate {
   display: block; width: 100%;
   padding: 14px; border-radius: 99px;
-  background: linear-gradient(135deg, var(--blue), var(--blue2));
-  border: none; color: #fff;
+  background: var(--blue);
+  border: none; color: var(--bg);
   font-family: var(--sans); font-size: 15px; font-weight: 600;
   cursor: pointer; position: relative; overflow: hidden;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.103);
   transition: all 0.25s; letter-spacing: -0.2px;
 }
-.btn-generate::after {
-  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-  transition: left 0.5s;
-}
-.btn-generate:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(79,142,247,0.4); }
+
+.btn-generate:hover { transform: translateY(-2px); color: var(--text); }
 .btn-generate:hover::after { left: 100%; }
 .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-/* ─── GENERIC BUTTONS ─── */
-.btn {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 9px 18px; border-radius: 99px;
-  font-family: var(--sans); font-size: 13px; font-weight: 500;
-  cursor: pointer; transition: all 0.2s; border: 1px solid var(--border2);
-  background: var(--card);  color: var(--text2);
-}
-.btn:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
-.btn-blue { background: rgba(79,142,247,0.12); border-color: rgba(79,142,247,0.3); color: var(--blue); }
-.btn-blue:hover { background: rgba(79,142,247,0.2); }
-.btn-green { background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.3); color: var(--green); }
-.btn-green:hover { background: rgba(52,211,153,0.18); }
-.btn-red { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.3); color: var(--red); }
-.btn-red:hover { background: rgba(248,113,113,0.18); }
 
 /* ─── PREVIEW ─── */
 .preview-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
 .preview-meta { display: flex; flex-wrap: wrap; gap: 8px; }
 .meta-badge {
   font-family: var(--mono); font-size: 11px; padding: 4px 10px;
-  border-radius: 99px; border: 1px solid;
-  background: transparent;
+  border-radius: 99px; border: 0px solid; background: var(--card);
 }
-.meta-blue { border-color: rgba(79,142,247,0.4); color: var(--blue); }
-.meta-green { border-color: rgba(52,211,153,0.4); color: var(--green); }
-.meta-orange { border-color: rgba(245,158,11,0.4); color: var(--orange); }
-.meta-gray { border-color: var(--border2); color: var(--text3); }
+.meta-blue   { border-color: var(--blue); color: var(--text2); }
+.meta-green  { border-color: rgba(111, 179, 144, 0.4);  color: var(--green); }
+.meta-orange { border-color: rgba(87, 133, 217, 0.4);  color: var(--blue); }
+.meta-gray   { border-color: var(--border2); color: var(--text3); }
 .preview-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
 
 .question-card {
-  background: var(--card); border: 1px solid var(--border2);
+  background: var(--card); border: 0px solid var(--border2);
   border-radius: var(--radius); padding: 22px 24px; margin-bottom: 14px;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.103);
   transition: border-color 0.2s;
 }
 .q-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
 .q-num {
-  font-family: var(--mono); font-size: 12px; color: var(--text3);
-  background: var(--card2); border: 1px solid var(--border2);
+  font-family: var(--mono); font-size: 12px; color: var(--bg);
+  font-weight: 500;
+  background: var(--text2) ; border: 0px solid var(--border2);
   padding: 2px 9px; border-radius: 99px; flex-shrink: 0;
 }
 .q-enonce { font-size: 14px; line-height: 1.7; flex: 1; }
-.answers-grid {
-  display: grid; gap: 8px; margin-top: 14px;
-}
+.answers-grid { display: grid; gap: 8px; margin-top: 14px; }
 .answer-btn {
   display: flex; align-items: center; gap: 10px;
   padding: 10px 14px; border-radius: var(--radius2);
-  border: 1px solid var(--border2); background: var(--card2);
+  border: 2px solid var(--card2); background: var(--card2);
   cursor: pointer; transition: all 0.2s; text-align: left;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.103);
   font-family: var(--sans); font-size: 13px; color: var(--text); width: 100%;
 }
 .answer-letter {
   width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
-  background: rgba(255,255,255,0.06); border: 1px solid var(--border2);
+  background: var(--text); border: 0px solid var(--border2);
+  color: var(--card) ; 
   display: flex; align-items: center; justify-content: center;
   font-family: var(--mono); font-size: 11px; font-weight: 500;
   transition: all 0.2s;
 }
-.answer-btn:hover { border-color: rgba(79,142,247,0.4); }
-.answer-btn:hover .answer-letter { background: rgba(79,142,247,0.15); border-color: rgba(79,142,247,0.4); color: var(--blue); }
-.answer-btn.selected { border-color: var(--blue); background: rgba(79,142,247,0.08); }
-.answer-btn.selected .answer-letter { background: var(--blue); border-color: var(--blue); color: #fff; }
-.answer-btn.correct { border-color: var(--green); background: rgba(52,211,153,0.08); }
-.answer-btn.correct .answer-letter { background: var(--green); border-color: var(--green); color: #fff; }
-.answer-btn.wrong { border-color: var(--red); background: rgba(248,113,113,0.08); }
-.answer-btn.wrong .answer-letter { background: var(--red); border-color: var(--red); color: #fff; }
+.answer-btn:hover { border-color: rgba(122, 156, 206, 0.4); background: rgba(122, 156, 206, 0.4);}
+.answer-btn:hover .answer-letter { background: var(--blue); border-color: var; color: var(--text); }
+.answer-btn.selected { border-color: var(--blue); background: rgba(87, 139, 217, 0.24); }
+.answer-btn.selected .answer-letter { background: var(--blue2); border-color: var(--blue); color: var(--text); }
+.answer-btn.correct { border-color: var(--green); background: rgba(94,184,138,0.08); }
+.answer-btn.correct .answer-letter { background: var(--green); border-color: var(--green); color: var(--bg); }
+.answer-btn.wrong { border-color: var(--red); background: rgba(224,112,112,0.08); }
+.answer-btn.wrong .answer-letter { background: var(--red); border-color: var(--red); color: var(--text); }
 
 .score-bar {
-  background: var(--card); border: 1px solid var(--border);
+  background: var(--card); border: 2px solid var(--border);
   border-radius: var(--radius); padding: 18px 22px; margin-bottom: 20px;
   display: flex; align-items: center; gap: 16px;
 }
@@ -348,61 +247,49 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 /* ─── EXPORT ─── */
 .tab-bar { display: flex; gap: 4px; margin-bottom: 20px; }
 .tab-btn {
-  padding: 8px 18px; border-radius: 99px; border: 1px solid var(--border2);
+  padding: 8px 18px; border-radius: 99px; border: 0px solid var(--border2);
   background: var(--card); color: var(--text2);
   font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer;
+  border : 2px solid var(--card) ;
   transition: all 0.2s;
 }
-.tab-btn.active { background: rgba(79,142,247,0.12); border-color: rgba(79,142,247,0.3); color: var(--blue); }
+.tab-btn.active { background: rgba(87, 122, 217, 0.12); border-color: var(--blue); color: var(--blue); }
 
 .export-options {
-  background: var(--card); border: 1px solid var(--border2);
+  background: var(--card); border: 0px solid var(--border2);
   border-radius: var(--radius); padding: 18px 20px; margin-bottom: 16px;
   display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
 }
 .export-opt { display: flex; align-items: center; gap: 8px; font-size: 13px; }
 .export-opt label { color: var(--text2); white-space: nowrap; }
 .export-opt select {
-  background: var(--card2); border: 1px solid var(--border2); color: var(--text);
+  background: var(--card2); border: 0px solid var(--border2); color: var(--text);
   border-radius: 6px; padding: 5px 10px; font-family: var(--sans); font-size: 13px;
   outline: none; cursor: pointer;
 }
-.export-opt select:focus { border-color: rgba(79,142,247,0.4); }
+.export-opt select:focus { border-color: rgba(87, 117, 217, 0.4); }
 .checkbox-opt { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; color: var(--text2); }
-.checkbox-opt input { accent-color: var(--blue); width: 15px; height: 15px; cursor: pointer; }
+.checkbox-opt input { accent-color: var(--accent); width: 15px; height: 15px; cursor: pointer; }
 
 .latex-preview {
-  background: #0d1520; border: 1px solid var(--border2);
+  background: #090d11; border: 1px solid var(--border2);
   border-radius: var(--radius); padding: 20px;
   font-family: var(--mono); font-size: 12px; line-height: 1.8;
   max-height: 400px; overflow-y: auto; margin-bottom: 16px;
   white-space: pre; tab-size: 2;
 }
-.lt-cmd { color: #79b8ff; }
-.lt-env { color: #85e89d; }
-.lt-math { color: #f9c74f; }
-.lt-comment { color: #6a737d; font-style: italic; }
-.lt-brace { color: #ffb347; }
+.lt-cmd     { color: #d4af6e; }
+.lt-env     { color: #5eb88a; }
+.lt-math    { color: #d97757; }
+.lt-comment { color: #6b6660; font-style: italic; }
+.lt-brace   { color: #a09b90; }
 
 .export-btns { display: flex; gap: 10px; flex-wrap: wrap; }
-
-/* ─── TOAST ─── */
-#toast {
-  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
-  background: rgba(19,29,48,0.9); backdrop-filter: blur(12px);
-  border: 1px solid var(--border); border-left: 3px solid var(--blue);
-  border-radius: var(--radius2); padding: 12px 20px;
-  font-size: 13px; color: var(--text); z-index: 9999;
-  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.35s;
-  opacity: 0; white-space: nowrap;
-}
-#toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-#toast.success { border-left-color: var(--green); }
-#toast.error { border-left-color: var(--red); }
 
 /* ─── RESPONSIVE ─── */
 /* ─── RESPONSIVE MOBILE ─── */
 @media (max-width: 640px) {
+  .btn-editeur { display: none !important; }
 
   /* Header : logo + steps compacts */
   header {
@@ -429,7 +316,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
   .section-sub { font-size: 13px; margin-bottom: 18px; }
 
   /* Thèmes : 1 colonne */
-  .theme-grid { grid-template-columns: 1fr !important; gap: 8px; margin-bottom: 18px; }
+  .theme-grid { grid-template-columns: 1fr 1fr !important; gap: 8px; margin-bottom: 18px; }
   .theme-card { padding: 14px 16px; }
   .theme-icon { width: 30px; height: 30px; font-size: 15px; margin-bottom: 8px; }
   .theme-name { font-size: 13px; }
@@ -454,7 +341,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
   .preview-actions {
     gap: 6px;
     overflow-x: auto;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     padding-bottom: 4px;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
@@ -466,7 +353,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
   .preview-header { flex-direction: column; align-items: flex-start; gap: 8px; }
   .preview-meta {
     overflow-x: auto;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
   }
@@ -478,7 +365,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
   .q-enonce { font-size: 13px; }
 
   /* Grille réponses : toujours 1 colonne sur mobile */
-  .answers-grid { grid-template-columns: 1fr !important; gap: 6px; }
+  .answers-grid { grid-template-columns: 1fr  !important; gap: 6px; }
   .answer-btn { padding: 9px 12px; font-size: 12px; }
 
   /* Score */
@@ -494,22 +381,13 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
   .export-btns { flex-direction: column; }
   .export-btns .btn { width: 100%; justify-content: center; }
 }
-
-/* ─── FIGURES SVG ─── */
-.fig-wrap {
-  display: flex; justify-content: center; margin: 14px 0;
-}
-.fig-wrap svg {
-  max-width: 100%; height: auto; border-radius: 6px; overflow: visible;
-}
-
 </style>
 </head>
 <body>
 
 <header>
   <div class="logo">
-    <div class="logo-badge">Q</div>
+    <!-- <div class="logo-badge"> </div> -->
     <div class="logo-text">QCM Maths <span>Première</span></div>
   </div>
   <div class="steps">
@@ -525,6 +403,16 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
       <div class="step-num">3</div> Export
     </div>
   </div>
+  <a href="editeur-banque.html" target="_blank" class="btn-editeur" style="
+    margin-left:auto; display:inline-flex; align-items:center; gap:6px;
+    padding:6px 14px; border-radius:99px; font-size:12px; font-weight:500;
+     background:rgba(60, 102, 193, 0.08);
+    color:var(--text); text-decoration:none; transition:all .2s;
+    white-space:nowrap;
+  " onmouseover="this.style.background='rgba(60, 122, 193, 0.2)'"
+     onmouseout="this.style.background='rgba(60, 122, 193, 0.08)'">
+    📁 Banque
+  </a>
 </header>
 
 <main>
@@ -532,39 +420,40 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
   <div class="view active" id="view-config">
     <div class="section-title">Configurer le QCM</div>
     <div class="section-sub">Sélectionnez les thèmes, le niveau et le nombre de questions</div>
+    <div class="warning"> ⚠️ Attention les QCM ne sont pas encore bien triés faute de recul sur l'épreuve, il est préférable de laisser la 1ère spécialité en inclusif</div>
     <div class="level-label">Thèmes <span style="font-size:11px;color:var(--text3);text-transform:none;font-weight:400;margin-left:6px;"> Si aucun thème n’est sélectionné, tous les thèmes seront automatiquement pris en compte. </span></div>
     <div class="theme-grid" style="grid-template-columns:1fr 1fr 1fr;">
-      <div class="theme-card" data-theme="calcul" style="--accent:#4f8ef7;--icon-bg:rgba(79,142,247,0.15)" onclick="toggleTheme(this)">
+      <div class="theme-card" data-theme="calcul" style="--accent:var(--blue);--icon-bg:rgba(137, 175, 200, 0.15);" onclick="toggleTheme(this)">
         <div class="theme-icon">🔢</div>
         <div class="theme-name">Calcul numérique et algébrique</div>
         <div class="theme-desc">Fractions, puissances, identités, équations, inéquations</div>
         <div class="theme-check">✓</div>
       </div>
-      <div class="theme-card" data-theme="proportions" style="--accent:#a78bfa;--icon-bg:rgba(167,139,250,0.15)" onclick="toggleTheme(this)">
+      <div class="theme-card" data-theme="proportions" style="--accent: var(--pur);--icon-bg:rgba(167,139,250,0.15)" onclick="toggleTheme(this)">
         <div class="theme-icon">➗</div>
         <div class="theme-name">Proportions et pourcentages</div>
         <div class="theme-desc">Fractions, pourcentages, proportionnalité</div>
         <div class="theme-check">✓</div>
       </div>
-      <div class="theme-card" data-theme="evolutions" style="--accent:#f59e0b;--icon-bg:rgba(245,158,11,0.15)" onclick="toggleTheme(this)">
+      <div class="theme-card" data-theme="evolutions" style="--accent:var(--yellow);--icon-bg:rgba(201,165,90,0.15)" onclick="toggleTheme(this)">
         <div class="theme-icon">📉</div>
         <div class="theme-name">Évolutions et variations</div>
         <div class="theme-desc">Taux d'évolution, coefficient multiplicateur, évolutions successives</div>
         <div class="theme-check">✓</div>
       </div>
-      <div class="theme-card" data-theme="fonctions" style="--accent:#34d399;--icon-bg:rgba(52,211,153,0.15)" onclick="toggleTheme(this)">
+      <div class="theme-card" data-theme="fonctions" style="--accent:var(--green);--icon-bg:rgba(52,211,153,0.15)" onclick="toggleTheme(this)">
         <div class="theme-icon">📈</div>
         <div class="theme-name">Fonctions et représentations</div>
         <div class="theme-desc">Fonctions affines, images, antécédents, droites</div>
         <div class="theme-check">✓</div>
       </div>
-      <div class="theme-card" data-theme="stats" style="--accent:#f87171;--icon-bg:rgba(248,113,113,0.15)" onclick="toggleTheme(this)">
+      <div class="theme-card" data-theme="stats" style="--accent:var(--red);--icon-bg:rgba(248,113,113,0.15)" onclick="toggleTheme(this)">
         <div class="theme-icon">📊</div>
         <div class="theme-name">Statistiques</div>
         <div class="theme-desc">Moyenne, médiane, quartiles, boîtes à moustaches</div>
         <div class="theme-check">✓</div>
       </div>
-      <div class="theme-card" data-theme="proba" style="--accent:#38bdf8;--icon-bg:rgba(56,189,248,0.15)" onclick="toggleTheme(this)">
+      <div class="theme-card" data-theme="proba" style="--accent:var(--cyan);--icon-bg:rgba(56,189,248,0.15)" onclick="toggleTheme(this)">
         <div class="theme-icon">🎲</div>
         <div class="theme-name">Probabilités</div>
         <div class="theme-desc">Événements, probabilités conditionnelles, arbres</div>
@@ -599,7 +488,8 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
           <div class="slider-title">Nombre de questions</div>
           <div class="slider-sub">Questions tirées aléatoirement de la banque filtrée</div>
         </div>
-        <input type="number" class="slider-num" id="numInput" value="12" min="5" max="30" onchange="syncSlider(this.value)">
+        <input type="number" class="slider-num" id="numInput" value="12" min="5" max="30"
+          oninput="syncSlider(this.value)" onchange="syncSlider(this.value)">
       </div>
       <input type="range" id="numSlider" min="5" max="30" value="12" oninput="syncNum(this.value)">
     </div>
@@ -611,16 +501,15 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
     <div class="preview-header">
       <div>
         <div class="section-title">Prévisualisation</div>
-        <div class="section-sub" id="previewSub"></div>
       </div>
       <div class="preview-meta" id="previewMeta"></div>
     </div>
     <div class="preview-actions">
-      <button class="btn" onclick="goToView('config')">← Reconfigurer</button>
+      <button class="btn" onclick="goToView('config')">⬅️ Reconfigurer</button>
       <button class="btn btn-blue" onclick="regenerate()">🔄 Régénérer</button>
       <button class="btn btn-green" id="btnSubmit" onclick="submitQCM()">✅ Soumettre</button>
       <button class="btn" id="btnCorrect" onclick="toggleCorrection()">👁️ Afficher le corrigé</button>
-      <button class="btn btn-blue" onclick="goToView('export')">📄 Exporter →</button>
+      <button class="btn btn-blue" onclick="goToView('export')">📄 Exporter</button>
     </div>
     <div id="scoreBar" style="display:none" class="score-bar">
       <div class="score-num" id="scoreNum">—</div>
@@ -634,7 +523,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
     <div class="section-title">Export LaTeX</div>
     <div class="section-sub">Téléchargez votre QCM en format LaTeX ou compilez-le en PDF</div>
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
-      <button class="btn" onclick="goToView('preview')">← Prévisualisation</button>
+      <button class="btn" onclick="goToView('preview')">⬅️ Prévisualisation</button>
     </div>
     <div class="tab-bar">
       <button class="tab-btn active" onclick="switchExportTab('exam',this)">📝 Document classique</button>
@@ -646,6 +535,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
       </label>
     </div>
     <div id="opts-beamer" class="export-options" style="display:none">
+      <div class="section-sub">La génération de diaporamas est encore expérimentale. Certaines questions peuvent s’afficher incorrectement.</div>
       <div class="export-opt">
         <label>Thème</label>
         <select id="beamerTheme" onchange="updateExport()">
@@ -680,7 +570,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
     <div class="latex-preview" id="latexPreview"></div>
     <div class="export-btns">
       <button class="btn btn-blue" onclick="downloadTex()">⬇️ Télécharger le .tex</button>
-      <button class="btn btn-green" onclick="compilePDF()">🚀 Compiler en PDF</button>
+      <button class="btn btn-green" onclick="compilePDF()">📃 Compiler en PDF</button>
     </div>
   </div>
 </main>
@@ -696,7 +586,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 <script src="questions/fonctions.js"></script>
 <script src="questions/stats.js"></script>
 <script src="questions/proba.js"></script>
-<script src="questions/figures.js"></script>
+<script src="compiler.js"></script>
 
 <script>
 // ═══════════════════════════════════════════════════════
@@ -709,7 +599,6 @@ const QUESTION_BANK = [
   ...QUESTIONS_FONCTIONS,
   ...QUESTIONS_STATS,
   ...QUESTIONS_PROBA,
-  ...QUESTIONS_FIGURES,
 ];
 </script>
 
@@ -778,12 +667,24 @@ function updateFilterInfo() {
     el.textContent = {techno:'Techno uniquement',specifique:'Spécifique uniquement',specialite:'Spécialité uniquement'}[state.selectedLevel];
   }
 }
-function syncNum(v) { state.numQuestions = +v; document.getElementById('numInput').value = v; }
+function syncNum(v) {
+  v = Math.max(5, Math.min(30, +v));
+  state.numQuestions = v;
+  document.getElementById('numInput').value = v;
+  // Mettre à jour le dégradé de la piste
+  const pct = (v - 5) / (30 - 5) * 100;
+  const slider = document.getElementById('numSlider');
+  if (slider) slider.style.background =
+    `linear-gradient(to right, var(--blue) ${pct}%, var(--card2) ${pct}%)`;
+}
 function syncSlider(v) {
   v = Math.max(5, Math.min(30, +v));
   state.numQuestions = v;
   document.getElementById('numSlider').value = v;
   document.getElementById('numInput').value = v;
+  const pct = (v - 5) / (30 - 5) * 100;
+  document.getElementById('numSlider').style.background =
+    `linear-gradient(to right, var(--blue) ${pct}%, var(--card2) ${pct}%)`;
 }
 
 // ═══════════════════════════════════════════════════════
@@ -846,7 +747,7 @@ function dedupeGroups(pool) {
 const themeNames = {
   calcul:'Calcul algébrique', proportions:'Proportions',
   evolutions:'Évolutions', fonctions:'Fonctions',
-  stats:'Statistiques', proba:'Probabilités', figures:'Figures (TikZ)'
+  stats:'Statistiques', proba:'Probabilités'
 };
 const levelNames = {techno:'1ère Techno',specifique:'1ère Spécifique',specialite:'1ère Spécialité'};
 
@@ -858,8 +759,6 @@ function renderPreview() {
     `<div class="meta-badge meta-green">${state.generatedQuestions.length} questions</div>`+
     `<div class="meta-badge meta-gray">${state.filterInclusive?'Inclusif':'Strict'}</div>`+
     `<div class="meta-badge meta-gray">${new Date().toLocaleDateString('fr-FR')}</div>`;
-  document.getElementById('previewSub').textContent =
-    `${state.generatedQuestions.length} questions — ${themes.map(t=>themeNames[t]||t).join(', ')}`;
   document.getElementById('scoreBar').style.display = 'none';
   document.getElementById('btnSubmit').style.display = '';
   document.getElementById('btnCorrect').textContent = '👁️ Afficher le corrigé';
@@ -952,7 +851,7 @@ function buildContent(container, str) {
       container.appendChild(wrap);
     } else if (part) {
       const span = document.createElement('span');
-      span.innerHTML = part;
+      span.innerHTML = part.replace(/\\\\\s*/g, '<br>');
       container.appendChild(span);
     }
   });
@@ -1024,263 +923,30 @@ function updateExport() {
   currentLatex = state.exportTab === 'exam' ? buildExam() : buildBeamer();
   document.getElementById('latexPreview').innerHTML = highlightLatex(currentLatex);
 }
-function latexifyStr(str) {
-  if (typeof str !== 'string') return str;
-  // Cas Fig : %%SVG...%%ENDSVG%%%%TIKZ...%%ENDTIKZ%% — garder le TikZ, supprimer le SVG
-  str = str.replace(/%%SVG[\s\S]*?%%ENDSVG%%\s*%%TIKZ([\s\S]*?)%%ENDTIKZ%%/g, (_,tikz) =>
-    '\n\\begin{center}\n' + tikz.trim() + '\n\\end{center}\n');
-  // Cas SVG seul sans TikZ (pas exportable en LaTeX)
-  str = str.replace(/%%SVG[\s\S]*?%%ENDSVG%%/g, '\n% [figure SVG — non exportable en LaTeX]\n');
-  // Cas TikZ seul legacy
-  str = str.replace(/%%TIKZ([\s\S]*?)%%ENDTIKZ%%/g, (_,code) =>
-    '\n\\begin{center}\n'+code.trim()+'\n\\end{center}\n');
-  return str.replace(/<br\s*\/?>/gi,'\\\\\n')
-    .replace(/<b>(.*?)<\/b>/gi,'\\textbf{$1}')
-    .replace(/<i>(.*?)<\/i>/gi,'\\textit{$1}')
-    .replace(/<[^>]+>/g,'');
-}
+// latexifyStr, examSplit, beamerSplit, highlightLatex, openInOverleaf → compiler.js
+
 function buildExam() {
   const inclCorrige = document.getElementById('inclureCorrige')?.checked;
-  const letters = ['A','B','C','D'];
-  let out = '\\documentclass[12pt,a4paper]{article}\n'
-    + '\\usepackage[utf8]{inputenc}\n\\usepackage[T1]{fontenc}\n\\usepackage[french]{babel}\n'
-    + '\\usepackage{amsmath,amssymb}\\usepackage{multicol}\\usepackage{enumitem}\n'
-    + '\\usepackage{tikz}\n\\usetikzlibrary{arrows.meta,calc,trees}\n'
-    + '\\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}\n'
-    + '\\usepackage{xcolor}\\definecolor{correct}{RGB}{16,185,129}\n'
-    + '\n\\begin{document}\n\n'
-    + '\\begin{center}{\\Large\\bfseries QCM -- Maths Premi\\`{e}re}\\end{center}\n'
-    + '\\vspace{1em}\n\n';
-
-  // Extrait le TikZ et le texte d'une chaîne (même logique que beamerSplit)
-  function examSplit(str) {
-    if (typeof str !== 'string') return { text: String(str), tikz: '' };
-    var tikzCode = '';
-    str = str.replace(/%%SVG[\s\S]*?%%ENDSVG%%\s*%%TIKZ([\s\S]*?)%%ENDTIKZ%%/g, function(_, t) {
-      tikzCode = t.trim(); return '';
-    });
-    str = str.replace(/%%TIKZ([\s\S]*?)%%ENDTIKZ%%/g, function(_, t) {
-      tikzCode = t.trim(); return '';
-    });
-    str = str.replace(/%%SVG[\s\S]*?%%ENDSVG%%/g, '');
-    str = str.replace(/<br\s*\/?>/gi,'\\\\\n')
-      .replace(/<b>(.*?)<\/b>/gi,'\\textbf{$1}')
-      .replace(/<i>(.*?)<\/i>/gi,'\\textit{$1}')
-      .replace(/<[^>]+>/g,'').trim();
-    return { text: str, tikz: tikzCode };
-  }
-
-  state.generatedQuestions.forEach((q,i) => {
-    const p = examSplit(q.enonce);
-    const hasFig = p.tikz !== '';
-    out += '% -- Question '+(i+1)+'\n';
-    out += '\\begin{minipage}{\\linewidth}\n';
-
-    if (hasFig) {
-      // Layout minipage : réponses à gauche (0.45) | figure à droite (0.50)
-      var innerTikz = p.tikz
-        .replace(/^\\begin\{tikzpicture\}[^\n]*\n?/, '')
-        .replace(/\\end\{tikzpicture\}\s*$/, '')
-        .trim();
-      out += '\\noindent\\textbf{Question '+(i+1)+'.} ' + p.text + '\n\n';
-      out += '\\noindent\\begin{minipage}{0.45\\textwidth}\n'+'\n\\vspace{1em}\n';
-      out += '\\begin{enumerate}[label=\\textbf{\\Alph*.},leftmargin=*]\n';
-      q.reponses.forEach(r => { out += '  \\item '+latexifyStr(r)+'\n\n\\vspace{1em}'; });
-      out += '\\end{enumerate}\n';
-      out += '\\end{minipage}\\hfill\n';
-      out += '\\begin{minipage}{0.50\\textwidth}\n';
-      out += '  \\begin{center}\n';
-      out += '  \\begin{tikzpicture}[scale=0.8]\n';
-      out += innerTikz + '\n';
-      out += '  \\end{tikzpicture}\n';
-      out += '  \\end{center}\n';
-      out += '\\end{minipage}\n';
-    } else {
-      // Pas de figure : layout classique
-      out += '\\noindent\\textbf{Question '+(i+1)+'.} '+latexifyStr(q.enonce)+'\n\n';
-      const cols = q.cols > 1 ? q.cols : 1;
-      if (cols>1) out += '\\begin{multicols}{'+cols+'}\n';
-      out += '\\begin{enumerate}[label=\\textbf{\\Alph*.},leftmargin=*]\n';
-      q.reponses.forEach(r => { out += '  \\item '+latexifyStr(r)+'\n\n\\vspace{1em}'; });
-      out += '\\end{enumerate}\n';
-      if (cols>1) out += '\\end{multicols}\n';
-    }
-
-    out += '\\end{minipage}\n';
-    out += '\\vspace{1em}\n\n';
-  });
-
-  if (inclCorrige) {
-    out += '\\newpage\n\n\\begin{center}{\\Large\\bfseries Corrig\\\'e}\\end{center}\n\\vspace{1em}\n\n';
-    out += '\\begin{enumerate}[leftmargin=*]\n';
-    state.generatedQuestions.forEach((q,i) => {
-      const idx = q.reponses.indexOf(q.bonneReponse);
-      const letter = letters[idx] ?? '?';
-      out += '  \\item \\textbf{Q'+(i+1)+'.} R\\\'eponse~: {\\color{correct}\\textbf{'+letter+'.} '+latexifyStr(q.bonneReponse)+'}\n';
-    });
-    out += '\\end{enumerate}\n';
-  }
-  out += '\n\\end{document}';
-  return out;
+  return buildExamDoc(state.generatedQuestions, { inclCorrige });
 }
+
 function buildBeamer() {
-  const theme = document.getElementById('beamerTheme')?.value||'Singapore';
-  const color = document.getElementById('beamerColor')?.value||'default';
-  const fmt   = document.getElementById('beamerFormat')?.value||'one';
-  let out = '\\documentclass{beamer}\n'
-    + '\\usepackage[utf8]{inputenc}\\usepackage[T1]{fontenc}\\usepackage[french]{babel}\n'
-    + '\\usepackage{amsmath,amssymb}\n'
-    + '\\usepackage{tikz}\\usetikzlibrary{arrows.meta,calc,trees}\n'
-    + '\\usefonttheme[onlymath]{serif}'
-    + '\\usepackage{xcolor}\n'
-    + '\\usetheme{'+theme+'}\\usecolortheme{'+color+'}\n'
-    + '\n\\begin{document}\n\n';
-
-  // Convertit une chaîne pour Beamer :
-  // - paire %%SVG%%ENDSVG%%%%TIKZ...%%ENDTIKZ%% → tikzpicture avec scale=0.7
-  // - %%TIKZ legacy → idem
-  // - %%SVG seul → commentaire
-  // Retourne { text, tikz } — tikz est le code figure extrait (ou '' si aucune)
-  function beamerSplit(str) {
-    if (typeof str !== 'string') return { text: String(str), tikz: '' };
-    var tikzCode = '';
-    // Paire SVG+TIKZ : extraire le TikZ
-    str = str.replace(/%%SVG[\s\S]*?%%ENDSVG%%\s*%%TIKZ([\s\S]*?)%%ENDTIKZ%%/g, function(_, t) {
-      tikzCode = t.trim(); return '';
-    });
-    // TIKZ legacy
-    str = str.replace(/%%TIKZ([\s\S]*?)%%ENDTIKZ%%/g, function(_, t) {
-      tikzCode = t.trim(); return '';
-    });
-    // SVG seul (pas exportable)
-    str = str.replace(/%%SVG[\s\S]*?%%ENDSVG%%/g, '');
-    // Nettoyage HTML
-    str = str.replace(/<br\s*\/?>/gi,'\\\\\n')
-      .replace(/<b>(.*?)<\/b>/gi,'\\textbf{$1}')
-      .replace(/<i>(.*?)<\/i>/gi,'\\textit{$1}')
-      .replace(/<[^>]+>/g,'')
-      .trim();
-    return { text: str, tikz: tikzCode };
-  }
-
-  // Construit une frame de question
-  const frames = (q, i) => {
-    const enonceParts = beamerSplit(q.enonce);
-    const hasFig = enonceParts.tikz !== '';
-    const enonceText = enonceParts.text;
-    const tikzCode = enonceParts.tikz;
-
-    // Réponses A) B) C) D) sans enumerate (compatible beamer sans enumitem)
-    const letters = ['A','B','C','D'];
-    const repLines = q.reponses.map((r,j) =>
-      '\\textbf{'+letters[j]+')} '+latexifyStr(r)+'\n\n\\vspace{1em}');
-
-    let f = '\\begin{frame}{Question '+(i+1)+'}\n';
-
-    if (hasFig) {
-      // Layout colonnes : texte+réponses à gauche, figure à droite
-      var innerTikz = tikzCode
-        .replace(/^\\begin\{tikzpicture\}[^\n]*\n?/, '')
-        .replace(/\\end\{tikzpicture\}\s*$/, '')
-        .trim();
-      f += '\\begin{columns}[T,totalwidth=\\textwidth]\n';
-      f += '\\begin{column}{0.4\\textwidth}\n';
-      f += '  \\small '+enonceText+'\n  \\vspace{1em}\n\n';
-      // Réponses en colonne simple
-      repLines.forEach(r => { f += '  '+r+'\\\\\n'; });
-      f += '\\end{column}\n';
-      f += '\\begin{column}{0.55\\textwidth}\n';
-      f += '  \\begin{center}\n';
-      f += '  \\begin{tikzpicture}[scale=0.55, baseline=(current bounding box.west)]\n';
-      f += innerTikz + '\n';
-      f += '  \\end{tikzpicture}\n';
-      f += '  \\end{center}\n';
-      f += '\\end{column}\n';
-      f += '\\end{columns}\n';
-    } else {
-      // Pas de figure : énoncé centré, réponses en 2 colonnes
-      f += '\\begin{center}\n';
-      f += '  '+enonceText+'\n\\end{center}\n';
-      f += '\\vspace{0.5em}\n';
-      f += '\\begin{columns}\n';
-      f += '\\begin{column}{0.48\\textwidth}\n';
-      f += '  '+repLines[0]+'\\\\\n';
-      if (repLines[2]) f += '  '+repLines[2]+'\\\\\n';
-      f += '\\end{column}\n';
-      f += '\\begin{column}{0.48\\textwidth}\n';
-      if (repLines[1]) f += '  '+repLines[1]+'\\\\\n';
-      if (repLines[3]) f += '  '+repLines[3]+'\\\\\n';
-      f += '\\end{column}\n';
-      f += '\\end{columns}\n';
-    }
-
-    f += '\\end{frame}\n\n';
-    return f;
-  };
-
-  // Construit une frame de correction
-  const corr = (q, i) => {
-    const enonceParts = beamerSplit(q.enonce);
-    const hasFig = enonceParts.tikz !== '';
-    const enonceText = enonceParts.text;
-    const tikzCode = enonceParts.tikz;
-
-    let f = '\\begin{frame}{Correction Q'+(i+1)+'}\n';
-
-    if (hasFig) {
-      var innerTikz = tikzCode
-        .replace(/^\\begin\{tikzpicture\}[^\n]*\n?/, '')
-        .replace(/\\end\{tikzpicture\}\s*$/, '')
-        .trim();
-      f += '\\begin{columns}[T,totalwidth=\\textwidth]\n';
-      f += '\\begin{column}{0.4\\textwidth}\n';
-      f += '  \\small '+enonceText+'\n  \\vspace{0.6em}\n\n';
-      f += '  {\\large\\color{green!60!black}\\textbf{'+latexifyStr(q.bonneReponse)+'}}\n';
-      f += '\\end{column}\n';
-      f += '\\begin{column}{0.55\\textwidth}\n';
-      f += '  \\begin{center}\n';
-      f += '  \\begin{tikzpicture}[scale=0.55]\n';
-      f += innerTikz + '\n';
-      f += '  \\end{tikzpicture}\n';
-      f += '  \\end{center}\n';
-      f += '\\end{column}\n';
-      f += '\\end{columns}\n';
-    } else {
-      f += '\\begin{center}\n';
-      f += '  '+enonceText+'\n  \\vspace{0.8em}\n\n';
-      f += '  {\\large\\color{green!60!black}\\textbf{'+latexifyStr(q.bonneReponse)+'}}\n';
-      f += '\\end{center}\n';
-    }
-
-    f += '\\end{frame}\n\n';
-    return f;
-  };
-
-  if (fmt==='allcorr') {
-    state.generatedQuestions.forEach((q,i) => { out+=frames(q,i); });
-    state.generatedQuestions.forEach((q,i) => { out+=corr(q,i); });
-  } else {
-    state.generatedQuestions.forEach((q,i) => {
-      out+=frames(q,i);
-      if (fmt==='corrected') out+=corr(q,i);
-    });
-  }
-  return out+'\\end{document}';
+  return buildBeamerDoc(state.generatedQuestions, {
+    theme:  document.getElementById('beamerTheme')?.value  || 'Singapore',
+    color:  document.getElementById('beamerColor')?.value  || 'default',
+    fmt:    document.getElementById('beamerFormat')?.value || 'one',
+  });
 }
-function highlightLatex(code) {
-  return code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/(\\begin|\\end)\{([^}]+)\}/g,'<span class="lt-env">$1{$2}</span>')
-    .replace(/(\\[a-zA-Z]+)/g,'<span class="lt-cmd">$1</span>')
-    .replace(/(\$[^$]+\$)/g,'<span class="lt-math">$1</span>')
-    .replace(/(%.+)/g,'<span class="lt-comment">$1</span>');
-}
+
 function downloadTex() {
+  // downloadTex() de compiler.js
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([currentLatex],{type:'text/plain'}));
-  a.download = 'qcm-maths-'+state.exportTab+'.tex';
+  a.download = 'QCM-1ere-' + new Date().toLocaleDateString('fr-FR').replace(/\//g,'-') + '.tex';
   a.click();
-  showToast('Fichier .tex téléchargé ✓','success');
+  showToast('Fichier .tex téléchargé ✓', 'success');
 }
+
 async function compilePDF() {
   showToast('Tentative de compilation…');
   try {
@@ -1288,9 +954,17 @@ async function compilePDF() {
     fd.append('filecontents[]', new Blob([currentLatex],{type:'text/plain'}), 'main.tex');
     fd.append('filename[]','main.tex'); fd.append('engine','pdflatex'); fd.append('return','pdf');
     const res = await fetch('https://latex.ytotech.com/builds/sync',{method:'POST',body:fd});
-    if (res.ok) { window.open(URL.createObjectURL(await res.blob()),'_blank'); showToast('PDF généré ✓','success'); return; }
-  } catch(e){}
-  window.open('https://www.overleaf.com/docs?snip_uri=data:application/x-tex;base64,'+btoa(unescape(encodeURIComponent(currentLatex))),'_blank');
+    if (res.ok) {
+      const blob = await res.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'QCM-1ere-' + new Date().toLocaleDateString('fr-FR').replace(/\//g,'-') + '.pdf';
+      a.click();
+      showToast('PDF généré ✓','success');
+      return;
+    }
+  } catch(e) {}
+  openInOverleaf(currentLatex);
   showToast('Ouverture sur Overleaf…');
 }
 
@@ -1310,6 +984,8 @@ function showToast(msg, type='') {
 // ═══════════════════════════════════════════════════════
 document.getElementById('inclureCorrige').addEventListener('change', updateExport);
 updateFilterInfo();
+// Initialiser le dégradé du slider
+syncNum(12);
 document.addEventListener('DOMContentLoaded', () => {
   if (window.renderMathInElement)
     renderMathInElement(document.body,{delimiters:[{left:'$',right:'$',display:false}],throwOnError:false});

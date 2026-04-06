@@ -24,10 +24,7 @@ function riStep(min, max, step, values) {
 /** Tire une valeur aléatoire pour une variable selon sa config.
  *  Priorité : values > step > min/max */
 function pickVar(cfg) {
-  if (cfg.values && cfg.values.length) {
-    return cfg.values[Math.floor(Math.random() * cfg.values.length)];
-  }
-  return riStep(cfg.min, cfg.max, cfg.step || 1);
+  return riStep(cfg.min, cfg.max, cfg.step || 1,cfg.values);
 }
 
 /** Flottant aléatoire dans [min, max] arrondi à `dec` décimales */

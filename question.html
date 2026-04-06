@@ -8,50 +8,8 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 <style>
-:root {
-  --bg:#0B1120; --card:#131d30; --card2:#162035;
-  --border2:rgba(255,255,255,0.06);
-  --blue:#4f8ef7; --green:#34d399; --orange:#f59e0b;
-  --red:#f87171; --pur:#a78bfa; --cyan:#38bdf8;
-  --text:#e2e8f0; --text2:#94a3b8; --text3:#64748b;
-  --mono:'DM Mono',monospace; --sans:'DM Sans',sans-serif;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body {
-  font-family:var(--sans); background:var(--bg); color:var(--text);
-  min-height:100vh; display:flex; flex-direction:column;
-}
-body::before {
-  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-  background:
-    radial-gradient(ellipse 60% 50% at 5% 5%,rgba(79,142,247,.07) 0%,transparent 60%),
-    radial-gradient(ellipse 40% 40% at 95% 90%,rgba(167,139,250,.06) 0%,transparent 60%);
-}
-::-webkit-scrollbar{width:5px}
-::-webkit-scrollbar-thumb{background:rgba(79,142,247,.3);border-radius:99px}
-
-/* ─── HEADER ─── */
-header {
-  position:sticky; top:0; z-index:100;
-  background:rgba(11,17,32,.85); backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--border2);
-  padding:0 24px; height:58px;
-  display:flex; align-items:center; gap:16px;
-}
-.logo{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;}
-.logo-badge{
-  width:32px;height:32px;border-radius:8px;
-  background:linear-gradient(135deg,var(--blue),var(--pur));
-  display:flex;align-items:center;justify-content:center;font-size:16px;
-}
-.q-meta{
-  font-family:var(--mono);font-size:12px;color:var(--text3);
-  display:flex;align-items:center;gap:10px;
-}
-.q-meta .id{color:var(--text2);font-weight:500;}
-.q-meta .groupe{color:var(--pur);}
-
 /* ─── MAIN ─── */
 main{
   position:relative;z-index:1;
@@ -71,8 +29,8 @@ main{
   background:var(--card);color:var(--text2);transition:all .2s;
 }
 .btn:hover{border-color:rgba(255,255,255,.15);color:var(--text);}
-.btn-blue{background:rgba(79,142,247,.12);border-color:rgba(79,142,247,.3);color:var(--blue);}
-.btn-blue:hover{background:rgba(79,142,247,.2);}
+.btn-blue{background:rgba(193,95,60,.12);border-color:rgba(193,95,60,.35);color:var(--accent);}
+.btn-blue:hover{background:rgba(193,95,60,.2);}
 
 /* ─── VARIABLES ÉDITABLES ─── */
 .vars-editor{
@@ -81,7 +39,7 @@ main{
   border-radius:10px;padding:12px 16px;
 }
 .var-editor-item{display:flex;align-items:center;gap:6px;}
-.var-editor-label{font-family:var(--mono);font-size:12px;color:var(--blue);font-weight:600;}
+.var-editor-label{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600;}
 .var-editor-range{font-size:10px;color:var(--text3);}
 .var-editor-input{
   width:56px;padding:4px 8px;
@@ -122,10 +80,6 @@ main{
 .variant-preview-box .rendered-enonce{font-size:15px;line-height:1.9;}
 .variant-preview-box .rendered-answer{font-size:13px;padding:10px 14px;}
 
-/* ─── FIGURES ─── */
-.fig-wrap{display:flex;justify-content:center;margin:12px 0;}
-.fig-wrap svg{max-width:100%;height:auto;border-radius:6px;overflow:visible;}
-
 /* ─── NOT FOUND ─── */
 .not-found{
   text-align:center;padding:60px 20px;color:var(--text3);
@@ -143,7 +97,7 @@ main{
 
 <header>
   <div class="logo">
-    <div class="logo-badge">Q</div>
+    <!-- <div class="logo-badge">Q</div> -->
     QCM Maths
   </div>
   <div class="q-meta" id="qMeta"></div>
@@ -160,7 +114,6 @@ main{
 <script src="questions/fonctions.js"></script>
 <script src="questions/stats.js"></script>
 <script src="questions/proba.js"></script>
-<script src="questions/figures.js"></script>
 
 <script>
 // ── Banque complète ──
@@ -171,7 +124,6 @@ const ALL_QUESTIONS = [
   ...QUESTIONS_FONCTIONS,
   ...QUESTIONS_STATS,
   ...QUESTIONS_PROBA,
-  ...QUESTIONS_FIGURES,
 ];
 
 // ── Lire l'ID dans l'URL (?id=calc_001) ──
@@ -199,7 +151,7 @@ if (!q) {
 
   // Méta dans le header
   const THEME_COLORS = {
-    calcul:'var(--blue)', proportions:'var(--pur)', evolutions:'var(--orange)',
+    calcul:'var(--blue)', proportions:'var(--pur)', evolutions:'var(--yellow)',
     fonctions:'var(--green)', stats:'var(--red)', proba:'var(--cyan)'
   };
   const col = THEME_COLORS[q.theme] || 'var(--text3)';
@@ -369,6 +321,7 @@ function display(str) {
       return '<div style="display:flex;justify-content:center;margin:12px 0">' + tikzToSvg(code.trim()) + '</div>';
     } catch(e) { return '<span style="color:var(--red);font-size:11px">Erreur SVG</span>'; }
   });
+  return str.replace(/\\\\\s*/g, '<br>');
 }
 
 function makeVars(variables) {

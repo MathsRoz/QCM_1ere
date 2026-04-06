@@ -170,30 +170,6 @@ function renderBarchart(code) {
   return out;
 }
 
-// ── Tableau de signes ───────────────────────────────────
-function renderSignTable(code) {
-  var W = 300, H = 60;
-  var mExpr = code.match(/\$([\d]+)x[-+][\d]+\$/);
-  var expr = mExpr ? mExpr[1] + 'x' : 'f(x)';
-  var mFrac = code.match(/\\frac\{([\d]+)\}\{([\d]+)\}/);
-  var zero = mFrac ? mFrac[1] + '/' + mFrac[2] : '?';
-
-  var out = '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '" style="background:' + TC.bg + ';border-radius:8px">';
-  out += '<rect x="1" y="1" width="' + (W - 2) + '" height="' + (H - 2) + '" fill="none" stroke="' + TC.axis + '" stroke-width="1.2" rx="4"/>';
-  out += '<line x1="1" y1="30" x2="' + (W - 1) + '" y2="30" stroke="' + TC.axis + '" stroke-width="1"/>';
-  out += '<line x1="90" y1="1" x2="90" y2="' + (H - 1) + '" stroke="' + TC.axis + '" stroke-width="1"/>';
-  out += '<line x1="175" y1="1" x2="175" y2="' + (H - 1) + '" stroke="' + TC.axis + '" stroke-width="1"/>';
-  out += '<text x="45" y="20" fill="' + TC.text + '" font-size="12" font-style="italic" text-anchor="middle">x</text>';
-  out += '<text x="132" y="20" fill="' + TC.dim + '" font-size="12" text-anchor="middle">−∞</text>';
-  out += '<text x="175" y="20" fill="' + TC.yel + '" font-size="11" text-anchor="middle">' + zero + '</text>';
-  out += '<text x="238" y="20" fill="' + TC.dim + '" font-size="12" text-anchor="middle">+∞</text>';
-  out += '<text x="45" y="48" fill="' + TC.text + '" font-size="10" text-anchor="middle">' + expr + '</text>';
-  out += '<text x="132" y="50" fill="' + TC.red + '" font-size="20" font-weight="bold" text-anchor="middle">−</text>';
-  out += '<text x="175" y="48" fill="' + TC.yel + '" font-size="13" font-weight="bold" text-anchor="middle">0</text>';
-  out += '<text x="238" y="50" fill="' + TC.green + '" font-size="20" font-weight="bold" text-anchor="middle">+</text>';
-  out += '</svg>';
-  return out;
-}
 
 // ═══════════════════════════════════════════════════════
 //  OBJET Fig — API fluente SVG + TikZ
@@ -264,7 +240,8 @@ var Fig = {
 
   // ── Init LaTeX ────────────────────────────────────────
   // Fig.latex(xmin, xmax, ymin, ymax)
-  latex: function(xmin, xmax, ymin, ymax) {
+  latex: function(xmin, xmax, ymin, ymax,scale) {
+    scale= scale||.75;
     var f = this._make('latex');
     f._xmin = xmin; f._xmax = xmax;
     f._ymin = ymin; f._ymax = ymax;
@@ -292,55 +269,56 @@ var Fig = {
   clip: function() {
     return this._add(
       '<g clip-path="url(#' + this._clipId + ')">',
-      '\\clip (' + this._xmin + ',' + this._ymin + ') rectangle ('
+      '\\begin{scope}\n'
+      + '\\clip (' + this._xmin + ',' + this._ymin + ') rectangle ('
         + this._xmax + ',' + this._ymax + ');\n'
     );
   },
 
   endClip: function() {
-    return this._add('</g>', '');
+    return this._add('</g>', '\\end{scope}\n');
   },
 
   // ── Grille ────────────────────────────────────────────
   // .grid(step)   step par défaut = 1
-  grid: function(stepx,stepy) {
+  grid: function(stepx,stepy,xmin,xmax,ymin,ymax) {
     stepx = stepx || 1;
     stepy= stepy || stepx ||1;
-    var xmin = this._xmin, xmax = this._xmax;
-    var ymin = this._ymin, ymax = this._ymax;
+    var xmin = xmin || this._xmin, xmax = xmax || this._xmax;
+    var ymin = ymin || this._ymin, ymax = ymax || this._ymax;
     var svg  = '';
     if (this._ctx === 'svg') {
       for (var x = xmin; x <= xmax; x += stepx) {
         svg += '<line x1="' + this._px(x) + '" y1="' + this._py(ymax)
              + '" x2="' + this._px(x) + '" y2="' + this._py(ymin)
-             + '" stroke="' + TC.grid + '" stroke-width=".5"/>';
+             + '" stroke="' + TC.grid + '" stroke-width="1"/>';
       }
       for (var y = ymin; y <= ymax; y += stepy) {
         svg += '<line x1="' + this._px(xmin) + '" y1="' + this._py(y)
              + '" x2="' + this._px(xmax) + '" y2="' + this._py(y)
-             + '" stroke="' + TC.grid + '" stroke-width=".5"/>';
+             + '" stroke="' + TC.grid + '" stroke-width="1"/>';
       }
     }
     return this._add(svg,
-      '\\draw[very thin,gray!30] (' + xmin + ',' + ymin + ') grid [xstep=' + stepx + ',ystep=' + stepy + '] ('
+      '\\draw[thick ,gray!30] (' + xmin + ',' + ymin + ') grid [xstep=' + stepx + ',ystep=' + stepy + '] ('
       + xmax + ',' + ymax + ');\n');
   },
 
   // ── Axes avec flèches ─────────────────────────────────
   // .axes()
-  axes: function() {
-    var xmin = this._xmin, xmax = this._xmax;
-    var ymin = this._ymin, ymax = this._ymax;
+  axes: function(xmin,xmax,ymin,ymax) {
+    var xmin = xmin || this._xmin, xmax = xmax || this._xmax;
+    var ymin = ymin || this._ymin, ymax = ymax || this._ymax;
     var ox = this._px(0), oy = this._py(0);
     var aid = this._ARR, fs = this._FS;
     var svg =
       // axe x
-      '<line x1="' + this._px(xmin) + '" y1="' + oy
+      '<line x1="' + (this._px(xmin)-12) + '" y1="' + oy
         + '" x2="' + (this._px(xmax) + 12) + '" y2="' + oy
         + '" stroke="' + TC.axis + '" stroke-width="1.8" marker-end="url(#' + aid + ')"/>'
       // axe y
-      + '<line x1="' + ox + '" y1="' + this._py(ymin)
-        + '" x2="' + ox + '" y2="' + (this._py(ymax) - 8)
+      + '<line x1="' + ox + '" y1="' + (this._py(ymin)+12)
+        + '" x2="' + ox + '" y2="' + (this._py(ymax) - 12)
         + '" stroke="' + TC.axis + '" stroke-width="1.8" marker-end="url(#' + aid + ')"/>'
       // label x
       + '<text x="' + (this._px(xmax)+4) + '" y="' + (oy -10)
@@ -352,41 +330,43 @@ var Fig = {
       + '<text x="' + (ox - 4) + '" y="' + (oy + fs + 2)
         + '" fill="' + TC.dim + '" font-size="' + fs + '" text-anchor="end">O</text>';
     return this._add(svg,
-      '\\draw[-stealth] (' + xmin + ',0) -- (' + (xmax) + ',0) node[above]{$x$};\n'
-      + '\\draw[-stealth] (0,' + ymin + ') -- (0,' + (ymax) + ') node[right]{$y$};\n'
-      + '\\node[below left,fontsize=small] {O};\n');
+      '\\draw[-stealth,very thick] (' + (xmin-.5) + ',0) -- (' + (xmax+.5) + ',0) node[above]{$x$};\n'
+      + '\\draw[-stealth, very thick] (0,' + (ymin-.5) + ') -- (0,' + (ymax+.5) + ') node[right]{$y$};\n'
+      + '\\node[below left,font=\\small] {O};\n');
   },
 
   // ── Graduations ───────────────────────────────────────
   // .gradX(step)   .gradY(step)
-  gradX: function(step) {
+  gradX: function(step,xmin,xmax) {
     step = step || 1;
+    xmin = xmin || this._xmin; xmax = xmax || this._xmax; 
     var oy = this._py(0), fs = this._FS;
     var svg = '', tikz = '';
-    for (var x = this._xmin; x <= this._xmax; x += 1) {
+    for (var x = xmin; x <= xmax; x += 1) {
       if (x === 0) continue;
       var px = this._px(x);
       svg  += '<line x1="' + px + '" y1="' + (oy - 3) + '" x2="' + px + '" y2="' + (oy + 3)
             + '" stroke="' + TC.axis + '" stroke-width="1"/>'
             + '<text x="' + px + '" y="' + (oy + fs + 4) + '" fill="' + TC.dim
             + '" font-size="' + fs + '" text-anchor="middle">' + x*step + '</text>';
-      tikz += '\\draw (' + x + ',2pt) -- (' + x + ',-2pt) node[below,font=\\small]{$' + x*step + '$};\n';
+      tikz += '\\draw[thick] (' + x + ',4pt) -- (' + x + ',-4pt) node[below,font=\\small]{$' + x*step + '$};\n';
     }
     return this._add(svg, tikz);
   },
 
-  gradY: function(step) {
+  gradY: function(step,ymin,ymax) {
     step = step || 1;
+    ymin = ymin || this._ymin; ymax = ymax || this._ymax; 
     var ox = this._px(0), fs = this._FS;
     var svg = '', tikz = '';
-    for (var y = this._ymin; y <= this._ymax; y += 1) {
+    for (var y = ymin; y <= ymax; y += 1) {
       if (y === 0) continue;
       var py = this._py(y);
       svg  += '<line x1="' + (ox - 3) + '" y1="' + py + '" x2="' + (ox + 3) + '" y2="' + py
             + '" stroke="' + TC.axis + '" stroke-width="1"/>'
             + '<text x="' + (ox - 8) + '" y="' + (py + fs / 2) + '" fill="' + TC.dim
             + '" font-size="' + fs + '" text-anchor="end">' + y*step + '</text>';
-      tikz += '\\draw (2pt,' + y + ') -- (-2pt,' + y + ') node[left,font=\\small]{$' + y*step + '$};\n';
+      tikz += '\\draw[thick] (4pt,' + y + ') -- (-4pt,' + y + ') node[left,font=\\small]{$' + y*step + '$};\n';
     }
     return this._add(svg, tikz);
   },
@@ -398,12 +378,13 @@ var Fig = {
   // color  : 'black' | 'red' | 'green' (défaut 'black')
   // style  : 'solid' | 'dashed' | 'dotted' (défaut 'solid')
   // arrows : '' | '->' | '<-' | '<->' (défaut '')
-  line: function(x1, y1, x2, y2, color, style, arrows) {
+  line: function(x1, y1, x2, y2, color, style, arrows, weight) {
     var col   = color === 'red' ? TC.red : color === 'green' ? TC.green : TC.black;
     var dash  = style === 'dashed' ? ' stroke-dasharray="5 3"'
               : style === 'dotted' ? ' stroke-dasharray="2 3"' : '';
     var tikzS = style === 'dashed' ? 'dashed,' : style === 'dotted' ? 'dotted,' : '';
     var aid   = this._ARR;
+    weight = weight || 1.5 ;
     arrows = arrows || '';
  
     // Marqueurs SVG selon le sens des flèches
@@ -442,9 +423,9 @@ var Fig = {
       defsExtra
       + '<line x1="' + this._px(x1) + '" y1="' + this._py(y1)
         + '" x2="' + this._px(x2) + '" y2="' + this._py(y2)
-        + '" stroke="' + col + '" stroke-width="1.5"' + dash
+        + '" stroke="' + col + '" stroke-width=" '+ weight +' "' + dash
         + markerStart + markerEnd + '/>',
-      '\\draw[' + tikzArr + tikzS + (color || 'blue') + ',thick] ('
+      '\\draw[' + tikzArr + tikzS + (color || ' ') + ',thick] ('
         + x1 + ',' + y1 + ') -- (' + x2 + ',' + y2 + ');\n'
     );
   },
@@ -457,6 +438,7 @@ var Fig = {
   // t      : texte SVG. Préfixe '~' → barre au-dessus : '~A' affiche Ā
   // color  : 'black' | 'blue' | 'red' | 'green' (défaut 'black')
   // anchor : 'middle' | 'start' | 'end' (défaut 'middle')
+  // height : 'above' | 'below' | 'middle' (defaut 'middle')
   // tikzT  : texte TikZ si différent (ex: '\\bar{A}').
   //          Si omis et t commence par '~', génère \\bar{X} automatiquement.
   //
@@ -465,35 +447,105 @@ var Fig = {
   //   .text(2, -1,  '~A')                   → SVG: Ā     / TikZ: $\bar{A}$
   //   .text(4,  0.5,'~B', 'red', 'start')   → SVG: B̄     / TikZ: $\bar{B}$
   //   .text(1,  0.7,'0,3')                  → SVG: 0,3   / TikZ: $0,3$
-  text: function(x, y, t, color, anchor, tikzT) {
+   text: function(x, y, t, color, anchor, tikzT) {
+    color= color || ' ';
     var col = color === 'red'   ? TC.red
             : color === 'blue'  ? TC.blue
             : color === 'green' ? TC.green
             : TC.black;
     var anch = anchor || 'middle';
     var fs   = this._FS;
-    var tikzAnch = anchor === 'start' ? 'anchor=west,'
-                 : anchor === 'end'   ? 'anchor=east,' : '';
+    var tikzAnch = anchor === 'start' ? 'anchor=west'
+                 : anchor === 'end'   ? 'anchor=east' : '';
+  
  
-    // Notation ~X → barre au-dessus via text-decoration SVG
+    // Notation ~X → barre au-dessus
+    // Notation X_y → indice (ex: 'C_f', 'x_0', 'C_g')
     var svgContent, tikzContent;
     if (typeof t === 'string' && t.charAt(0) === '~') {
       var letter = t.slice(1);
       svgContent  = '<tspan text-decoration="overline">' + letter + '</tspan>';
       tikzContent = tikzT !== undefined ? tikzT : '\\bar{' + letter + '}';
+    } else if (typeof t === 'string' && t.indexOf('_') !== -1) {
+      var parts = t.split('_');
+      var base  = parts[0];
+      var sub   = parts.slice(1).join('_');
+      svgContent  = base + '<tspan dy="' + (fs*0.35) + '" font-size="' + (fs*0.75) + '">' + sub + '</tspan>';
+      tikzContent = tikzT !== undefined ? tikzT : base + '_{' + sub + '}';
     } else {
       svgContent  = t;
       tikzContent = tikzT !== undefined ? tikzT : t;
     }
  
     return this._add(
-      '<text x="' + this._px(x) + '" y="' + this._py(y) + '"'
+      '<text x="' + this._px(x) + '" y="' + (this._py(y)) + '"'
         + ' fill="' + col + '" font-size="' + fs + '" font-weight="bold"'
         + ' text-anchor="' + anch + '" dominant-baseline="central">' + svgContent + '</text>',
-      '\\node[' + tikzAnch + 'font=\\small] at (' + x + ',' + y + '){$' + tikzContent + '$};\n'
+      '\\node[' +  'font=\\small,' + color +','+ tikzAnch +'] at (' + x + ',' + y + '){$' + tikzContent + '$};\n'
     );
   },
 
+
+
+
+
+  // ── Fraction ─────────────────────────────────────────
+  // .frac(x, y, num, den, color)
+  // Affiche num/den centré en (x,y) en SVG, et \dfrac{num}{den} en TikZ.
+  // x, y   : coordonnées mathématiques du centre de la fraction
+  // num    : chaîne numérateur  (ex: '3', 'x+1')
+  // den    : chaîne dénominateur (ex: '4', '2x')
+  // color  : 'black' | 'blue' | 'red' | 'green' (défaut 'black')
+  frac: function(x, y, num, den, color) {
+    var col = color === 'red'   ? TC.red
+            : color === 'blue'  ? TC.blue
+            : color === 'green' ? TC.green
+            : TC.black;
+    var fs   = this._FS;
+    var fsF  = fs * 0.85;          // police légèrement réduite pour num/den
+    var px   = this._px(x);
+    var py   = this._py(y);
+    var gap  = fsF * 0.6;          // demi-hauteur entre barre et texte
+    var barW = Math.max(String(num).length, String(den).length) * fsF * 0.55 + 4;
+ 
+    var svg =
+      // Numérateur
+      '<text x="' + px + '" y="' + (py - gap) + '"'
+        + ' fill="' + col + '" font-size="' + fsF + '"'
+        + ' text-anchor="middle" dominant-baseline="auto">' + num + '</text>'
+      // Barre de fraction
+      + '<line x1="' + (px - barW/2) + '" y1="' + py
+        + '" x2="' + (px + barW/2) + '" y2="' + py
+        + '" stroke="' + col + '" stroke-width="1"/>'
+      // Dénominateur
+      + '<text x="' + px + '" y="' + (py + gap) + '"'
+        + ' fill="' + col + '" font-size="' + fsF + '"'
+        + ' text-anchor="middle" dominant-baseline="hanging">' + den + '</text>';
+ 
+    var tikz = '\\node[font=\\small] at (' + x + ',' + y + '){$\\dfrac{' + num + '}{' + den + '}$};\n';
+ 
+    return this._add(svg, tikz);
+  },
+
+
+
+  label: function(f,name,color,xmin,xmax,ymin,ymax){
+    var xmin = xmin || this._xmin, xmax = xmax || this._xmax;
+    var ymin = ymin || this._ymin, ymax = ymax || this._ymax;
+    var x=xmin;
+    if (fimage(xmin,f)<=ymax && fimage(xmin,f)>=ymin){
+        var y=fimage(x,f);
+        var p='end';
+      }else{
+        while((fimage(x,f)>=ymax || fimage(x,f)<=ymin) || x>xmax){
+          x+=.02;
+        }
+        var y=(Math.abs(fimage(x,f)-ymax)>Math.abs(fimage(x,f)-ymin)) ? ymin:ymax;
+        y=(y>0)? y+.4 : y-.4;
+        var p='middle';
+      }
+      return this.text(x,y,name,color,p);
+  },
 
   // ── Droite affine  y = a*x + b ───────────────────────
   // .line(a, b, xmin, xmax, color, label)
@@ -504,22 +556,24 @@ var Fig = {
     return this._add(
       '<line x1="' + this._px(x1) + '" y1="' + this._py(y1)
         + '" x2="' + this._px(x2) + '" y2="' + this._py(y2)
-        + '" stroke="' + col + '" stroke-width="2.5"/>'
-        + (lbl ? '<text x="' + (this._px(x2) + 4) + '" y="' + (this._py(y2) + 4)
-            + '" fill="' + col + '" font-size="12" font-style="italic">' + lbl + '</text>' : ''),
+        + '" stroke="' + col + '" stroke-width="2.5"/>',
       '\\draw[' + (color || 'red') + ',very thick] (' + x1 + ',' + y1 + ') -- ('
-        + x2 + ',' + y2 + ')' + (lbl ? ' node[right]{$' + lbl + '$}' : '') + ';\n'
+        + x2 + ',' + y2 + ')' + ';\n'
     );
   },
 
   // ── Point (disque plein) ──────────────────────────────
-  // .point(x, y, color)
-  point: function(x, y, color) {
-    var col = color === 'red' ? TC.red : color === 'green' ? TC.green : TC.blue;
+  // .point(x, y, l, color, anchor, height)
+    //x,y, l:lettre, anchor:{'end','middle','start'}, height:{'above', 'below'}
+  point: function(x, y, l , color,  anchor, height) {
+    l=l||'';
+    height = height || 'above'
+    dy=(height==='above') ? .5 : -.5;
+    var col = color==='blue' ? TC.blue : color === 'red' ? TC.red : color === 'green' ? TC.green : TC.black;
     return this._add(
       '<circle cx="' + this._px(x) + '" cy="' + this._py(y) + '" r="4" fill="' + col + '"/>',
-      '\\filldraw[' + (color || 'blue') + '] (' + x + ',' + y + ') circle (2pt);\n'
-    );
+      '\\filldraw[' + (color || 'black') + '] (' + x + ',' + y + ') circle (2pt);\n'
+    ).text(x,y+dy,l,color,anchor);
   },
 
   // ── Tirets de lecture ────────────────────────────────
@@ -631,10 +685,48 @@ var Fig = {
     return this._add(svg, tikz);
   },
 
+  // t =[['x'   ,'-∞'  , 2   ,  '+∞' ],
+  //     ['f(x)',   '+','0' ,'-'   ]]
+  tableauS : function(t,dx,lgt,esp){
+    lgt = lgt || 2; // espace de la premiere colonne
+    esp = esp || 2; // espace entre les valeurs de x
+    dx = dx || .5; // espace entre la deuxieme ligne et la première valeur
+    const wt = (t[0].length-2)*esp +lgt+dx*2; // largeur tableau
+    const nv = t[0].length-3; //nombre de valeurs remarquables
+    var hl = 1; // hauteur d'une ligne
+    const nl = t.length; //nombre de ligne
+    this.line(0,0,wt,0)  // premiere ligne 
+    for (var j = 1; j <= nl; j++){  //| lignes suivantes
+      this.line(0,-j*hl,wt,-j*hl)         //| 
+    }                                 
+    this.line(0,0,0,-nl*hl, 'black')      //|
+    this.line(wt,0,wt,-nl*hl, 'black')    //|  3 lignes verticales pour les deux colonnes
+    this.line(lgt,0,lgt,-nl*hl,'black')   //|
+    for (var j=0 ; j< nv ; j++){
+      this.line(lgt+dx+(j+1)*esp,-1*hl,lgt+dx+(j+1)*esp,-(nl)*hl,'gray','dotted', '', 1) // dotted pour les zeros ou non
+    }
+    this.text(lgt/2,-hl/2,t[0][0])          //|
+    for (var j =1;j<=nl -1; j++){           //| texte première colonne
+      this.text(lgt/2,(-j*hl)-hl/2,t[j][0]) //|
+    }
+    for (var j=1 ; j<= t[0].length-1 ; j++){
+      this.text(lgt+dx+(j-1)*esp,-hl/2,t[0][j])
+    }
+    for (var j=1 ; j<= 1+nv*2 ; j++){
+      for (var i=1; i<=t.length-1;i++){
+          this.text(lgt+dx+(j-1)*esp/2+esp/2,(-i*hl)-hl/2,t[i][j])
+        }
+    }
+
+    return this;
+  },
+
+
+
   arbre : function(xmin,xmax,ymin,ymax){
     var col = 'black';
     var style ='';
-    var arrow = '->'
+    var arrow = '->';
     xmin  = (xmin  !== undefined && xmin  !== null) ? xmin  : this._xmin;
     xmax  = (xmax  !== undefined && xmax  !== null) ? xmax  : this._xmax;
     ymin  = (ymin  !== undefined && ymin  !== null) ? ymin  : this._ymin;
@@ -659,6 +751,9 @@ var Fig = {
 };
  
 // fin Fig 
+
+
+
 
 
 
@@ -724,4 +819,3 @@ Fig._parseExpr = function(expr) {
   }
 
 };
-

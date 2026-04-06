@@ -81,7 +81,7 @@ const QUESTIONS_CALCUL = [
   {
     id: "calc_004", theme: "calcul", groupe :"puissance",
     niveau: ["techno", "specifique", "specialite"], cols: 4,
-    variables: { a: { min: 2, max: 5 }, p: { min: 2, max: 4 }, q: { min: 1, max: 3 } },
+    variables: { a: { min: 2, max: 5 }, p: { min: -9, max: 9 }, q: { min: -9, max: 9 } },
     enonce: (v) => `Simplifier $${v.a}^{${v.p}} \\times ${v.a}^{${v.q}}$`,
     bonneReponse: (v) => `$${v.a}^{${v.p + v.q}}$`,
     distracteurs: (v) => [
@@ -95,7 +95,7 @@ const QUESTIONS_CALCUL = [
   {
     id: "calc_005", theme: "calcul", groupe :"puissance",
     niveau: ["techno", "specifique", "specialite"], cols: 4,
-    variables: { a: { min: 2, max: 6 }, p: { min: 3, max: 6 }, q: { min: 1, max: 3 } },
+    variables: { a: { min: 2, max: 6 }, p: { min: -6, max: 6 }, q: { min: -6, max: 8 } },
     enonce: (v) => {
       if(v.p===v.q){v.q--}
       return `Simplifier $\\dfrac{${v.a}^{${v.p}}}{${v.a}^{${v.q}}}$`},
@@ -139,13 +139,14 @@ const QUESTIONS_CALCUL = [
   {
     id: "calc_008", theme: "calcul", groupe : "id_rem",
     niveau: ["techno", "specifique", "specialite"], cols: 2,
-    variables: { a: { min: 2, max: 8 } },
-    enonce: (v) => `Développer $(x + ${v.a})^2$`,
-    bonneReponse: (v) => `$x^2 + ${2 * v.a}x + ${v.a ** 2}$`,
+    variables: { a: { min: 2, max: 8 },
+                  b:{min:2,max:8}},
+    enonce: (v) => `Développer $(${v.a}x + ${v.b})^2$`,
+    bonneReponse: (v) => `$${v.a**2}x^2 + ${2 * v.a*v.b}x + ${v.b ** 2}$`,
     distracteurs: (v) => [
-      `$x^2 + ${v.a ** 2}$`,
-      `$x^2 + ${v.a}x + ${v.a ** 2}$`,
-      `$x^2 + ${2 * v.a}x - ${v.a ** 2}$`
+      `$${v.a**2}x^2 + ${v.b ** 2}$`,
+      `$${v.a**2}x^2 + ${v.a*v.b}x + ${v.b ** 2}$`,
+      `$${v.a**2}x^2 + ${2 * v.a*v.b}x - ${v.b ** 2}$`
     ]
   },
 
@@ -153,13 +154,14 @@ const QUESTIONS_CALCUL = [
   {
     id: "calc_009", theme: "calcul",groupe : "id_rem",
     niveau: ["techno", "specifique", "specialite"], cols: 2,
-    variables: { a: { min: 2, max: 7 } },
-    enonce: (v) => `Développer $(x - ${v.a})^2$`,
-    bonneReponse: (v) => `$x^2 - ${2 * v.a}x + ${v.a ** 2}$`,
+    variables: { a: { min: 2, max: 7 },
+                  b:{min:2,max:8} },
+    enonce: (v) => `Développer $(${v.a}x - ${v.b})^2$`,
+    bonneReponse: (v) => `$${v.a**2}x^2 - ${2 * v.b*v.a}x + ${v.b ** 2}$`,
     distracteurs: (v) => [
-      `$x^2 + ${v.a ** 2}$`,
-      `$x^2 - ${v.a ** 2}$`,
-      `$x^2 + ${2 * v.a}x + ${v.a ** 2}$`
+      `$${v.a**2}x^2 + ${v.b ** 2}$`,
+      `$${v.a**2}x^2 - ${v.b ** 2}$`,
+      `$${v.a**2}x^2 + ${2 * v.b*v.a}x + ${v.b ** 2}$`
     ]
   },
 
@@ -167,13 +169,14 @@ const QUESTIONS_CALCUL = [
   {
     id: "calc_010", theme: "calcul",groupe : "id_rem",
     niveau: ["techno", "specifique", "specialite"], cols: 2,
-    variables: { a: { min: 2, max: 7 } },
-    enonce: (v) => `Développer $(x + ${v.a})(x - ${v.a})$`,
-    bonneReponse: (v) => `$x^2 - ${v.a ** 2}$`,
+    variables: { a: { min: 2, max: 7 } ,
+                  b:{min:2,max:8} },
+    enonce: (v) => `Développer $(${v.a}x + ${v.b})(${v.a}x - ${v.b})$`,
+    bonneReponse: (v) => `$${v.a**2}x^2 - ${v.b ** 2}$`,
     distracteurs: (v) => [
-      `$x^2 + ${v.a ** 2}$`,
-      `$x^2 - ${2 * v.a}x - ${v.a ** 2}$`,
-      `$x^2 + ${2 * v.a}x - ${v.a ** 2}$`
+      `$${v.a**2}x^2 + ${v.b ** 2}$`,
+      `$${v.a**2}x^2 - ${2 * v.a*v.b}x - ${v.b ** 2}$`,
+      `$${v.a**2}x^2 + ${2 * v.a*v.b}x - ${v.b ** 2}$`
     ]
   },
 
@@ -235,19 +238,7 @@ const QUESTIONS_CALCUL = [
     ]
   },
 
-  // ── Inéquation du 1er degré ── done
-  {
-    id: "calc_014b", theme: "calcul", groupe : "inequation",
-    niveau: ["techno", "specifique", "specialite"], cols: 4,
-    variables: { a: { min: 2, max: 8 }, b: { min: 1, max: 12 } },
-    enonce: (v) => `Résoudre l'inéquation $-${v.a}x - ${v.b} > 0$`,
-    bonneReponse: (v) => `$x < ${frac(v.b, -v.a)}$`,
-    distracteurs: (v) => [
-      `$x > ${frac(v.b, -v.a)}$`,
-      `$x < ${frac(-v.b, -v.a)}$`,
-      `$x > ${frac(-v.b, -v.a)}$`
-    ]
-  },
+
 
   // ── Équation produit nul ── done
   {
@@ -306,7 +297,7 @@ const QUESTIONS_CALCUL = [
   },
   // ── Inverse du double d'un entier ──
   {
-    id: "calc_019", theme: "calcul", groupe : "frtomath",
+    id: "calc_019", theme: "calcul", groupe : "fr->math",
     niveau: ["techno", "specifique", "specialite"], cols: 4,
     variables: { n: { min: 3, max: 9 } },
     enonce: (v) => `L'inverse du double de $${v.n}$ est égal à :`,
@@ -318,7 +309,7 @@ const QUESTIONS_CALCUL = [
     ]
   },
   {
-    id: "calc_019b", theme: "calcul", groupe : "frtomath",
+    id: "calc_019b", theme: "calcul", groupe : "fr->math",
     niveau: ["techno", "specifique", "specialite"], cols: 4,
     variables: { n: { min: 4, max: 8 } },
     enonce: (v) => `Le triple de l'inverse de $${v.n}$ est égal à :`,
@@ -612,6 +603,67 @@ const QUESTIONS_CALCUL = [
     ];
   }
 },
+
+{
+  id: "calc_025", theme: "calcul",
+  groupe: "ordre de grandeur",
+  niveau: ["techno", "specifique", "specialite"], cols: 4,
+  variables: {
+    situation: { values: [0,1,2,3] },
+    a: { min: 1, max: 3 },   
+    b: { values:[100,50,200,300,400]}, 
+  },
+  enonce: (v) => {
+    var situations = [
+      {
+        enon: `$\\sqrt{${v.b-v.a}} \\times \\sqrt{${v.b+v.a}}$`,
+        ga : `$${v.b}$`,
+        dis : ['$' + v.b/10 + '$',
+              '$' + v.b/100 + '$',
+              '$' + v.b*10 + '$',],
+      },
+      {
+        enon: ` $${v.b-v.a} \\times ${v.b+v.a}$`,
+        ga : '$' + v.b*v.b + '$',
+        dis : ['$' + v.b*v.b/10 + '$',
+              '$' + v.b*v.b/100 + '$',
+              '$' + v.b*v.b*10 + '$',],
+      },
+      {
+        enon: `$${v.b-v.a/2*3}^2$`,
+        ga : `$${v.b*v.b}$`,
+        dis : ['$' + v.b*v.b/10 + '$',
+              '$' + v.b*v.b/100 + '$',
+              '$' + v.b + '$',],
+      },
+      {
+        enon: `$${v.b-v.a} \\times ${0.5-v.a/100}$`,
+        ga : `$${v.b/2}$`,
+        dis : ['$' + v.b/10/2 + '$',
+              '$' + v.b/100/2 + '$',
+              '$' + v.b*10/2 + '$',],
+      },
+      {
+        enon: `$10^${10-v.a} + 10^{${-10+v.a}}$`,
+        ga : `$10^${10-v.a}$`,
+        dis : [`$10^0$`,
+              '$0$',
+              `$100^${0}$`,],
+      },
+    ];
+
+     v._s = situations[v.situation];
+    
+
+    return 'On considère $A=$ ' + v._s.enon + ' . $A$ est environ égale à :' ;
+  },
+
+  bonneReponse: (v) => v._s.ga,
+
+  distracteurs: (v) => v._s.dis
+  
+},
+
 
 ];
 
