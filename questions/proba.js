@@ -211,8 +211,7 @@ const QUESTIONS_PROBA = [
         .end();
 
       var tikz = Fig.latex(0, 8, -3, 3)
-        .arbre().
-        text(8/4,3/4+.5,'0,'+v.p1)
+        .arbre().text(8/4,3/4+.5,'0,'+v.p1)
         .text(8/4,-3/4-.5,'0,'+(10-v.p1))
         .text(8*3/4,-.8,'0,'+v.p3)
         .text(8*3/4,-2.3,'0,'+(10-v.p3))
@@ -276,4 +275,21 @@ const QUESTIONS_PROBA = [
     }
   },
   
+
+  {
+    id: "proba_011", theme: "proba", groupe:"de",
+    niveau: ["techno", "specifique", "specialite"], cols: 4,
+    variables: { n: { min: 1, max: 4 },s:{min:0,max:3} },
+    enonce: function(v) { 
+      v.t=[['\\dfrac{'+ (10-v.n)+'}{10}', Math.round((1-v.n/10)*10)/10,'-(0.'+v.n+'-1)','\\dfrac{'+ (v.n)+'}{'+ (v.n+1)+'}'],
+          ['\\dfrac{'+ (10+v.n)+'}{10}',Math.round((1+v.n/5)*10)/10,'0.'+v.n+'-1','\\dfrac{'+ (v.n+1)+'}{'+ (v.n)+'}']]
+      
+      return `Soit $A$ un événement, sa probabilité peut être égale à :`},
+    bonneReponse: (v) => `$`+v.t[0][v.s]+'$',
+    distracteurs: (v) => [
+      `$`+v.t[1][(v.s+1)%4]+'$',
+      `$`+v.t[1][(v.s+2)%4]+'$',
+      `$`+v.t[1][(v.s+3)%4]+'$'
+    ]
+  },
 ];

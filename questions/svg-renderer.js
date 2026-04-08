@@ -18,157 +18,7 @@ var TC = {
   black:'#000000' ,
 };
 
-/**
- * Point d'entrée : convertit du code TikZ en SVG.
- * Détecte automatiquement le type de figure.
- */
-function tikzToSvg(code) {
-  if (code.includes('grow=right') || code.includes('child{') || code.includes('child {')) {
-    return renderTree(code);
-  }
-  if (code.includes('rectangle') && (code.includes('Q_1') || code.includes('Q_3') || code.includes('Me='))) {
-    return renderBoxplot(code);
-  }
-  if (code.includes('rectangle') && code.includes('node[below') && code.includes('An')) {
-    return renderBarchart(code);
-  }
-  if (code.includes('rectangle') && code.includes('node at') && code.includes('infty')) {
-    return renderSignTable(code);
-  }
-  return renderAxes(code);
-}
 
-// ── Repère cartésien + droite(s) ────────────────────────
-function renderAxes(code) {
-  var W = 260, ox = 30, oy = 165, s = 28, nx = 5, ny = 4;
-
-  var mDraw = code.match(/\\draw\[.*?\]\s*\(0\s*,\s*([\d.]+)\s*\)\s*--\s*\(\s*[\d.]+\s*,\s*([\d.]+)\s*\)/);
-  var aVal = 1, bVal = 0;
-  if (mDraw) {
-    var y0 = parseFloat(mDraw[1]), y5 = parseFloat(mDraw[2]);
-    aVal = (y5 - y0) / 5; bVal = y0;
-    ny = Math.ceil(Math.max(y5, y0)) + 1;
-  }
-
-  function px(x) { return ox + x * s; }
-  function py(y) { return oy - y * s; }
-
-  var out = '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + (oy + 24) + '" style="background:' + TC.bg + ';border-radius:8px">';
-
-  // Grille
-  for (var xi = 0; xi <= nx; xi++)
-    out += '<line x1="' + px(xi) + '" y1="20" x2="' + px(xi) + '" y2="' + (oy + 2) + '" stroke="' + TC.grid + '" stroke-width="1"/>';
-  for (var yi = 0; yi <= ny; yi++)
-    out += '<line x1="' + (ox - 2) + '" y1="' + py(yi) + '" x2="' + (px(nx) + 10) + '" y2="' + py(yi) + '" stroke="' + TC.grid + '" stroke-width="1"/>';
-
-  // Axes
-  out += '<defs><marker id="arr" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="' + TC.axis + '"/></marker></defs>';
-  out += '<line x1="' + (ox - 10) + '" y1="' + oy + '" x2="' + (px(nx) + 14) + '" y2="' + oy + '" stroke="' + TC.axis + '" stroke-width="1.8" marker-end="url(#arr)"/>';
-  out += '<line x1="' + ox + '" y1="' + (oy + 12) + '" x2="' + ox + '" y2="16" stroke="' + TC.axis + '" stroke-width="1.8" marker-end="url(#arr)"/>';
-
-  // Graduations
-  for (var gx = 1; gx <= nx; gx++) {
-    out += '<line x1="' + px(gx) + '" y1="' + (oy - 3) + '" x2="' + px(gx) + '" y2="' + (oy + 3) + '" stroke="' + TC.axis + '" stroke-width="1"/>';
-    out += '<text x="' + px(gx) + '" y="' + (oy + 14) + '" fill="' + TC.dim + '" font-size="10" text-anchor="middle">' + gx + '</text>';
-  }
-  for (var gy = 1; gy <= ny; gy++) {
-    out += '<line x1="' + (ox - 3) + '" y1="' + py(gy) + '" x2="' + (ox + 3) + '" y2="' + py(gy) + '" stroke="' + TC.axis + '" stroke-width="1"/>';
-    out += '<text x="' + (ox - 6) + '" y="' + (py(gy) + 4) + '" fill="' + TC.dim + '" font-size="10" text-anchor="end">' + gy + '</text>';
-  }
-
-  // Labels
-  out += '<text x="' + (px(nx) + 16) + '" y="' + (oy + 4) + '" fill="' + TC.axis + '" font-size="12" font-style="italic">x</text>';
-  out += '<text x="' + (ox + 5) + '" y="14" fill="' + TC.axis + '" font-size="12" font-style="italic">y</text>';
-  out += '<text x="' + (ox - 6) + '" y="' + (oy + 14) + '" fill="' + TC.dim + '" font-size="10" text-anchor="end">O</text>';
-
-  // Droite
-  var lineColor = code.includes('red') ? TC.red : TC.blue;
-  out += '<line x1="' + px(0) + '" y1="' + py(bVal) + '" x2="' + px(nx) + '" y2="' + py(aVal * nx + bVal) + '" stroke="' + lineColor + '" stroke-width="2.5"/>';
-  out += '<text x="' + (px(nx) + 4) + '" y="' + (py(aVal * nx + bVal) + 4) + '" fill="' + lineColor + '" font-size="12" font-style="italic">f</text>';
-
-  // Points remarquables
-  var mPoints = code.matchAll(/\\filldraw.*?\((\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\)\s*circle/g);
-  for (var mp of mPoints) {
-    var fpColor = mp[0].includes('red') ? TC.red : TC.blue;
-    out += '<circle cx="' + px(parseFloat(mp[1])) + '" cy="' + py(parseFloat(mp[2])) + '" r="4" fill="' + fpColor + '"/>';
-  }
-
-  // Tirets de lecture
-  var mDash = code.matchAll(/\\draw\[dashed.*?\]\s*\((\d+(?:\.\d+)?)\s*,\s*0\)\s*--\s*\((\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\)\s*--\s*\(0/g);
-  for (var md of mDash) {
-    var dashColor = md[0].includes('red') ? TC.red : TC.dim;
-    var dx = parseFloat(md[2]), dy2 = parseFloat(md[3]);
-    out += '<line x1="' + px(dx) + '" y1="' + oy + '" x2="' + px(dx) + '" y2="' + py(dy2) + '" stroke="' + dashColor + '" stroke-width="1" stroke-dasharray="4 3"/>';
-    out += '<line x1="' + ox + '" y1="' + py(dy2) + '" x2="' + px(dx) + '" y2="' + py(dy2) + '" stroke="' + dashColor + '" stroke-width="1" stroke-dasharray="4 3"/>';
-    out += '<text x="' + (ox - 6) + '" y="' + (py(dy2) + 4) + '" fill="' + dashColor + '" font-size="10" text-anchor="end">' + dy2 + '</text>';
-    var nodeLabel = code.includes('$?$') ? '?' : dx;
-    out += '<text x="' + px(dx) + '" y="' + (oy + 14) + '" fill="' + dashColor + '" font-size="10" text-anchor="middle">' + nodeLabel + '</text>';
-  }
-
-  out += '</svg>';
-  return out;
-}
-
-// ── Boîte à moustaches ──────────────────────────────────
-function renderBoxplot(code) {
-  var W = 340, H = 80, ax = 18, ay = 48, ht = 18, sc = 6.2;
-  function px(v) { return ax + v * sc; }
-
-  var allNums = [...code.matchAll(/\((\d{1,2})\s*,/g)].map(x => parseInt(x[1])).filter(n => n >= 5 && n <= 45);
-  var uniq = [...new Set(allNums)].sort((a, b) => a - b);
-  var vMin = uniq[0] || 5, vQ1 = uniq[1] || 12, vMed = uniq[2] || 20, vQ3 = uniq[3] || 28, vMax = uniq[4] || 38;
-
-  var out = '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '" style="background:' + TC.bg + ';border-radius:8px">';
-  out += '<line x1="' + (ax - 4) + '" y1="' + ay + '" x2="' + (W - 8) + '" y2="' + ay + '" stroke="' + TC.axis + '" stroke-width="1.5"/>';
-  for (var g = 0; g <= 45; g += 5) {
-    out += '<line x1="' + px(g) + '" y1="' + (ay - 3) + '" x2="' + px(g) + '" y2="' + (ay + 3) + '" stroke="' + TC.axis + '" stroke-width="1"/>';
-    out += '<text x="' + px(g) + '" y="' + (ay + 14) + '" fill="' + TC.dim + '" font-size="9" text-anchor="middle">' + g + '</text>';
-  }
-  out += '<line x1="' + px(vMin) + '" y1="' + ay + '" x2="' + px(vQ1) + '" y2="' + ay + '" stroke="' + TC.blue + '" stroke-width="2"/>';
-  out += '<line x1="' + px(vMin) + '" y1="' + (ay - ht / 2) + '" x2="' + px(vMin) + '" y2="' + (ay + ht / 2) + '" stroke="' + TC.blue + '" stroke-width="2"/>';
-  out += '<rect x="' + px(vQ1) + '" y="' + (ay - ht / 2) + '" width="' + (px(vQ3) - px(vQ1)) + '" height="' + ht + '" fill="' + TC.blue + '22" stroke="' + TC.blue + '" stroke-width="2"/>';
-  out += '<line x1="' + px(vMed) + '" y1="' + (ay - ht / 2) + '" x2="' + px(vMed) + '" y2="' + (ay + ht / 2) + '" stroke="' + TC.red + '" stroke-width="2.5"/>';
-  out += '<line x1="' + px(vQ3) + '" y1="' + ay + '" x2="' + px(vMax) + '" y2="' + ay + '" stroke="' + TC.blue + '" stroke-width="2"/>';
-  out += '<line x1="' + px(vMax) + '" y1="' + (ay - ht / 2) + '" x2="' + px(vMax) + '" y2="' + (ay + ht / 2) + '" stroke="' + TC.blue + '" stroke-width="2"/>';
-  out += '<text x="' + px(vQ1) + '" y="' + (ay - ht / 2 - 4) + '" fill="' + TC.blue + '" font-size="9" text-anchor="middle">Q₁=' + vQ1 + '</text>';
-  out += '<text x="' + px(vMed) + '" y="' + (ay - ht / 2 - 4) + '" fill="' + TC.red + '" font-size="9" text-anchor="middle">Me=' + vMed + '</text>';
-  out += '<text x="' + px(vQ3) + '" y="' + (ay - ht / 2 - 4) + '" fill="' + TC.blue + '" font-size="9" text-anchor="middle">Q₃=' + vQ3 + '</text>';
-  out += '</svg>';
-  return out;
-}
-
-// ── Diagramme en barres ─────────────────────────────────
-function renderBarchart(code) {
-  var W = 220, H = 150, ox = 30, oy = 120, bw = 42, gap = 28;
-
-  var vals = [...code.matchAll(/rectangle\s*\([^,]+,\s*0\)\s*rectangle\s*\([^,]+,\s*([\d.]+)\)/g)].map(m => parseFloat(m[1]));
-  if (vals.length < 2) {
-    var numMatch = [...code.matchAll(/\{([\d]+)\}/g)].map(m => parseInt(m[1])).filter(n => n > 10 && n < 1000);
-    vals = numMatch.length >= 2 ? [numMatch[0], numMatch[1]] : [100, 130];
-  }
-  var v0 = vals[0], v1 = vals[1];
-  var maxV = Math.ceil(Math.max(v0, v1) / 50) * 50 + 20;
-  var sc = (oy - 10) / maxV;
-
-  var out = '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '" style="background:' + TC.bg + ';border-radius:8px">';
-  out += '<line x1="' + ox + '" y1="8" x2="' + ox + '" y2="' + (oy + 2) + '" stroke="' + TC.axis + '" stroke-width="1.5"/>';
-  out += '<line x1="' + (ox - 2) + '" y1="' + oy + '" x2="' + (W - 8) + '" y2="' + oy + '" stroke="' + TC.axis + '" stroke-width="1.5"/>';
-  for (var yv = 0; yv <= maxV; yv += 50) {
-    var yp = oy - yv * sc;
-    out += '<line x1="' + (ox - 3) + '" y1="' + yp + '" x2="' + (ox + 2) + '" y2="' + yp + '" stroke="' + TC.axis + '" stroke-width="1"/>';
-    out += '<text x="' + (ox - 5) + '" y="' + (yp + 3) + '" fill="' + TC.dim + '" font-size="8" text-anchor="end">' + yv + '</text>';
-  }
-  var x1b = ox + gap, h1 = v0 * sc;
-  out += '<rect x="' + x1b + '" y="' + (oy - h1) + '" width="' + bw + '" height="' + h1 + '" fill="' + TC.blue + '44" stroke="' + TC.blue + '" stroke-width="1.5"/>';
-  out += '<text x="' + (x1b + bw / 2) + '" y="' + (oy - h1 - 4) + '" fill="' + TC.blue + '" font-size="10" text-anchor="middle">' + v0 + '</text>';
-  out += '<text x="' + (x1b + bw / 2) + '" y="' + (oy + 12) + '" fill="' + TC.dim + '" font-size="9" text-anchor="middle">An 1</text>';
-  var x2b = x1b + bw + gap, h2 = v1 * sc;
-  out += '<rect x="' + x2b + '" y="' + (oy - h2) + '" width="' + bw + '" height="' + h2 + '" fill="' + TC.green + '44" stroke="' + TC.green + '" stroke-width="1.5"/>';
-  out += '<text x="' + (x2b + bw / 2) + '" y="' + (oy - h2 - 4) + '" fill="' + TC.green + '" font-size="10" text-anchor="middle">' + v1 + '</text>';
-  out += '<text x="' + (x2b + bw / 2) + '" y="' + (oy + 12) + '" fill="' + TC.dim + '" font-size="9" text-anchor="middle">An 2</text>';
-  out += '</svg>';
-  return out;
-}
 
 
 // ═══════════════════════════════════════════════════════
@@ -189,7 +39,7 @@ function renderBarchart(code) {
 var Fig = {
 
   // ── Constantes de mise en page (px) ─────────────────
-  _PAD:  { l:28, r:24, t:18, b:22 },
+  _PAD:  { l:19, r:17, t:18, b:18 },
   _FS:   12,
   _COUNT: 0,                            // compteur global → ids uniques garantis
 
@@ -224,7 +74,7 @@ var Fig = {
     f._out = '<svg xmlns="http://www.w3.org/2000/svg"'
       + ' viewBox="0 0 ' + f._W + ' ' + f._H + '"'
       + ' width="' + f._W + '" height="' + f._H + '"'
-      + ' style="background:' + (bg || TC.bg) + ';border-radius:8px;display:block;margin:0 auto">'
+      + ' style="background:' + (bg || TC.bg) + ';border-radius:3px;display:block;margin:0 auto">'
       + '<defs>'
       + '<marker id="' + aid + '" markerWidth="7" markerHeight="7"'
       + ' refX="5" refY="3" orient="auto">'
@@ -240,13 +90,14 @@ var Fig = {
 
   // ── Init LaTeX ────────────────────────────────────────
   // Fig.latex(xmin, xmax, ymin, ymax)
-  latex: function(xmin, xmax, ymin, ymax,scale) {
+  latex: function(xmin, xmax, ymin, ymax,scale,scalediap) {
     scale= scale||.75;
+    scalediap = scalediap || scale;
     var f = this._make('latex');
     f._xmin = xmin; f._xmax = xmax;
     f._ymin = ymin; f._ymax = ymax;
     f._SC = 1; f._ox = 0; f._oy = 0;
-    f._out = '\\begin{tikzpicture}[scale=0.75, baseline=(current bounding box.west)]\n';
+    f._out = '\\begin{tikzpicture}[scale='+ scale +', baseline=(current bounding box.west)]\n';
     return f;
   },
 
@@ -453,6 +304,10 @@ var Fig = {
             : color === 'blue'  ? TC.blue
             : color === 'green' ? TC.green
             : TC.black;
+    color = color === 'red'   ? 'Red'
+            : color === 'blue'  ? 'Blue' 
+            : color === 'green' ? 'Green'
+            : 'black';
     var anch = anchor || 'middle';
     var fs   = this._FS;
     var tikzAnch = anchor === 'start' ? 'anchor=west'
@@ -501,6 +356,10 @@ var Fig = {
             : color === 'blue'  ? TC.blue
             : color === 'green' ? TC.green
             : TC.black;
+    color = color === 'red'   ? 'Red'
+            : color === 'blue'  ? 'Blue' 
+            : color === 'green' ? 'Green'
+            : 'black';
     var fs   = this._FS;
     var fsF  = fs * 0.85;          // police légèrement réduite pour num/den
     var px   = this._px(x);
@@ -551,7 +410,10 @@ var Fig = {
   // .line(a, b, xmin, xmax, color, label)
   affine: function(a, b, xmin, xmax, color, label) {
     var col = color === 'blue' ? TC.blue : color === 'green' ? TC.green : TC.red;
-    var lbl = label || '';
+    color = color === 'red'   ? 'Red'
+            : color === 'blue'  ? 'Blue' 
+            : color === 'green' ? 'Green'
+            : 'black';
     var x1 = xmin, y1 = a * xmin + b, x2 = xmax, y2 = a * xmax + b;
     return this._add(
       '<line x1="' + this._px(x1) + '" y1="' + this._py(y1)
@@ -570,6 +432,10 @@ var Fig = {
     height = height || 'above'
     dy=(height==='above') ? .5 : -.5;
     var col = color==='blue' ? TC.blue : color === 'red' ? TC.red : color === 'green' ? TC.green : TC.black;
+    color = color === 'red'   ? 'Red'
+            : color === 'blue'  ? 'Blue' 
+            : color === 'green' ? 'Green'
+            : 'black';
     return this._add(
       '<circle cx="' + this._px(x) + '" cy="' + this._py(y) + '" r="4" fill="' + col + '"/>',
       '\\filldraw[' + (color || 'black') + '] (' + x + ',' + y + ') circle (2pt);\n'
@@ -628,6 +494,10 @@ var Fig = {
     var fn = Fig._parseExpr(expr);
  
     var col = color === 'red' ? TC.red : color === 'green' ? TC.green : TC.blue;
+    color = color === 'black'   ? 'black'
+            : color === 'blue'  ? 'Blue' 
+            : color === 'green' ? 'Green'
+            : 'Red';
     var lbl = label || '';
  
     // ── SVG : polyline par segments ───────────────────
@@ -721,6 +591,44 @@ var Fig = {
     return this;
   },
 
+  tableauV : function(t,dx,lgt,esp){
+    lgt = lgt || 2; // espace de la premiere colonne
+    esp = esp || 3; // espace entre les valeurs de x
+    dx = dx || .5; // espace entre la deuxieme ligne et la première valeur
+    const wt = (t[0].length-2)*esp +lgt+dx*2; // largeur tableau
+    const nv = t[0].length-3; //nombre de valeurs remarquables
+    var hl = 1; // hauteur d'une ligne
+    const nl = t.length; //nombre de ligne
+    this.line(0,0,wt,0)  // premiere ligne 
+    for (var j = 1; j <= nl; j++){  //| lignes suivantes
+      this.line(0,-hl-(j-1)*hl*2,wt,-hl-(j-1)*hl*2)         //| 
+    }                                 
+    this.line(0,0,0,-(nl-1)*hl*2-hl, 'black')      //|
+    this.line(wt,0,wt,-(nl-1)*hl*2-hl, 'black')    //|  3 lignes verticales pour les deux colonnes
+    this.line(lgt,0,lgt,-(nl-1)*hl*2-hl,'black')   //|
+    this.text(lgt/2,-hl/2,t[0][0])          //|
+    for (var j =1;j<=nl -1; j++){           //| texte première colonne
+      this.text(lgt/2,(hl/2-j*hl*2)-hl/2,t[j][0]) //|
+    }
+    for (var j=1 ; j<= t[0].length-1 ; j++){
+      this.text(lgt+dx+(j-1)*esp,-hl/2,t[0][j])
+    }
+
+    function down(x,y,v){v.line(x+dx, y-dx, x -dx+esp , y+dx-2*hl, 'black', '' , '->', ) }
+    function up(x,y,v){v.line(x+dx,y+dx-2*hl , x -dx+esp ,y-dx , 'black', '' , '->' ,) }
+
+    for (var j=1 ; j<= t[1].length-1 ; j++){
+      for (var i=1; i<=t.length-1;i++){
+          (t[i][j]==='c') ? up(lgt+dx+esp*(j-2)/2,-hl,this)
+          : (t[i][j]==='d') ? down(lgt+dx+esp*(j-2)/2,-hl,this)
+          : (t[i][j-1]==='c'||t[i][j+1]==='d') ? this.text(lgt+dx+(j-1)*esp/2,-1.5*hl-(i-1)*hl*2,t[i][j]) 
+          : this.text(lgt+dx+(j-1)*esp/2,-hl/2-i*hl*2,t[i][j]);
+        }
+    }
+
+    return this;
+  },
+
 
 
   arbre : function(xmin,xmax,ymin,ymax){
@@ -746,6 +654,112 @@ var Fig = {
     .text(xmax,-ymax*3/4,'~B','black','middle','\\overline{B}');
   },
 
+
+  // ── Diagramme circulaire ──────────────────────────────
+// .camembert(data)
+//
+// data : tableau d'objets { val, color, label }
+//   val   : valeur numérique (pas forcément un %)
+//   color : 'red' | 'blue' | 'green' | 'black' | code hex '#...'
+//   label : texte affiché dans le secteur (ex: '30%', 'A', '')
+//
+// Exemple :
+//   Fig.svg(0,1,0,1).camembert([
+//     { val:30, color:'blue',  label:'30%' },
+//     { val:50, color:'red',   label:'50%' },
+//     { val:20, color:'green', label:'20%' },
+//   ]).end()
+//
+// Le camembert est centré dans le repère SVG, indépendamment
+// des coordonnées mathématiques (comme arbre et tableauSV).
+
+camembert: function(data) {
+  if (!data || !data.length) return this;
+
+  var W    = this._W || 260;   // largeur SVG en pixels
+  var H    = this._H || 260;   // hauteur SVG en pixels
+  var cx   = W / 2;
+  var cy   = H / 2;
+  var r    = Math.min(W, H) * 0.38;
+  var rLbl = r * 0.65;         // rayon pour les labels internes
+
+  var total = data.reduce(function(s, d) { return s + d.val; }, 0);
+
+  function resolveColor(c) {
+    if (c === 'red')   return TC.red;
+    if (c === 'blue')  return TC.blue;
+    if (c === 'green') return TC.green;
+    if (c === 'black') return TC.black;
+    return c;  // hex ou autre
+  }
+
+  function polarToCart(cx, cy, r, angleDeg) {
+    var rad = (angleDeg - 90) * Math.PI / 180;
+    return {
+      x: +(cx + r * Math.cos(rad)).toFixed(2),
+      y: +(cy + r * Math.sin(rad)).toFixed(2)
+    };
+  }
+
+  var svgOut  = '';
+  var tikzOut = '';
+  var angle   = 0;
+
+  data.forEach(function(d) {
+    var deg     = d.val / total * 360;
+    var endAngle = angle + deg;
+    var large   = deg > 180 ? 1 : 0;
+    var col     = resolveColor(d.color || 'blue');
+    d.color = d.color === 'red'   ? 'Red'
+            : d.color === 'blue'  ? 'Blue' 
+            : d.color === 'green' ? 'Green'
+            : 'black';
+
+    // ── SVG ──────────────────────────────────
+    var s = polarToCart(cx, cy, r, angle);
+    var e = polarToCart(cx, cy, r, endAngle);
+
+    svgOut += '<path d="M ' + cx + ' ' + cy
+      + ' L ' + s.x + ' ' + s.y
+      + ' A ' + r + ' ' + r + ' 0 ' + large + ' 1 ' + e.x + ' ' + e.y
+      + ' Z" fill="' + col + '" stroke="' + TC.bg + '" stroke-width="2"/>';
+
+    // Label SVG au centre du secteur
+    if (d.label) {
+      var mid = polarToCart(cx, cy, rLbl, angle + deg / 2);
+      svgOut += '<text x="' + mid.x + '" y="' + mid.y + '"'
+        + ' text-anchor="middle" dominant-baseline="central"'
+        + ' font-size="11" font-weight="600" fill="' + TC.bg + '">'
+        + d.label + '</text>';
+    }
+
+    // ── TikZ ─────────────────────────────────
+    // \draw[fill=color] (0,0) -- (angle:r) arc (angle:endAngle:r) -- cycle;
+    // TikZ angles : 0° = droite, sens antihoraire → on convertit
+    var tikzStart = 90 - angle;
+    var tikzEnd   = 90 - endAngle;
+    tikzOut += '\\fill[' + (d.color || 'Blue') + ']'
+      + ' (0,0) -- (' + tikzStart + ':' + (r/40).toFixed(2) + ')'
+      + ' arc (' + tikzStart + ':' + tikzEnd + ':' + (r/40).toFixed(2) + ')'
+      + ' -- cycle;\n';
+    // Contour
+    tikzOut += '\\draw[white,line width=2pt]'
+      + ' (0,0) -- (' + tikzStart + ':' + (r/40).toFixed(2) + ')'
+      + ' arc (' + tikzStart + ':' + tikzEnd + ':' + (r/40).toFixed(2) + ')'
+      + ' -- cycle;\n';
+    // Label TikZ
+    if (d.label) {
+      var midAngle = 90 - (angle + deg / 2);
+      var rL = (r / 40 * 0.65).toFixed(2);
+      tikzOut += '\\node[font=\\tiny\\bfseries,white] at ('
+        + midAngle + ':' + rL + ') {' + d.label + '};\n';
+    }
+
+    angle = endAngle;
+  });
+
+  return this._add(svgOut, tikzOut);
+},
 
 
 };
@@ -817,5 +831,8 @@ Fig._parseExpr = function(expr) {
     console.warn('Fig._parseExpr: cannot parse "' + expr + '" → "' + s + '"', e.message);
     return function() { return NaN; };
   }
+
+
+
 
 };

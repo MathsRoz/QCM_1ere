@@ -340,7 +340,7 @@ function katexRender(elOrId) {
   setTimeout(() => {
     const el = typeof elOrId === 'string' ? document.getElementById(elOrId) : elOrId;
     if (el && window.renderMathInElement)
-      renderMathInElement(el, {delimiters:[{left:'$',right:'$',display:false}], throwOnError:false});
+      renderMathInElement(el, {delimiters:[{left: '$$', right: '$$', display: true},{left:'$',right:'$',display:false}], throwOnError:false});
   }, 60);
 }
 </script>

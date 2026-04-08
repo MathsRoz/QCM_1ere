@@ -1,13 +1,4 @@
-/* ═══════════════════════════════════════════════════════════
-   style.css — Feuille de style commune
-   QCM Mathématiques Première
-   Palette Claude.ai : Crail #C15F3C · Pampas #F4F3EE · Cloudy #B1ADA1
-   ═══════════════════════════════════════════════════════════ */
 
-/* ═══════════════════════════════════════
-   PALETTE CLAUDE.AI
-   Crail #C15F3C · Pampas #F4F3EE · Cloudy #B1ADA1
-   ═══════════════════════════════════════ */
 :root {
   /* Fonds */
   --bg:      rgb(11, 17, 32);        
@@ -45,6 +36,47 @@
   --sans:   'DM Sans', sans-serif;
   --radius: 10px;
   --radius2: 7px;
+}
+
+/* ── Thème clair ──────────────────────────────────────── */
+body.light {
+  --bg:      rgb(255, 255, 255);
+  --card:    rgb(230, 235, 241);
+  --card2:   rgb(248, 248, 248);
+
+  --border:  rgba(235, 241, 248, 0.15);
+  --border2: rgba(255, 255, 255, 0.08);
+
+  --accent:  #63a1b4;
+  --accent2: #6395ac;
+  --accentL: rgba(54, 73, 128, 0.15);
+
+  --text:    #0c121b;
+  --text2:   #25303f;
+  --text3:   #333b47;
+
+  --green:   #1a9450;
+  --green2:  #127038;
+  --blue:    #2666a0;
+  --blue2:   #9fc4e4;
+  --red:     #b83030;
+  --amber:   #8a6010;
+  --orange:  #c05808;
+  --pur:     #7030a8;
+  --cyan:    #0a8080;
+  --yellow:  #906800;
+  --autre:   #3a8a08;
+}
+
+body.light::before {
+  background: linear-gradient(var(--bg), rgb(255, 255, 255) 0%, transparent 60%);
+}
+
+/* Transition douce au changement de thème */
+.theme-transitioning,
+.theme-transitioning * {
+  transition: background-color 0s ease, border-color 0s ease,
+              color 0s ease, box-shadow 0s ease !important;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -147,6 +179,5 @@ header {
 #toast.error   { border-left-color: var(--red); }
 
 /* ─── FIGURES ─── */
-.fig-wrap { display: flex; justify-content: center; margin: 14px 0; }
+.fig-wrap { display: flex; justify-content: center; margin: 3px 0; }
 .fig-wrap svg { max-width: 100%; height: auto; border-radius: 6px; overflow: visible; }
-

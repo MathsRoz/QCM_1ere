@@ -34,11 +34,12 @@ main { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding
 .section-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
 .section-sub { font-size: 14px; color: var(--text2); margin-bottom: 28px; }
 
-.warning {color:var(--red); 
+.warning {color:var(--card); 
   font-size: 22px; font-weight: 700; 
-  letter-spacing: -0.5px; padding: 10px; 
+  letter-spacing: -0.5px; padding: 10px 15px; 
   margin-bottom: 30px; 
-  border-radius: 15px;
+  border-radius: 10px;
+  background-color: var(--red);
   border: 2px solid var(--red);}
 
 
@@ -108,7 +109,7 @@ main { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding
 .toggle.on { background: var(--blue2); border-color: var(--blue); }
 .toggle::after {
   content: ''; position: absolute; top: 3px; left: 3px;
-  width: 16px; height: 16px; border-radius: 50%; background: var(--text);
+  width: 16px; height: 16px; border-radius: 50%; background: #eff2f3;
   transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
   box-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
@@ -381,6 +382,122 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
   .export-btns { flex-direction: column; }
   .export-btns .btn { width: 100%; justify-content: center; }
 }
+/* ─── MODE PRÉSENTATION ─── */
+.pres-overlay {
+  position: fixed; inset: 0; z-index: 9000;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  animation: fadeIn .2s ease;
+}
+@keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
+
+.pres-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 28px;
+  border-bottom: 1px solid var(--border2);
+  flex-shrink: 0;
+  position: relative;        /* ← ajouter */
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,.4);
+}
+.pres-counter {
+  font-family: var(--mono); font-size: 13px; color: var(--text3);
+}
+.pres-counter strong { color: var(--blue); }
+.pres-nav { display: flex; gap: 8px; align-items: center; }
+.pres-btn {
+  padding: 8px 18px; border-radius: 99px; border: none;
+  font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: all .2s;
+}
+.pres-btn-prev { background: var(--card2); color: var(--text2); }
+.pres-btn-prev:hover { color: var(--text); }
+.pres-btn-prev:disabled { opacity: .35; cursor: not-allowed; }
+.pres-btn-next { background: var(--blue); color: var(--bg); }
+.pres-btn-next:hover { opacity: .85; }
+.pres-btn-close {
+  background: none; color: var(--text3); font-size: 20px; padding: 4px 10px;
+  border-radius: 8px;
+}
+.pres-btn-close:hover { color: var(--text); background: var(--card2); }
+.pres-corr-btn {
+  background: var(--card2); color: var(--text2); border-radius:99px;
+  padding:6px 14px; font-size:12px; border:1px solid var(--border2);
+}
+.pres-corr-btn:hover { color:var(--text); }
+.pres-corr-btn.on { background:rgba(94,184,138,.1); color:var(--green); border-color:rgba(94,184,138,.3); }
+
+.pres-body {
+  flex: 1;
+  min-height: 0;              /* ← clé : permet à flex de contraindre la hauteur */
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: 24px;
+  overflow: hidden;           /* ← pas de scroll sur le body */
+}
+.pres-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff; border-radius: 16px;
+  padding: 10px;
+  box-shadow: 0 8px 40px rgba(0,0,0,.4);
+  overflow-y: auto;           /* ← scroll sur la carte si contenu trop long */
+}
+.pres-q-num {
+  font-family: var(--mono); font-size: 12px; color: var(--text3);
+  margin-bottom: 20px;
+}
+.pres-q-enonce {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;    /* ← centre verticalement dans l'espace disponible */
+  font-size: 22px; line-height: 1.8;
+  text-align: center;
+  color: #030303;
+}
+.pres-answers { display: grid; gap: 12px;  margin-top: auto; }
+.pres-answer {
+  display: flex; align-items: center; gap: 16px;
+   justify-content: center;   /* ← centre le contenu */
+  position: relative;        /* ← pour positionner la lettre */
+  padding: 5px 0px; border-radius: 12px;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.103);
+  background: #ffffff; border: 2px solid #030303;
+  font-size: 22px; line-height: 1.6; cursor: pointer;
+  transition: all .2s; font-family: var(--sans); text-align: center; width: 100%;
+  color:#030303
+}
+.pres-answer:hover { border-color: rgba(137,175,200,.4); background: rgba(137,175,200,.08); color:rgba(137,175,200,.4)  }
+.pres-answer.selected { border-color: var(--blue); background: rgba(137,175,200,.15); color:var(--blue);}
+.pres-answer.correct  { border-color: var(--green); background: rgba(109,206,138,.08); color:var(--green);}
+.pres-answer.wrong    { border-color: var(--red);   background: rgba(212,87,87,.08); color:var(--red);}
+.pres-letter {
+  position: absolute;
+  left: 5px; border-radius: 50%;
+  width: 36px; height: 36px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 14px; font-weight: 600;
+   color: #030303; transition: all .2s;
+}
+.pres-answer.selected .pres-letter {  color: var(--blue); }
+.pres-answer.correct  .pres-letter {  color: var(--green); }
+.pres-answer.wrong    .pres-letter {  color: var(--red); }
+
+.pres-progress {
+  position: absolute; bottom: 0; left: 0;
+  height: 3px; background: var(--blue);
+  transition: width .3s ease;
+}
+
+@media (max-width: 640px) {
+  .pres-card { padding: 24px 20px; }
+  .pres-q-enonce { font-size: 17px; }
+  .pres-answer { font-size: 14px; padding: 12px 16px; color:var(--text)}
+}
 </style>
 </head>
 <body>
@@ -390,6 +507,11 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
     <!-- <div class="logo-badge"> </div> -->
     <div class="logo-text">QCM Maths <span>Première</span></div>
   </div>
+  <button id="themeToggle" onclick="toggleThemeMode()" style="
+    background:none; border:none; cursor:pointer; font-size:18px;
+    padding:4px 8px; border-radius:8px; transition:all .2s;
+    color:var(--text3); line-height:1;
+  " title="Basculer thème clair/sombre">🌙</button>
   <div class="steps">
     <div class="step-pill active" id="step1" onclick="goToView('config')">
       <div class="step-num">1</div> Configuration
@@ -413,6 +535,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
      onmouseout="this.style.background='rgba(60, 122, 193, 0.08)'">
     📁 Banque
   </a>
+  
 </header>
 
 <main>
@@ -509,6 +632,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
       <button class="btn btn-blue" onclick="regenerate()">🔄 Régénérer</button>
       <button class="btn btn-green" id="btnSubmit" onclick="submitQCM()">✅ Soumettre</button>
       <button class="btn" id="btnCorrect" onclick="toggleCorrection()">👁️ Afficher le corrigé</button>
+      <button class="btn" onclick="openPresentation()">🖥️ Présentation</button>
       <button class="btn btn-blue" onclick="goToView('export')">📄 Exporter</button>
     </div>
     <div id="scoreBar" style="display:none" class="score-bar">
@@ -535,7 +659,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
       </label>
     </div>
     <div id="opts-beamer" class="export-options" style="display:none">
-      <div class="section-sub">La génération de diaporamas est encore expérimentale. Certaines questions peuvent s’afficher incorrectement.</div>
+      <div class="section-sub">La génération de diaporamas est encore expérimentale. Certaines questions peuvent s’afficher incorrectement. Un mode présentation est disponible sans génération de diaporamas</div>
       <div class="export-opt">
         <label>Thème</label>
         <select id="beamerTheme" onchange="updateExport()">
@@ -616,6 +740,7 @@ let state = {
   submitted: false,
   showCorrection: false,
   exportTab: 'exam',
+  seed: null,
 };
 
 // ═══════════════════════════════════════════════════════
@@ -719,11 +844,33 @@ function shuffle(arr) {
   for (let i=a.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
   return a;
 }
-function generateQCM() {
+
+// ── Générateur pseudo-aléatoire déterministe (Mulberry32) ──
+function makeRNG(seed) {
+  return function() {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+function generateQCM(seed) {
   const pool = filterBank();
   if (!pool.length) { showToast('Aucune question disponible.','error'); return; }
+
+  // Seed : fournie (reproduction) ou aléatoire (nouveau QCM)
+  state.seed = (seed !== undefined) ? +seed : Math.floor(Math.random() * 1e9);
+
+  // Patcher Math.random pendant toute la génération
+  const _orig = Math.random;
+  Math.random = makeRNG(state.seed);
+
   const n = Math.min(state.numQuestions, pool.length);
   state.generatedQuestions = shuffle(dedupeGroups(pool)).slice(0,n).map(instantiateQuestion);
+
+  Math.random = _orig;   // restaurer
+
   state.userAnswers = {};
   state.submitted = false;
   state.showCorrection = false;
@@ -758,7 +905,8 @@ function renderPreview() {
     themes.map(t=>`<div class="meta-badge meta-orange">${themeNames[t]||t}</div>`).join('')+
     `<div class="meta-badge meta-green">${state.generatedQuestions.length} questions</div>`+
     `<div class="meta-badge meta-gray">${state.filterInclusive?'Inclusif':'Strict'}</div>`+
-    `<div class="meta-badge meta-gray">${new Date().toLocaleDateString('fr-FR')}</div>`;
+    `<div class="meta-badge meta-gray">${new Date().toLocaleDateString('fr-FR')}</div>`+
+    `<div class="meta-badge" style="color:var(--amber);cursor:pointer" title="Cliquer pour copier le lien" onclick="copySeedLink()">🎲 ${state.seed}</div>`;
   document.getElementById('scoreBar').style.display = 'none';
   document.getElementById('btnSubmit').style.display = '';
   document.getElementById('btnCorrect').textContent = '👁️ Afficher le corrigé';
@@ -773,10 +921,10 @@ function renderPreview() {
   setTimeout(() => {
     if (window.renderMathInElement) {
       renderMathInElement(document.body, {
-        delimiters:[{left:'$',right:'$',display:false}], throwOnError:false
+        delimiters:[{left: '$$', right: '$$', display: true},{left:'$',right:'$',display:false}], throwOnError:false
       });
     }
-  }, 80);
+  }, 300);
 }
 
 function renderQuestion(q, idx, container) {
@@ -851,7 +999,23 @@ function buildContent(container, str) {
       container.appendChild(wrap);
     } else if (part) {
       const span = document.createElement('span');
-      span.innerHTML = part.replace(/\\\\\s*/g, '<br>');
+      // Remplacer \\ par <br> uniquement hors des blocs $...$ et $$...$$
+      const safe = part.replace(/((\$\$[\s\S]*?\$\$)|(\$[^$]*?\$))|(\\\\\s*)/g, (m, math, d, i, br) => {
+        if (math) return math;   // bloc math → préserver tel quel
+        if (br)   return '<br>'; // \\ hors math → retour à la ligne
+        return m;
+      });
+      span.innerHTML = safe;
+      // Rendu KaTeX immédiat sur ce span (évite le flash de code brut)
+      if (window.renderMathInElement) {
+        renderMathInElement(span, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$',  right: '$',  display: false},
+          ],
+          throwOnError: false
+        });
+      }
       container.appendChild(span);
     }
   });
@@ -884,7 +1048,7 @@ function submitQCM() {
   document.getElementById('scoreLabel').textContent = 'soit '+pct+'% de bonnes réponses';
   document.getElementById('scoreBar').style.display = 'flex';
   document.getElementById('btnSubmit').style.display = 'none';
-  setTimeout(()=>{ if(window.renderMathInElement) renderMathInElement(document.body,{delimiters:[{left:'$',right:'$',display:false}],throwOnError:false}); },80);
+  setTimeout(()=>{ if(window.renderMathInElement) renderMathInElement(document.body,{delimiters:[{left: '$$', right: '$$', display: true},{left:'$',right:'$',display:false}],throwOnError:false}); },80);
 }
 function toggleCorrection() {
   state.showCorrection = !state.showCorrection;
@@ -903,7 +1067,7 @@ function toggleCorrection() {
       }
     });
   });
-  setTimeout(()=>{ if(window.renderMathInElement) renderMathInElement(document.body,{delimiters:[{left:'$',right:'$',display:false}],throwOnError:false}); },80);
+  setTimeout(()=>{ if(window.renderMathInElement) renderMathInElement(document.body,{delimiters:[{left:'$',right:'$',display:false}],throwOnError:false}); },200);
 }
 
 // ═══════════════════════════════════════════════════════
@@ -988,8 +1152,225 @@ updateFilterInfo();
 syncNum(12);
 document.addEventListener('DOMContentLoaded', () => {
   if (window.renderMathInElement)
-    renderMathInElement(document.body,{delimiters:[{left:'$',right:'$',display:false}],throwOnError:false});
+    renderMathInElement(document.body,{delimiters:[{left: '$$', right: '$$', display: true},{left:'$',right:'$',display:false}],throwOnError:false});
 });
+
+// ── Copier le lien avec la seed ──────────────────────────
+function copySeedLink() {
+  const params = new URLSearchParams();
+  params.set('seed',      state.seed);
+  params.set('level',     state.selectedLevel);
+  params.set('inclusive', state.filterInclusive ? '1' : '0');
+  params.set('n',         state.numQuestions);
+  if (state.selectedThemes.length) params.set('themes', state.selectedThemes.join(','));
+  const url = location.origin + location.pathname + '?' + params.toString();
+  navigator.clipboard.writeText(url).then(() => showToast('Lien copié ✓', 'success'));
+}
+
+// ── Restaurer depuis l'URL si seed présente ──────────────
+(function() {
+  const p = new URLSearchParams(location.search);
+  if (!p.get('seed')) return;
+
+  const seed   = +p.get('seed');
+  const level  = p.get('level')  || 'specialite';
+  const incl   = p.get('inclusive') !== '0';
+  const n      = +p.get('n') || 12;
+  const themes = p.get('themes') ? p.get('themes').split(',') : [];
+
+  state.selectedLevel   = level;
+  state.filterInclusive = incl;
+  state.numQuestions    = n;
+  state.selectedThemes  = themes;
+
+  document.querySelectorAll('.level-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.lvl === level));
+  document.getElementById('filterToggle').classList.toggle('on', incl);
+  document.getElementById('filterLabel').textContent = incl ? 'Inclusif' : 'Strict';
+  syncNum(n);
+  if (themes.length) {
+    document.querySelectorAll('.theme-card').forEach(c => {
+      if (themes.includes(c.dataset.theme)) c.classList.add('selected');
+    });
+  }
+  updateFilterInfo();
+  generateQCM(seed);
+})();
+
+// ═══════════════════════════════════════════════════════
+//  MODE PRÉSENTATION
+// ═══════════════════════════════════════════════════════
+const pres = {
+  idx: 0,
+  showCorr: false,
+  answers: {},
+};
+
+function openPresentation() {
+  if (!state.generatedQuestions.length) return;
+  pres.idx = 0;
+  pres.showCorr = false;
+  pres.answers = {};
+
+  // Créer l'overlay une seule fois
+  const overlay = document.createElement('div');
+  overlay.className = 'pres-overlay';
+  overlay.id = 'presOverlay';
+  overlay.innerHTML = `
+    <div class="pres-header" id="presHeader"></div>
+    <div class="pres-body" id="presBody">
+      <div class="pres-card" id="presCard" style="position:relative"></div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  overlay._keyHandler = (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); presGo(1); }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); presGo(-1); }
+    if (e.key === 'Escape')     closePresentation();
+    if (e.key === 'c' || e.key === 'C') togglePresCorr();
+  };
+  document.addEventListener('keydown', overlay._keyHandler);
+
+  renderPresSlide();
+}
+
+function renderPresSlide() {
+  const questions = state.generatedQuestions;
+  const n = questions.length;
+  const q = questions[pres.idx];
+  const letters = ['A','B','C','D'];
+  const cols = Math.min(q.cols || 4, q.reponses.length);
+  const gridCols = cols === 1 ? '1fr 1fr' : cols === 2 ? '1fr 1fr' : cols === 3 ? '1fr 1fr 1fr' : '1fr 1fr 1fr 1fr';
+
+  // ── Header ─────────────────────────────────────────
+  document.getElementById('presHeader').innerHTML = `
+    <div class="pres-counter">Question <strong>${pres.idx + 1}</strong> / ${n}</div>
+    <div class="pres-nav">
+      <button class="pres-btn pres-corr-btn${pres.showCorr ? ' on' : ''}"
+        onclick="togglePresCorr()">
+        ${pres.showCorr ? '🙈 Masquer' : '👁️ Corrigé'}
+      </button>
+      <button class="pres-btn pres-btn-prev" onclick="presGo(-1)"
+        ${pres.idx === 0 ? 'disabled' : ''}> Précédente</button>
+      <button class="pres-btn pres-btn-next" onclick="presGo(1)">
+        ${pres.idx === n - 1 ? 'Terminer' : 'Suivante'}
+      </button>
+      <button class="pres-btn pres-btn-close" onclick="closePresentation()" title="Fermer">✕</button>
+    </div>`;
+
+  // ── Carte ──────────────────────────────────────────
+  const card = document.getElementById('presCard');
+  card.innerHTML = '';
+
+  // // Numéro
+  // const qnum = document.createElement('div');
+  // qnum.className = 'pres-q-num';
+  // qnum.textContent = 'Q' + (pres.idx + 1);
+  // card.appendChild(qnum);
+
+  // Énoncé
+  const enonce = document.createElement('div');
+  enonce.className = 'pres-q-enonce';
+  buildContent(enonce, q.enonce);
+  card.appendChild(enonce);
+
+  // Réponses
+  const grid = document.createElement('div');
+  grid.className = 'pres-answers';
+  grid.style.gridTemplateColumns = gridCols;
+  const sel = pres.answers[pres.idx];
+
+  q.reponses.forEach((rep, ri) => {
+    const btn = document.createElement('button');
+    btn.className = 'pres-answer';
+    const isCorrect = rep === q.bonneReponse;
+    const isSelected = sel === ri;
+
+    if (pres.showCorr) {
+      if (isCorrect) btn.classList.add('correct');
+      if (isSelected && !isCorrect) btn.classList.add('wrong');
+    } else if (isSelected) {
+      btn.classList.add('selected');
+    }
+
+    btn.onclick = () => {
+      if (pres.showCorr) return;
+      pres.answers[pres.idx] = ri;
+      renderPresSlide();
+    };
+
+    const letter = document.createElement('div');
+    letter.className = 'pres-letter';
+    letter.textContent = letters[ri];
+
+    const content = document.createElement('div');
+   
+    buildContent(content, rep);
+
+    btn.appendChild(letter);
+    btn.appendChild(content);
+    grid.appendChild(btn);
+  });
+  card.appendChild(grid);
+
+  // Barre de progression
+  const prog = document.createElement('div');
+  prog.className = 'pres-progress';
+  prog.style.width = ((pres.idx + 1) / n * 100) + '%';
+  document.getElementById('presHeader').appendChild(prog);
+
+  // KaTeX
+  setTimeout(() => {
+    if (window.renderMathInElement)
+      renderMathInElement(card, {delimiters:[{left: '$$', right: '$$', display: true},{left:'$',right:'$',display:false}], throwOnError:false});
+  }, 200);
+}
+
+function presGo(dir) {
+  const n = state.generatedQuestions.length;
+  const newIdx = pres.idx + dir;
+  if (newIdx < 0) return;
+  if (newIdx >= n) { closePresentation(); return; }
+  pres.idx = newIdx;
+  renderPresSlide();
+}
+
+function togglePresCorr() {
+  pres.showCorr = !pres.showCorr;
+  renderPresSlide();
+}
+
+function closePresentation() {
+  const overlay = document.getElementById('presOverlay');
+  if (overlay) {
+    document.removeEventListener('keydown', overlay._keyHandler);
+    overlay.remove();
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  THÈME CLAIR / SOMBRE
+// ═══════════════════════════════════════════════════════
+function toggleThemeMode() {
+  // Activer les transitions seulement au moment du basculement
+  document.body.classList.add('theme-transitioning');
+  const isLight = document.body.classList.toggle('light');
+  document.getElementById('themeToggle').textContent = isLight ? '🌞' : '🌙';
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  // Retirer après la transition
+  setTimeout(() => document.body.classList.remove('theme-transitioning'), 300);
+}
+
+// Restaurer le thème sauvegardé
+(function() {
+  if (localStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light');
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('themeToggle');
+      if (btn) btn.textContent = '🌞';
+    });
+  }
+})();
 </script>
 </body>
 </html>

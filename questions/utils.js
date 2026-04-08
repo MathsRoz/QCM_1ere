@@ -149,3 +149,64 @@ function fimage(a, s) {
   // Arrondir pour éviter 2.9999999999 au lieu de 3
   return parseFloat(result.toPrecision(10));
 }
+
+
+
+function makeTable(rows, opts) {
+  opts = opts || {};
+  var hasHeader = (opts.header !== false);
+  var nCols = rows.reduce(function(m, r) { return Math.max(m, r.length); }, 0);
+ 
+  // Alignements par colonne (défaut : centré)
+  var aligns = opts.align || [];
+  var cssAlign = function(ci) {
+    var a = aligns[ci] || 'c';
+    return a === 'l' ? 'left' : a === 'r' ? 'right' : 'center';
+  };
+  var texAlign = function(ci) {
+    return aligns[ci] || 'c';
+  };
+ 
+  // ── HTML ──────────────────────────────────────────────
+  var borderStyle = '1px solid rgba(137,175,200,0.35)';
+  var cellPad = '6px 14px';
+  var html = '<table style="border-collapse:collapse;margin:12px auto;font-size:14px">';
+ 
+  rows.forEach(function(row, ri) {
+    var isHead = hasHeader && ri === 0;
+    html += '<tr>';
+    row.forEach(function(cell, ci) {
+      var tag = isHead ? 'th' : 'td';
+      html += '<' + tag + ' style="'
+        + 'border:' + borderStyle + ';'
+        + 'padding:' + cellPad + ';'
+        + 'text-align:' + cssAlign(ci) + ';'
+        + (isHead ? 'font-weight:600;background:rgba(137,175,200,0.1);' : '')
+        + '">' + cell + '</' + tag + '>';
+    });
+    html += '</tr>';
+  });
+  html += '</table>';
+ 
+  // ── LaTeX ─────────────────────────────────────────────
+  // Colonnes : |c|c|c| selon alignements
+  var colSpec = '|' + Array.from({length: nCols}, function(_, ci) {
+    return texAlign(ci);
+  }).join('|') + '|';
+ 
+  var tex = '\\begin{center}\n\\begin{tabular}{' + colSpec + '}\n\\hline\n';
+ 
+  rows.forEach(function(row, ri) {
+    var isHead = hasHeader && ri === 0;
+    var cells = Array.from({length: nCols}, function(_, ci) {
+      return (row[ci] !== undefined) ? String(row[ci]) : '';
+    });
+    var line = cells.join(' & ') + ' \\\\\n\\hline\n';
+    if (isHead) line = '\\textbf{' + cells.join('} & \\textbf{') + '} \\\\\n\\hline\\hline\n';
+    tex += line;
+  });
+ 
+  tex += '\\end{tabular}\n\\end{center}';
+ 
+  return '%%SVG' + html + '%%ENDSVG%%%%TIKZ' + tex + '%%ENDTIKZ%%';
+}

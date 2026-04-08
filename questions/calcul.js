@@ -77,6 +77,20 @@ const QUESTIONS_CALCUL = [
     }
   },
 
+  {
+    id: "calc_003b", theme: "calcul", groupe :"fraction",
+    niveau: ["techno", "specifique"], cols: 2,
+    variables: { a: {values:[20,40,50,60,70,80]} },
+    enonce: (v) => {
+      return 'Voici trois nombres.\\\\ $A='+ frac(v.a,100)+';\\quad B='+frac(v.a-1,100)+';\\quad C='+((v.a+1)/100).toFixed(2)+' $ \\\\ Le classement par ordre croissant de ces trois nombres est :'},
+    bonneReponse: (v) => '$ C < A < B $',
+    distracteurs: (v) => [
+      '$ A < B < C$',
+      '$  B < A < C $',
+      '$ C < B < A $',
+    ]
+  },
+
   // ── Puissances : produit ── done
   {
     id: "calc_004", theme: "calcul", groupe :"puissance",
@@ -324,7 +338,7 @@ const QUESTIONS_CALCUL = [
   // ── Calcul avec la relation F = a + b/(cd) ──
   // Valeurs fixées : a=1/2, b=3, c=4, d=-1/4 → F = 1/2 + 3/(4×(-1/4)) = 1/2 - 3 = -5/2
   {
-    id: "calc_020", theme: "calcul",
+    id: "calc_020", theme: "calcul", groupe :'calcul_w/_frac',
     niveau: ["techno", "specifique", "specialite"], cols: 4,
     variables: {a : {min:2,max:8}, b : {min:2,max:9},c : {min:2,max:8}},
     enonce: (v) =>
@@ -338,12 +352,25 @@ const QUESTIONS_CALCUL = [
       `$`+frac(1-v.b,-v.a+1)+`$`
     ]
   },
-
+  {
+    id: "calc_020b", theme: "calcul", groupe :'calcul_w/_frac',
+    niveau: ["techno", "specifique", "specialite"], cols: 4,
+    variables: {a : {min:2,max:8}, b : {min:2,max:7},c : {min:2,max:8}},
+    enonce: function(v) {
+      v.c=(v.c===v.b)? v.c+1:v.c;
+      return `On considère $A=\\dfrac{${v.a}}{1-\\dfrac{${v.b}}{${v.c}}}$. On a :`},
+    bonneReponse: (v) => `$`+frac(v.a*v.c,v.c-v.b)+`$`,
+    distracteurs: (v) => [
+      `$`+frac(v.a*v.c,1-v.b)+`$`,
+      `$`+frac(v.a*v.c,v.b)+`$`,
+      `$`+frac(v.a,1-v.b)+`$`
+    ]
+  },
 
   {
     id: "calc_021_isol_var", theme: "calcul",
     niveau: ["techno", "specifique", "specialite"], cols: 2,
-    variables: { f: { values: [0, 1, 2, 3, 4, 5, 6, 7,8] } },
+    variables: { f: { values: [0, 1, 2, 3, 4, 5, 6, 7,8,9] } },
     enonce: (v) => {
       const formules = [
         // [énoncé, variable isolée, bonne réponse, dist1, dist2, dist3]
@@ -419,6 +446,14 @@ const QUESTIONS_CALCUL = [
           'u=x+y',
           'x,y,u'
         ],
+        ['V=\\dfrac{1}{3}\\pi r^2h', 'h',
+          'h=\\dfrac{\\pi r^2}{3V}',
+          'h=\\dfrac{V}{3\\pi r}',
+          'h=\\dfrac{\\sqrt{V}}{\\pi r}',
+        'h=\\dfrac{3V}{\\pi r}',
+
+        'V,h,r'
+        ]
       ];
       const formule = formules[v.f];
       v._formules = formule;

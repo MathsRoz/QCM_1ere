@@ -241,14 +241,14 @@ const QUESTIONS_FONCTIONS = [
 
       return 'On donne la courbe de $f$ ci-contre. '
            + '%%SVG' + svg + '%%ENDSVG%%%%TIKZ' + tikz + '%%ENDTIKZ%%'
-           + 'Résoudre $f(x)=' + (-v.k)*v.gy + '$';
+           + 'Résoudre ${f(x)=' + (-v.k)*v.gy + '}$';
     },
     bonneReponse: function(v) { return (v.r1===v.r2)? '$x='+v.r1*v.gx+'$': '$x='+v.r1*v.gx +'$ ou $x='+v.r2*v.gx  + '$'; },
     distracteurs: function(v) {
       return [
         (v.r1===v.r2)? '$x='+(-v.r1*v.gx)+'$' :'$x='+v.r1*v.gx + '$',
         (v.r1===v.r2)? '$x='+((v.x0+1)*v.gx)+'$' :'$x='+v.r2*v.gx + '$',
-        '$x='+ (fimage(-v.k,simplExpr(v.a+'*4(x-'+v.r1+')(x-'+v.r2+')/('+v.y0+')-'+v.k))*v.gy).toFixed(0) + '$',
+        '$x='+ (fimage(-v.k,simplExpr(v.a+'*4(x-'+v.r1*v.gx+')(x-'+v.r2*v.gx+')/('+v.y0+')-'+v.k))*v.gy).toFixed(0) + '$',
       ];
     }
   },
@@ -286,7 +286,7 @@ const QUESTIONS_FONCTIONS = [
     enonce: function(v) {
       v._a = v.a; v._b = v.b;
       const expr = v.a + 'x+' +v.b;
-      return 'Laquelle de ces courbes peut représenter la fonction $f$ définie par $f(x) = ' + simplExpr(expr) + '$' + ' ?';
+      return 'Laquelle de ces courbes peut représenter la fonction $f$ définie par ${f(x) = ' + simplExpr(expr) + '}$' + ' ?';
     },
  
     bonneReponse: function(v) {
@@ -569,7 +569,7 @@ const QUESTIONS_FONCTIONS = [
       var s1 = (v.a*v.b<0) ? '+' : '-';
       var s2 = (v.a*v.b>0) ? '+' : '-';
 
-      var svg = Fig.svg(0, 7, -2, 0)
+      var svg = Fig.svg(.6, 6.5, -1.5, -.5)
         .tableauS([['x','-∞',v.b,'+∞'],['f(x)',s1,'0',s2]]).end();
 
       var tikz = Fig.latex(0, 7, -2, 0)
@@ -580,13 +580,13 @@ const QUESTIONS_FONCTIONS = [
     },
  
     bonneReponse: function(v) {
-     return '$f(x)='+ simplExpr(-v.a +'x+'+v.b*v.a) +'$' 
+     return '${f(x)='+ simplExpr(-v.a +'x+'+v.b*v.a) +'}$' 
     },
  
     distracteurs: function(v) {
-      return ['$f(x)='+ simplExpr(v.a +'x+'+v.b*v.a) +'$',
-              '$f(x)='+ simplExpr(v.a +'x+'+ (-v.b*v.a)) +'$',
-              '$f(x)='+ simplExpr(-v.a +'x+'+ (-v.b*v.a)) +'$'
+      return ['${f(x)='+ simplExpr(v.a +'x+'+v.b*v.a) +'}$',
+              '${f(x)='+ simplExpr(v.a +'x+'+ (-v.b*v.a)) +'}$',
+              '${f(x)='+ simplExpr(-v.a +'x+'+ (-v.b*v.a)) +'}$'
             ];
     }
   },
@@ -600,11 +600,11 @@ const QUESTIONS_FONCTIONS = [
     },
     enonce: function(v) {
       if (v._deduping) return '';
-      return 'Le tableau de signes de la fonction $f$ définie sur $\\mathbb{R}$ apr $f(x)=' + simplExpr(v.a+'x+'+v.b*v.a) +'$ est :' ;
+      return 'Le tableau de signes de la fonction $f$ définie sur $\\mathbb{R}$ apr ${f(x)=' + simplExpr(v.a+'x+'+v.b*v.a) +'}$ est :' ;
     },
     
     aux: function(a,s1,s2) {
-      var svg = Fig.svg(0, 7, -2, 0)
+      var svg = Fig.svg(.6, 6.5, -1.5, -.5)
         .tableauS([['x','-∞',a,'+∞'],['f(x)',s1,'0',s2]]).end();
 
       var tikz = Fig.latex(0, 7, -2, 0)
@@ -647,11 +647,11 @@ const QUESTIONS_FONCTIONS = [
 
       (Math.abs(v.b)===Math.abs(v.d)) ? v.d-- : ' ' ;
 
-      return 'Le tableau de signes de la fonction $f$ définie sur $\\mathbb{R}$ par $f(x)=' + simplExpr('('+v.a+'x+'+v.b*v.a+')('+v.c+'x+'+v.d*v.c+')') +'$ est :';
+      return 'Le tableau de signes de la fonction $f$ définie sur $\\mathbb{R}$ par ${f(x)=' + simplExpr('('+v.a+'x+'+v.b*v.a+')('+v.c+'x+'+v.d*v.c+')') +'}$ est :';
     },
     
     aux: function(a,b,s1,s2) {
-      var svg = Fig.svg(0, 9, -2, 0)
+      var svg = Fig.svg(.6, 8.5, -1.5, -.5)
         .tableauS([['x','-∞',a,b,'+∞'],['f(x)',s1,'0',s2,'0',s1]]).end();
 
       var tikz = Fig.latex(0, 9, -2, 0)
@@ -662,15 +662,15 @@ const QUESTIONS_FONCTIONS = [
     },
 
     bonneReponse: function(v) {
-      let [s1,s2]= (v.a*v.c>0)? ['-','+']:['+','-'] ;
-     return this.aux(-v.b,-v.d,s1,s2) 
+      let [s1,s2]= (v.a*v.c<0)? ['-','+']:['+','-'] ;
+     return this.aux(Math.min(-v.b,-v.d),Math.max(-v.b,-v.d),s1,s2) 
     },
  
     distracteurs: function(v) {
-      let [s1,s2]= (v.a*v.c>0)? ['-','+']:['+','-'] ;
-      return [this.aux(-v.b,-v.d,s2,s1) ,
-              this.aux(v.b,v.d,s1,s2) ,
-              this.aux(v.b,v.d,s2,s1) 
+      let [s1,s2]= (v.a*v.c<0)? ['-','+']:['+','-'] ;
+      return [this.aux(Math.min(-v.b,-v.d),Math.max(-v.b,-v.d),s2,s1) ,
+              this.aux(Math.min(v.b,v.d),Math.max(v.b,v.d),s1,s2) ,
+              this.aux(Math.min(v.b,v.d),Math.max(v.b,v.d),s2,s1)  
             ];
     }
   },
@@ -694,7 +694,7 @@ const QUESTIONS_FONCTIONS = [
     },
     
     aux: function(a,b,s1,s2) {
-      var svg = Fig.svg(0, 9, -2, 0)
+      var svg = Fig.svg(.6, 8.5, -1.5, -.5)
         .tableauS([['x','-∞',Math.min(a,b),Math.max(a,b),'+∞'],['f(x)',s1,'0',s2,'0',s1]]).end();
 
       var tikz = Fig.latex(0, 9, -2, 0)
@@ -705,13 +705,13 @@ const QUESTIONS_FONCTIONS = [
     },
 
     bonneReponse: function(v) {
-     return '$f(x)=' + simplExpr('('+v.a+'x+'+v.b*v.a+')('+v.c+'x+'+v.d*v.c+')') +'$';
+     return '${f(x)=' + simplExpr('('+v.a+'x+'+v.b*v.a+')('+v.c+'x+'+v.d*v.c+')') +'}$';
     },
  
     distracteurs: function(v) {
-      return ['$f(x)=' + simplExpr('('+(-v.a)+'x+'+(-v.b*v.a)+')('+(-v.c)+'x+'+(v.d*v.c)+')') +'$',
-              '$f(x)=' + simplExpr('('+(-v.a)+'x+'+(-v.b*v.a)+')('+v.c+'x+'+v.d*v.c+')') +'$',
-              '$f(x)=' + simplExpr('('+v.a+'x+'+v.b*v.a+')('+(-v.c)+'x+'+(-v.d*v.c)+')') +'$'
+      return ['${f(x)=' + simplExpr('('+(-v.a)+'x+'+(-v.b*v.a)+')('+(-v.c)+'x+'+(v.d*v.c)+')') +'}$',
+              '${f(x)=' + simplExpr('('+(-v.a)+'x+'+(-v.b*v.a)+')('+v.c+'x+'+v.d*v.c+')') +'}$',
+              '${f(x)=' + simplExpr('('+v.a+'x+'+v.b*v.a+')('+(-v.c)+'x+'+(-v.d*v.c)+')') +'}$'
             ];
     }
   },
@@ -720,7 +720,7 @@ const QUESTIONS_FONCTIONS = [
   {
     id: 'fonc_019_degre3', theme: 'fonctions',
     groupe: 'graph -> signe',
-    niveau: ['techno', 'specifique', 'specialite'], cols: 1,
+    niveau: ['techno', 'specifique', 'specialite'], cols: 2,
     variables: {
       a:  { values: [-1,1] },
       b: {values: [-1,1]},
@@ -730,7 +730,7 @@ const QUESTIONS_FONCTIONS = [
 
     aux: function(a,b,c,s1,s2){
 
-      var svg = Fig.svg(0, 11, -2, 0)
+      var svg = Fig.svg(.6, 10.5, -1.5, -.5)
         .tableauS([['x','-∞',a,b,c,'+∞'],['f(x)',s1,'0',s2,'0',s1,'0',s2]]).end();
 
       var tikz = Fig.latex(0, 11, -2, 0)
@@ -780,7 +780,7 @@ const QUESTIONS_FONCTIONS = [
   {
     id: 'fonc_019_degre2', theme: 'fonctions',
     groupe: 'graph -> signe',
-    niveau: ['techno', 'specifique', 'specialite'], cols: 1,
+    niveau: ['techno', 'specifique', 'specialite'], cols: 2,
     variables: {
       s:{values:[-1,1]},
       a:  { min:-3,max:3},
@@ -791,7 +791,7 @@ const QUESTIONS_FONCTIONS = [
 
     aux: function(a,b,s1,s2){
 
-      var svg = Fig.svg(0, 9, -2, 0)
+      var svg = Fig.svg(.6, 8.5, -1.5, -.5)
         .tableauS([['x','-∞',a,b,'+∞'],['f(x)',s1,'0',s2,'0',s1]]).end();
 
       var tikz = Fig.latex(0, 9, -2, 0)
@@ -930,7 +930,7 @@ const QUESTIONS_FONCTIONS = [
 
       ];
       v._s=table[v.situation]
-      return 'On considère la fonction $f$ définie pour tout réel $x$ par $f(x)='+ v._s.f+'$. \\\\ '
+      return 'On considère la fonction $f$ définie pour tout réel $x$ par ${f(x)='+ v._s.f+'}$. \\\\ '
       + 'L\'image de $'+v.x+'$ par la fonction $f$ est égale à :'
     },
     
@@ -947,6 +947,65 @@ const QUESTIONS_FONCTIONS = [
     }
   },
 
+  {
+    id: 'fonc_022_degre2', theme: 'fonctions',
+    niveau: ['techno', 'specifique', 'specialite'], cols: 2,
+    variables: {
+      s:{values:[-1,1]},
+      a:  { min:-3,max:3},
+      b: { min:-3,max:3},
+      k:{min:1, max:3}
+    },
 
+
+    aux: function(a,b,s1,s2){
+
+      var svg = Fig.svg(.6, 8.5, -2.5, -.5)
+        .tableauV([['x','-∞',a,'+∞'],['f','',s1,b,s2,'']]).end();
+
+      var tikz = Fig.latex(0, 9, -2, 0)
+        .tableauV([['x','-\\infty',a,'+\\infty'],['f','',s1,b,s2,'']]).end();
+
+      return '%%SVG' + svg + '%%ENDSVG%%%%TIKZ' + tikz + '%%ENDTIKZ%%';
+
+    },
+
+    enonce: function(v) {
+      v.b=(v.b===v.a) ? -v.b:v.b;
+      v.k=(-v.k*v.s===v.x0)? (v.k===1)? v.k+1 : v.k-1:v.k;
+      v.f= simplExpr(v.s +'*(x-'+v.a+')*(x-'+v.b+')')
+      v.x0=(v.a+v.b)/2;
+      
+      v.y0= (v.a-v.b ===0)? 1: Math.abs(fimage((v.a+v.b)/2,v.f));
+      v.f= simplExpr(v.k*v.s +'*(x-'+v.a+')*(x-'+v.b+')/'+ Math.abs(v.y0))
+      
+      var svg = Fig.svg(-4, 4, -4, 4)
+        .grid().axes().gradX().gradY().clip()
+        .curve(v.f)
+        .endClip()
+        .end();
+
+      var tikz = Fig.latex(-4, 4, -4, 4)
+        .grid().axes().gradX().gradY().clip()
+        .curve(v.f)
+        .endClip()
+        .end();
+
+      return 'On donne la courbe de la fonction $f$ ci-contre. '
+           + '%%SVG' + svg + '%%ENDSVG%%%%TIKZ' + tikz + '%%ENDTIKZ%%'
+           + 'Quel est le tableau de variations de la fonction $f$ ?';
+    },
+    bonneReponse: function(v) { 
+      let [s1,s2]= (v.s<0)? ['c','d']:['d','c'] ;
+      return this.aux(v.x0,-v.s*v.k,s1,s2) },
+    distracteurs: function(v) {
+      let [s1,s2]= (v.s<0)? ['c','d']:['d','c'] ;
+      return [
+        this.aux(v.x0,-v.s*v.k,s2,s1)  ,
+        this.aux(-v.s*v.k,v.x0,s1,s2)  ,
+        this.aux(-v.s*v.k,v.x0,s2,s1)  ,
+      ];
+    }
+  },
 ];
  

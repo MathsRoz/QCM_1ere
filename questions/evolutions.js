@@ -159,4 +159,20 @@ const QUESTIONS_EVOLUTIONS = [
       `Une `+ ((v.t<0) ? "baisse" : "hausse" )+ ` de $${Math.abs((100 + v.t)).toFixed(0)}\\%$`,
     ]
   },
+  
+  {
+    id: "evol_009", theme: "evolutions", groupe :"coeff_mul",
+    niveau: ["techno", "specifique", "specialite"], cols: 2,
+    variables: { t: { min: 10, max: 30 ,step:10} },
+    enonce: (v) =>{
+      if(v.t===0)(v.t=-17)
+      return `Le prix d’un article est noté $P$. Il connait deux augmentations de ${v.t}%.
+Le prix après ces augmentations est:`},
+    bonneReponse: (v) => `$P\\times ${(1+v.t/100).toFixed(1)}^2$`,
+    distracteurs: (v) => [
+      `$P\\times \\left(1+\\left(\\dfrac{t}{100}\\right)^2\\right)$`,
+      `$P\\times ${(1+2*v.t/100).toFixed(1)}$`,
+      `$\\dfrac{P}{${((1+v.t/100)**2).toFixed(2)}}$`,
+    ]
+  },
 ];

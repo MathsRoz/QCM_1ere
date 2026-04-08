@@ -11,7 +11,7 @@ const LATEX_PREAMBLE_ARTICLE =
   + '\\usepackage{amsmath,amssymb}\\usepackage{multicol}\\usepackage{enumitem}\n'
   + '\\usepackage{tikz}\n\\usetikzlibrary{arrows.meta,calc,trees}\n'
   + '\\usepackage[left=1cm,right=1cm,top=1cm,bottom=2cm]{geometry}\n'
-  + '\\usepackage{xcolor}\\definecolor{correct}{RGB}{16,185,129}\n';
+  + '\\usepackage[dvipsnames]{xcolor}\\definecolor{correct}{RGB}{16,185,129}\n';
 
 const LATEX_PREAMBLE_BEAMER = (theme, color) =>
     '\\documentclass{beamer}\n'
@@ -20,7 +20,7 @@ const LATEX_PREAMBLE_BEAMER = (theme, color) =>
   + '\\usepackage{amsmath,amssymb}\n'
   + '\\usepackage{tikz}\\usetikzlibrary{arrows.meta,calc,trees}\n'
   + '\\usefonttheme[onlymath]{serif}'
-  + '\\usepackage{xcolor}\n'
+  + '\\usepackage[dvipsnames]{xcolor}\n'
   + '\\usetheme{'+(theme||'Singapore')+'}\\usecolortheme{'+(color||'default')+'}\n';
 
 // ── Conversion chaîne → LaTeX ───────────────────────────
@@ -91,16 +91,13 @@ function questionToLatex(q, idx) {
 
   if (hasFig) {
     var innerTikz = p.tikz
-      .replace(/^\\begin\{tikzpicture\}[^\n]*\n?/, '')
-      .replace(/\\end\{tikzpicture\}\s*$/, '').trim();
     out += '\\noindent\\textbf{Question ' + idx + '.} ' + p.text + '\n\n';
     out += '\\noindent\\begin{minipage}{0.45\\textwidth}\n\\vspace{1em}\n';
     out += '\\begin{enumerate}[label=\\textbf{\\Alph*.},leftmargin=*]\n';
     q.reponses.forEach(r => { out += '  \\item ' + latexifyStr(r) + '\n\\vspace{1em}\n'; });
     out += '\\end{enumerate}\n\\end{minipage}\\hfill\n';
     out += '\\begin{minipage}{0.50\\textwidth}\n  \n';
-    out += '  \\begin{tikzpicture}[scale=0.8,baseline=(current bounding box.west)]\n';
-    out += innerTikz + '\n  \\end{tikzpicture}\n \n';
+    out += innerTikz
     out += '\\end{minipage}\n';
   } else {
     out += '\\noindent\\textbf{Question ' + idx + '.} ' + latexifyStr(q.enonce) + '\n\n';
