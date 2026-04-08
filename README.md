@@ -2,6 +2,8 @@
 
 Générateur de QCM interactif pour les **automatismes de Première** (BO 2025), conçu pour un usage en classe ou en autonomie.
 
+[https://mathsroz.github.io/QCM_1ere/](https://mathsroz.github.io/QCM_1ere/)
+
 ---
 
 ## Fonctionnalités
