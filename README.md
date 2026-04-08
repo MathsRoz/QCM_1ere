@@ -40,22 +40,6 @@ Générateur de QCM interactif pour les **automatismes de Première** (BO 2025),
 
 ---
 
-## Thèmes et niveaux
-
-| Thème | Contenu | Niveaux |
-|-------|---------|---------|
-| 🔢 Calcul algébrique | Fractions, puissances, identités, équations, inéquations | Techno / Spécifique / Spécialité |
-| ➗ Proportions | Fractions, pourcentages, proportionnalité | Techno / Spécifique / Spécialité |
-| 📉 Évolutions | Taux, coefficient multiplicateur, évolutions successives | Techno / Spécifique / Spécialité |
-| 📈 Fonctions | Fonctions affines, images, antécédents, droites, courbes | Techno / Spécifique / Spécialité |
-| 📊 Statistiques | Moyenne, médiane, quartiles, diagrammes | Techno / Spécifique / Spécialité |
-| 🎲 Probabilités | Événements, probabilités conditionnelles, arbres | Techno / Spécifique / Spécialité |
-
-**Mode de filtrage :**
-- **Inclusif** — inclut le niveau sélectionné et les niveaux inférieurs
-- **Strict** — uniquement le niveau exact sélectionné
-
----
 
 ## Format d'une question
 
