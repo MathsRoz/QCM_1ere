@@ -1,3 +1,6 @@
+READ ME pas à jour
+
+
 # QCM Maths Première
 
 Générateur de QCM interactif pour la classe de **Première** (BO 2025, session 2027).
