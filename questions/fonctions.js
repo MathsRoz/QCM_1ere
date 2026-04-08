@@ -843,7 +843,7 @@ const QUESTIONS_FONCTIONS = [
     aux: function(f,p1,p2,p3,p4) {
       if (this._deduping) return '';
       var svg = Fig.svg(-4, 4, -4, 4)
-        .grid().axes().gradX().gradY().clip()
+        .axes().clip()
         .curve(f)
         .point(-2.85,fimage(-2.85,f),'A','blue',p1)
         .point(-.71,fimage(-.71,f),'B','blue','end',p3)
@@ -853,7 +853,7 @@ const QUESTIONS_FONCTIONS = [
         .end();
 
       var tikz = Fig.latex(-4, 4, -4, 4)
-        .grid().axes().gradX().gradY().clip()
+        .axes().clip()
         .curve(f)
         .point(-2.85,fimage(-2.85,f),'A','blue',p1)
         .point(-.71,fimage(-.71,f),'B','blue','end',p3)

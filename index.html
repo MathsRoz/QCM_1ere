@@ -543,7 +543,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
   <div class="view active" id="view-config">
     <div class="section-title">Configurer le QCM</div>
     <div class="section-sub">Sélectionnez les thèmes, le niveau et le nombre de questions</div>
-    <div class="warning"> ⚠️ Attention les QCM ne sont pas encore bien triés faute de recul sur l'épreuve, il est préférable de laisser la 1ère spécialité en inclusif</div>
+    <div class="warning"> ⚠️ Attention, les QCM ne sont pas encore correctement organisés faute de recul sur l’épreuve ; il est donc recommandé de conserver la première spécialité en mode inclusif.</div>
     <div class="level-label">Thèmes <span style="font-size:11px;color:var(--text3);text-transform:none;font-weight:400;margin-left:6px;"> Si aucun thème n’est sélectionné, tous les thèmes seront automatiquement pris en compte. </span></div>
     <div class="theme-grid" style="grid-template-columns:1fr 1fr 1fr;">
       <div class="theme-card" data-theme="calcul" style="--accent:var(--blue);--icon-bg:rgba(137, 175, 200, 0.15);" onclick="toggleTheme(this)">
@@ -659,7 +659,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
       </label>
     </div>
     <div id="opts-beamer" class="export-options" style="display:none">
-      <div class="section-sub">La génération de diaporamas est encore expérimentale. Certaines questions peuvent s’afficher incorrectement. Un mode présentation est disponible sans génération de diaporamas</div>
+      <div class="section-sub">La génération de diaporamas reste expérimentale : certaines questions peuvent s’afficher de manière incorrecte. Un mode présentation est toutefois disponible sans recourir à la génération de diaporamas LaTeX.</div>
       <div class="export-opt">
         <label>Thème</label>
         <select id="beamerTheme" onchange="updateExport()">
