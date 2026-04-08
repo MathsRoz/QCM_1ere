@@ -63,21 +63,6 @@ Générateur de QCM interactif pour les **automatismes de Première** (BO 2025),
 }
 ```
 
-### Insérer un tableau dans un énoncé
-
-```js
-enonce: (v) => `Voici les données :` + makeTable([
-  ['$x$',    '$f(x)$'],
-  [v.a,      v.fa],
-  [v.b,      v.fb],
-]) + `Quelle est la moyenne ?`
-
-// Options disponibles
-makeTable(rows, { align: ['l', 'c', 'r'], header: true })
-```
-
-Le tableau est rendu en HTML dans le navigateur et en `\begin{array}` centré dans l'export LaTeX.
-
 ### Insérer une figure SVG + TikZ
 
 ```js
