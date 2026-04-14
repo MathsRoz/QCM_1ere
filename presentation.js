@@ -144,6 +144,7 @@ function renderPresSlide() {
 function presGo(dir) {
   const n = pres.questions.length;
   const newIdx = pres.idx + dir;
+  pres.showCorr = false;
   if (newIdx < 0) return;
   if (newIdx >= n) { closePresentation(); return; }
   pres.idx = newIdx;
