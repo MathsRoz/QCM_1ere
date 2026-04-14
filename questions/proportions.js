@@ -97,4 +97,52 @@ const QUESTIONS_PROPORTIONS = [
       `$${frac(v.n + 10, 100)}$`
     ]
   },
+
+
+{
+  id: "prop_007", theme: "proportions",
+  groupe: "proportion_proportion",
+  niveau: ["techno", "specifique", "specialite"], cols: 4,
+  variables: {
+    a: { values: [2,3, 4, 5] },   // dénominateur de la première proportion
+    b: { values: [2,3, 4, 5] },   // dénominateur de la deuxième proportion
+  },
+  enonce: (v) => {
+    return `Dans un lycée, $\\dfrac{1}{${v.a}}$ des élèves sont internes. `
+      + `Parmi eux, $\\dfrac{1}{${v.b}}$ sont des filles. `
+      + `La proportion de filles internes parmi l'ensemble des élèves est égale à :`;
+  },
+  bonneReponse: (v) => `$${frac(1, v.a * v.b)}$`,
+  distracteurs: (v) => [
+    `$${frac(1, v.a + v.b)}$`,
+    `$${frac(v.a+v.b, v.b*v.a)}$`,
+    `$${frac(1, v.b)}$`,
+  ]
+},
+
+{
+  id: "prop_007b", theme: "proportions",
+  groupe: "proportion_proportion",
+  niveau: [ "specialite"], cols: 4,
+  variables: {
+    a: { values: [2, 4, 5] },   // dénominateur de la première proportion
+    b: { values: [2, 4, 5] },   // dénominateur de la deuxième proportion
+  },
+  enonce: (v) => {
+    return `Dans un lycée, $\\dfrac{1}{${v.a}}$ des élèves sont internes. `
+      + `Parmi eux, $\\dfrac{1}{${v.b}}$ sont des filles. `
+      + `La proportion de filles internes parmi l'ensemble des élèves est égale à :`;
+  },
+  bonneReponse: (v) => `$${+parseFloat(100/ (v.a * v.b)).toFixed(2)}\\%$`,
+  distracteurs: (v) => [
+    `$${+parseFloat(100/ v.a + 100/v.b).toFixed(2)}\\%$`,
+    `$${+parseFloat(100/(v.b+v.a)).toFixed(0)}\\%$`,
+    `$${+parseFloat(100/ v.b).toFixed(2)}\\%$`,
+  ]
+},
+
+
+
+
+
 ];

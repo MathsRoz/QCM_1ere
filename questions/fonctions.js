@@ -112,6 +112,53 @@ const QUESTIONS_FONCTIONS = [
     ]
   },
 
+// ── lecture d'éuqtation de droite ──
+  {
+    id: 'fonc_010', theme: 'fonctions',
+    groupe: 'lecture droite',
+    niveau: ['techno', 'specifique', 'specialite'], cols: 2,
+    variables: {
+      x:  { values: [-3,-2,-1,1,2,3] },
+      gx : {values : [1,2]},
+      gy : {values : [1,2]},
+      y:  { values: [-3,-2,-1,1,2,3]},
+    },
+    enonce: function(v) {
+      v._x=v.x*v.gx;
+      v._y=v.y*v.gy;
+      v.a=v.y/v.x;
+      v._a=v._y/v._x;
+
+      // Pendant dedupeAnswers — pas de SVG
+      if (v._deduping) return '';
+
+      var svg = Fig.svg(-4, 4, -4, 4)
+        .grid().axes().gradX(v.gx).gradY(v.gy).clip()
+        .affine(-v.a, v.y, -4, 4, 'red', 'f')
+        .endClip()
+        .end();
+
+      var tikz = Fig.latex(-4, 4, -4, 4)
+        .grid().axes().gradX(v.gx).gradY(v.gy).clip()
+        .affine(v.a, v.y, -4, 4, 'red', 'f')
+        .endClip()
+        .end();
+
+      return 'On considère la droit représenté ci-contre. '
+           + '%%SVG' + svg + '%%ENDSVG%%%%TIKZ' + tikz + '%%ENDTIKZ%%'
+           + 'L\'équation réduite de la droite est :';
+    },
+    bonneReponse: function(v) { return simplExpr('$y=' + frac(-v._y,v._x) + 'x+'+v._y+'$'); },
+    distracteurs: function(v) {
+      return [
+        simplExpr('$y=-' + frac(-v._x,v._y) + 'x+'+v._y+'$'),
+        simplExpr('$y=' + frac(-v._x,v._y) + 'x+'+v._y+'$'),
+        simplExpr('$y=-' + frac(-v._y,v._x) + 'x+'+v._y+'$')
+      ];
+    }
+  },
+
+
 
   // ── Lire f(x₀) graphiquement ──
   {
@@ -435,8 +482,8 @@ const QUESTIONS_FONCTIONS = [
         .affine(v.a1, v.b, -4, 4, 'red', 'f')
         .curve(g,-4,4,'blue')
         .endClip()
-        .text(xcf,v.a1*xcf+v.b,'C_f','red',(xcf>0) ? 'start':'end')
-        .text(xg,yg,'C_g','blue', p)
+        .text(xcf,v.a1*xcf+v.b,'C_f','red',(xcf>0) ? 'start':'end','\\mathcal{C}_f')
+        .text(xg,yg,'C_g','blue', p,'\\mathcal{C}_g')
         .end();
 
       return 'Les courbes $\\mathcal{C}_f$ et $\\mathcal{C}_g$ représentent les fonctions $f$ et $g$ définies sur $\\mathbb{R}$. \\\\ '
@@ -538,8 +585,8 @@ const QUESTIONS_FONCTIONS = [
         .affine(v.a1, v.b, -4, 4, 'red', 'f')
         .curve(g,-4,4,'blue')
         .endClip()
-        .text(xcf,v.a1*xcf+v.b,'C_f','red',(xcf>0) ? 'start':'end')
-        .text(xg,yg,'C_g','blue', p)
+        .text(xcf,v.a1*xcf+v.b,'C_f','red',(xcf>0) ? 'start':'end','\\mathcal{C}_f')
+        .text(xg,yg,'C_g','blue', p,'\\mathcal{C}_g')
         .end();
 
       return 'Les courbes $\\mathcal{C}_f$ et $\\mathcal{C}_g$ représentent les fonctions $f$ et $g$ définies sur $\\mathbb{R}$. \\\\'
@@ -600,7 +647,7 @@ const QUESTIONS_FONCTIONS = [
     },
     enonce: function(v) {
       if (v._deduping) return '';
-      return 'Le tableau de signes de la fonction $f$ définie sur $\\mathbb{R}$ apr ${f(x)=' + simplExpr(v.a+'x+'+v.b*v.a) +'}$ est :' ;
+      return 'Le tableau de signes de la fonction $f$ définie sur $\\mathbb{R}$ par ${f(x)=' + simplExpr(v.a+'x+'+v.b*v.a) +'}$ est :' ;
     },
     
     aux: function(a,s1,s2) {
@@ -762,7 +809,7 @@ const QUESTIONS_FONCTIONS = [
 
       return 'On donne la courbe de la fonction $f$ ci-contre. '
            + '%%SVG' + svg + '%%ENDSVG%%%%TIKZ' + tikz + '%%ENDTIKZ%%'
-           + 'Quel est le tableau de signe de la fonction $f$ ?';
+           + 'Quel est le tableau de signes de la fonction $f$ ?';
     },
     bonneReponse: function(v) { 
       let [s1,s2]= (v.a*v.b>0)? ['-','+']:['+','-'] ;
@@ -820,7 +867,7 @@ const QUESTIONS_FONCTIONS = [
 
       return 'On donne la courbe de la fonction $f$ ci-contre. '
            + '%%SVG' + svg + '%%ENDSVG%%%%TIKZ' + tikz + '%%ENDTIKZ%%'
-           + 'Quel est le tableau de signe de la fonction $f$ ?';
+           + 'Quel est le tableau de signes de la fonction $f$ ?';
     },
     bonneReponse: function(v) { 
       let [s1,s2]= (v.s<0)? ['-','+']:['+','-'] ;

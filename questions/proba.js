@@ -292,4 +292,49 @@ const QUESTIONS_PROBA = [
       `$`+v.t[1][(v.s+3)%4]+'$'
     ]
   },
+
+  {
+    id: "proba_012", theme: "proba",
+    niveau: ["specifique", "specialite"], cols: 4,
+    variables: { p: { values :[5,10,20,25] },
+                a:{min:2,max:4},
+              s: {min:400, max:1000, step:200} },
+
+    enonce: function(v) {
+      
+      let [[s1,s2,s3],
+          [s4,s5,s6],
+          [s7,s8,s9]]= [[v.p*(v.s/2+100)/100,(v.s/2-100)*(v.p+10)/100,v.p*(v.s/2+100)/100+(v.s/2-100)*(v.p+10)/100],
+                        [v.s/2+100-v.p*(v.s/2+100)/100,v.s/2-100-(v.s/2-100)*(v.p+10)/100,v.s-(v.p*(v.s/2+100)/100+(v.s/2-100)*(v.p+10)/100)],
+                        [v.s/2+100,v.s/2-100,v.s]]
+      
+      return 'On observe ' + v.s +' sportifs amateurs sur une saison.\\\\ On choisi au hasard un sportif et on note $A$ : \" Le sportif s\'est systématiquement échauffé\" et $B$ : \" Le sportif s\'est blessé \"\\\\'
+      + ' Les données de la saison sont regroupés dans le tableau ci-contre.'
+      +'$$\\def\\arraystretch{1.5} ' 
+      + '\\begin{array}{|c|c|c|c|}\\hline '
+      +' & ~~A~~  & ~~\\overline{A}~~ & \\text{Total}   \\\\'
+      + ' \\hline '
+      +'B &' + s1+ ' & '+ s2 +'  & ' + s3  +  '  \\\\'
+      + ' \\hline '
+      +'\\overline{B} &'+ s4 +'& '+ s5 +' & ' + s6 +   '\\\\'
+      + ' \\hline '
+      +' \\text{Total} & '+ s7 +' & ' + s8 +'  &  ' + s9 +' \\\\'
+      + ' \\hline '
+      + '\\end{array}$$'
+      + 'La probabilité que le sportif se soit blessé sachant qu\'il s\'est échauffé est de :'
+    },
+    bonneReponse: (v) => '$'+frac(v.p,100) + '$',
+    distracteurs: function(v){
+      let [[s1,s2,s3],
+          [s4,s5,s6],
+          [s7,s8,s9]]= [[v.p*(v.s/2+100)/100,(v.s/2-100)*(v.p+10)/100,v.p*(v.s/2+100)/100+(v.s/2-100)*(v.p+10)/100],
+                        [v.s/2+100-v.p*(v.s/2+100)/100,v.s/2-100-(v.s/2-100)*(v.p+10)/100,v.s-(v.p*(v.s/2+100)/100+(v.s/2-100)*(v.p+10)/100)],
+                        [v.s/2+100,v.s/2-100,v.s]]
+      
+      return ['$'+frac(s1,s9) + '$',
+      '$'+frac(s3,s9) + '$',
+      '$'+frac(s1,s3) + '$'
+    ]}
+  },
+
 ];

@@ -9,6 +9,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="presentation.css">
 <style>
 /* ─── LAYOUT ─── */
 header {
@@ -105,7 +106,7 @@ header {
 /* Barre de sélection bas de sidebar */
 .selection-bar {
   padding:10px 14px; border-top:1px solid var(--border2);
-  background:var(--card); display:flex; align-items:center; gap:8px;
+  background:var(--card); display:flex; flex-direction: column; align-items:center; gap:8px;
   flex-shrink:0;
 }
 .sel-count { font-size:12px; color:var(--text2); font-family:var(--mono); flex:1; }
@@ -329,7 +330,10 @@ transform: scale(1.2); border-color: var(--red);}
     <div class="q-list" id="qList"></div>
     <div class="selection-bar">
       <div class="sel-count"><span id="selCount">0</span> sélectionnée(s)</div>
+      <div> 
+      <button class="btn-compile-sel" id="btnPressSel" onclick="startPresentation()" disabled>🖥️ Présenter</button>
       <button class="btn-compile-sel" id="btnCompileSel" onclick="openCompileModal()" disabled>📄 Compiler</button>
+      </div>
     </div>
   </aside>
 
@@ -355,6 +359,7 @@ transform: scale(1.2); border-color: var(--red);}
 <script src="questions/proba.js"></script>
 <script src="questions/autre.js"></script>
 <script src="compiler.js"></script>
+<script src="presentation.js"></script>
 
 <script>
 // ═══════════════════════════════════════════════════
@@ -551,6 +556,7 @@ function updateSelCount() {
   const n = selectedQuestions.size;
   document.getElementById('selCount').textContent = n;
   document.getElementById('btnCompileSel').disabled = (n === 0);
+  document.getElementById('btnPressSel').disabled = (n === 0);
 }
 
 function openCompileModal() {
@@ -1047,6 +1053,52 @@ function showToast(msg, type='') {
 //  DÉMARRAGE
 // ═══════════════════════════════════════════════════
 init();
+</script>
+<script>
+// ── Bridge presentation.js pour l'éditeur ──────────────
+
+// Rendu de contenu : l'éditeur utilise cleanForDisplay (string→HTML)
+function presRenderContent(container, str) {
+  if (typeof str !== 'string') { container.textContent = String(str); return; }
+  const parts = str.split(/(%%SVG[\s\S]*?%%ENDSVG%%(?:\s*%%TIKZ[\s\S]*?%%ENDTIKZ%%)?|%%TIKZ[\s\S]*?%%ENDTIKZ%%)/);
+  parts.forEach(part => {
+    if (part.startsWith('%%SVG')) {
+      const svgCode = part.replace(/^%%SVG/, '').replace(/%%ENDSVG%%[\s\S]*$/, '').trim();
+      const wrap = document.createElement('div');
+      wrap.className = 'fig-wrap';
+      wrap.innerHTML = svgCode;
+      container.appendChild(wrap);
+    } else if (part.startsWith('%%TIKZ')) {
+      const code = part.replace(/^%%TIKZ/, '').replace(/%%ENDTIKZ%%$/, '').trim();
+      const wrap = document.createElement('div');
+      wrap.className = 'fig-wrap';
+      try { wrap.innerHTML = tikzToSvg(code); } catch(e) { wrap.textContent = '[figure]'; }
+      container.appendChild(wrap);
+    } else if (part) {
+      const span = document.createElement('span');
+      const safe = part.replace(/((\$\$[\s\S]*?\$\$)|(\$[^$]*?\$))|(\\\\\s*)/g, (m, math, d, i, br) => {
+        if (math) return math;
+        if (br)   return '<br>';
+        return m;
+      });
+      span.innerHTML = safe;
+      if (window.renderMathInElement) {
+        renderMathInElement(span, {
+          delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],
+          throwOnError:false
+        });
+      }
+      container.appendChild(span);
+    }
+  });
+}
+
+// Lance la présentation avec les questions sélectionnées
+function startPresentation() {
+  const questions = buildQuestionsFromSelection();
+  if (!questions.length) return;
+  openPresentation(questions);
+}
 </script>
 </body>
 </html>

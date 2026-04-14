@@ -1,0 +1,121 @@
+/* ═══════════════════════════════════════════════════════
+   presentation.css — Styles du mode présentation
+   Partagé par : index.html, editeur-banque.html
+   ═══════════════════════════════════════════════════════ */
+
+.pres-overlay {
+  position: fixed; inset: 0; z-index: 9000;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  animation: fadeIn .2s ease;
+}
+@keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
+
+.pres-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 28px;
+  border-bottom: 1px solid var(--border2);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,.4);
+}
+.pres-counter {
+  font-family: var(--mono); font-size: 13px; color: var(--text3);
+}
+.pres-counter strong { color: var(--blue); }
+.pres-nav { display: flex; gap: 8px; align-items: center; }
+.pres-btn {
+  padding: 8px 18px; border-radius: 99px; border: none;
+  font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: all .2s;
+}
+.pres-btn-prev { background: var(--card2); color: var(--text2); }
+.pres-btn-prev:hover { color: var(--text); }
+.pres-btn-prev:disabled { opacity: .35; cursor: not-allowed; }
+.pres-btn-next { background: var(--blue); color: var(--bg); }
+.pres-btn-next:hover { opacity: .85; }
+.pres-btn-close {
+  background: none; color: var(--text3); font-size: 20px; padding: 4px 10px;
+  border-radius: 8px;
+}
+.pres-btn-close:hover { color: var(--text); background: var(--card2); }
+.pres-corr-btn {
+  background: var(--card2); color: var(--text2); border-radius: 99px;
+  padding: 6px 14px; font-size: 12px; border: 1px solid var(--border2);
+}
+.pres-corr-btn:hover { color: var(--text); }
+.pres-corr-btn.on { background: rgba(94,184,138,.1); color: var(--green); border-color: rgba(94,184,138,.3); }
+
+.pres-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: 5px;
+  overflow: hidden;
+}
+.pres-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff; border-radius: 16px;
+  padding: 10px;
+  box-shadow: 0 8px 40px rgba(0,0,0,.4);
+  overflow-y: auto;
+}
+.pres-q-num {
+  font-family: var(--mono); font-size: 12px; color: var(--text3);
+  margin-bottom: 20px;
+}
+.pres-q-enonce {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.8;
+  text-align: center;
+  color: #030303;
+}
+.pres-answers { display: grid; gap: 8px; margin-top: auto; }
+.pres-answer {
+  display: flex; align-items: center; gap: 8px;
+  justify-content: center;
+  position: relative;
+  padding: 5px 0; border-radius: 12px;
+  box-shadow: 5px 5px 5px rgba(0,0,0,.103);
+  background: #ffffff; border: 2px solid #030303;
+  line-height: 1.6; cursor: pointer;
+  transition: all .2s; font-family: var(--sans); text-align: center; width: 100%;
+  color: #030303;
+}
+.pres-answer:hover { transform: translateY(-5px); }
+.pres-answer.selected { border-color: var(--blue);  color: var(--blue); }
+.pres-answer.correct  { border-color: var(--green); color: var(--green); }
+.pres-answer.wrong    { border-color: var(--red);   color: var(--red); }
+.pres-letter {
+  position: absolute;
+  padding: 0 5px;
+  border-radius: 20%;
+  flex-shrink: 0;
+  background: #030303;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 14px; font-weight: 600;
+  color: #ffffff; transition: all .2s;
+}
+.pres-answer.selected .pres-letter { background-color: var(--blue); }
+.pres-answer.correct  .pres-letter { background-color: var(--green); }
+.pres-answer.wrong    .pres-letter { background-color: var(--red); }
+
+.pres-progress {
+  position: absolute; bottom: 0; left: 0;
+  height: 3px; background: var(--blue);
+  transition: width .3s ease;
+}
+
+@media (max-width: 640px) {
+  .pres-card { padding: 24px 20px; }
+  .pres-answer { padding: 12px 16px; color: var(--text); }
+}

@@ -699,6 +699,105 @@ const QUESTIONS_CALCUL = [
   
 },
 
+{
+  id: "calc_026", theme: "calcul",
+  groupe: "puissances",
+  niveau: ["techno", "specifique"], cols: 2,
+  variables: {
+    a: { min: 2, max: 9 },
+    b: { min: 2, max: 6 },
+    c: { min: 2, max: 6 },
+    d: { min: 2, max: 9 },
+    e: { min: 2, max: 9 },
+  },
+  enonce: (v) => `La seule égalité vraie est :`,
+
+  bonneReponse: (v) => `$\\dfrac{${v.a}^{${v.b}}}{${v.a}^{${v.c}}} = ${v.a}^{${v.b - v.c}}$`,
+
+  distracteurs: (v) => [
+    // (a^b)^c = a^(b+c) au lieu de a^(b*c)
+    `$(${v.a}^{${v.b}})^{${v.c}} = ${v.a}^{${v.b + v.c}}$`,
+    // a^b × a^c = a^(b*c) au lieu de a^(b+c)
+    `$${v.a}^{${v.b}} \\times ${v.a}^{${v.c}} = ${v.a}^{${v.b * v.c}}$`,
+    // (a×b)^c = a^c × b^c est vrai, donc on met une erreur : (a+b)^c = a^c + b^c
+    `$(${v.a}+${v.d})^{${v.c}} = ${v.a}^{${v.c}}+${v.d}^{${v.c}}$`,
+  ]
+},
+
+{
+  id: "calc_027", theme: "calcul",
+  groupe: "notation_scientifique_contexte",
+  niveau: ["techno", "specifique", "specialite"], cols: 4,
+  variables: {
+    s: { values: [0, 1, 2, 3] },
+  },
+  enonce: (v) => {
+    v.situations = [
+      {
+        objet: "feuille de papier",
+        epaisseur: "70 \\times 10^{-3}",
+        unite: "mm",
+        n: 2000, facteur: 70e-3 * 2000,
+        // 70e-3 * 2000 = 140 mm = 14 cm
+      },
+      {
+        objet: "cheveu",
+        epaisseur: "8 \\times 10^{-2}",
+        unite: "mm",
+        n: 500, facteur: 8e-2 * 500,
+        // 8e-2 * 500 = 40 mm = 4 cm
+      },
+      {
+        objet: "carte bancaire",
+        epaisseur: "8 \\times 10^{-1}",
+        unite: "mm",
+        n: 250, facteur: 8e-1 * 250,
+        // 8e-1 * 250 = 200 mm = 20 cm
+      },
+      {
+        objet: "feuille d'aluminium",
+        epaisseur: "16 \\times 10^{-3}",
+        unite: "mm",
+        n: 5000, facteur: 16e-3 * 5000,
+        // 16e-3 * 5000 = 80 mm = 8 cm
+      },
+    ];
+    v.sit = v.situations[v.s];
+    v.res_mm = v.sit.facteur;          // résultat en mm
+    v.res_cm = v.sit.facteur / 10;     // résultat en cm
+    return `L'épaisseur d'${v.sit.objet === "feuille d'aluminium" || v.sit.objet === 'carte bancaire' ? "une" : "un"} ${v.sit.objet} est égale à $${v.sit.epaisseur}$ mm.\\\\`
+      + `L'épaisseur d'une pile de $${v.sit.n}$ est égale à :`;
+  },
+  bonneReponse: (v) => `$${v.res_cm}$ cm`,
+  distracteurs: (v) => [
+    `$${v.res_mm/10}$ mm`,           // bonne valeur mais mauvaise unité
+    `$${v.res_cm * 10}$ cm`,      // oubli de conversion ×10
+    `$${v.res_cm / 10}$ cm`,      // conversion inversée
+  ]
+},
+
+{
+  id: "calc_028", theme: "calcul",
+  groupe: "conversion_minutes_heures",
+  niveau: ["techno", "specifique", "specialite"], cols: 4,
+  variables: {
+    // minutes choisies pour donner des résultats "pièges" sympas
+    m: { values: [75, 90, 105,66,72,96] },
+  },
+  enonce: (v) => {
+    v.res = v.m / 60;   // résultat exact en heures
+    return `Une durée de $${v.m}$ minutes correspond à :`;
+  },
+  bonneReponse: (v) => `$${v.res.toFixed(4).replace(/\.?0+$/, '')}$ heure`,
+  distracteurs: (v) => [
+    // erreur classique : écrire les minutes après la virgule
+    `$${Math.floor(v.m / 60)}.${v.m % 60}$ heure`,
+    // diviser par 100 au lieu de 60
+    `$${(v.m / 100).toFixed(2)}$ heure`,
+    // multiplier par 60 au lieu de diviser
+    `$${+parseFloat(v.m /60-.25).toFixed(2)}$ heure`,
+  ]
+},
 
 ];
 

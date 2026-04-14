@@ -40,7 +40,7 @@ var Fig = {
 
   // ── Constantes de mise en page (px) ─────────────────
   _PAD:  { l:19, r:17, t:18, b:18 },
-  _FS:   12,
+  _FS:   14,
   _COUNT: 0,                            // compteur global → ids uniques garantis
 
   // ── Usine : crée un objet de rendu indépendant ───────
@@ -403,7 +403,8 @@ var Fig = {
         y=(y>0)? y+.4 : y-.4;
         var p='middle';
       }
-      return this.text(x,y,name,color,p);
+    var nameT= '\\mathcal{C}_'+ name[-1]
+      return this.text(x,y,name,color,p,nameT);
   },
 
   // ── Droite affine  y = a*x + b ───────────────────────
