@@ -164,6 +164,3 @@ Tout le reste est vanilla JS / HTML / CSS, sans framework ni bundler.
 
 ---
 
-## Licence
-
-MIT — libre d'utilisation, de modification et de redistribution.
