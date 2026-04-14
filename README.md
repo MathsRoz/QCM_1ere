@@ -13,8 +13,7 @@ Générateur de QCM interactif pour les **automatismes de Première** (BO 2025),
 - **Mode présentation** plein écran pour le vidéoprojecteur (navigation clavier)
 - **Export LaTeX** — document classique (article) ou diaporama (Beamer)
 - **Compilation PDF** via [ytotech](https://latex.ytotech.com) ou Overleaf
-- **Thème clair / sombre** avec persistance localStorage
-- **Éditeur de banque** pour consulter, tester et compiler les questions
+- **Banque** pour consulter, tester et compiler les questions
 
 ---
 
@@ -25,7 +24,9 @@ Générateur de QCM interactif pour les **automatismes de Première** (BO 2025),
 ├── editeur-banque.html     Éditeur et explorateur de la banque de questions
 ├── question.html           Affichage d'une question individuelle (?id=calc_001)
 ├── style.css               Feuille de style commune (thème clair/sombre)
+├── presentation.css        Feuille de style de présentation (diaporama)
 ├── compiler.js             Fonctions de compilation LaTeX partagées
+├── presentation.js         Fonctions de présentation (diaporama) partagées
 └── questions/
     ├── utils.js            Utilitaires (frac, ri, pickVar, dedupeAnswers, makeTable…)
     ├── svg-renderer.js     Moteur de rendu SVG + TikZ (objet Fig)
