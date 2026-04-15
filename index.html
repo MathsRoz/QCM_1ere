@@ -197,6 +197,8 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 .meta-green  { border-color: rgba(111, 179, 144, 0.4);  color: var(--green); }
 .meta-orange { border-color: rgba(87, 133, 217, 0.4);  color: var(--blue); }
 .meta-gray   { border-color: var(--border2); color: var(--text3); }
+.meta-seed {color:var(--amber);cursor:pointer; transition: 0.2s;}
+.meta-seed:hover {transform: translateY(-2px);}
 .preview-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
 
 .question-card {
@@ -289,11 +291,15 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
 .export-btns { display: flex; gap: 10px; flex-wrap: wrap; }
 
+.qrcode { display: flex; margin: 10px; transition: .2s;}
+.qrcode:hover {cursor : pointer; transform: translateY(-2px);}
+
 /* ─── RESPONSIVE ─── */
 /* ─── RESPONSIVE MOBILE ─── */
 @media (max-width: 640px) {
   .btn-editeur { display: none !important; }
-
+  .qrcode { display: none !important; }
+  .meta-seed { display: none !important; }
   /* Header : logo + steps compacts */
   header {
     padding: 0 12px;
@@ -429,9 +435,19 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 <main>
   <!-- ══ VIEW 1 : CONFIGURATION ══ -->
   <div class="view active" id="view-config">
+    <div style="display: flex; align-items: center; ">
+    <div style="display: flex; flex-direction: column;"> 
     <div class="section-title">Configurer le QCM</div>
     <div class="section-sub">Sélectionnez les thèmes, le niveau et le nombre de questions</div>
-    <div class="warning"> ⚠️ Attention, les QCM ne sont pas encore correctement organisés faute de recul sur l’épreuve ; il est donc recommandé de conserver la première spécialité en mode inclusif.</div>
+      <div class="warning"> ⚠️ Attention, les QCM ne sont pas encore correctement organisés faute de recul sur l’épreuve ; il est donc recommandé de conserver la première spécialité en mode inclusif.</div>
+  </div>
+  <div class="qrcode" onclick="openQRCode2()"><img 
+  src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://mathsroz.github.io/QCM_1ere/"
+  alt="QR Code"
+  width="160" height="160"
+  style="border-radius:3px"
+></div></div>
+    
     <div class="level-label">Thèmes <span style="font-size:11px;color:var(--text3);text-transform:none;font-weight:400;margin-left:6px;"> Si aucun thème n’est sélectionné, tous les thèmes seront automatiquement pris en compte. </span></div>
     <div class="theme-grid" style="grid-template-columns:1fr 1fr 1fr;">
       <div class="theme-card" data-theme="calcul" style="--accent:var(--blue);--icon-bg:rgba(137, 175, 200, 0.15);" onclick="toggleTheme(this)">
@@ -797,7 +813,8 @@ function renderPreview() {
     `<div class="meta-badge meta-blue">${state.generatedQuestions.length} questions</div>`+
     `<div class="meta-badge meta-gray">${state.filterInclusive?'Inclusif':'Strict'}</div>`+
     `<div class="meta-badge meta-gray">${new Date().toLocaleDateString('fr-FR')}</div>`+
-    `<div class="meta-badge" style="color:var(--amber);cursor:pointer" title="Cliquer pour copier le lien" onclick="copySeedLink()">🎲 ${state.seed} <- cliquer ici pour copier le lien</div>`;
+    `<div class="meta-badge meta-seed"  title="Cliquer pour copier le lien" onclick="copySeedLink()">Copier le lien</div>`+
+    `<div class="meta-badge meta-seed"  title="Cliquer pour afficher le QRcode" onclick="openQRCode()">qrcode</div>`;
   document.getElementById('scoreBar').style.display = 'none';
   document.getElementById('btnSubmit').style.display = '';
   document.getElementById('btnCorrect').textContent = '👁️ Afficher le corrigé';
@@ -1127,6 +1144,67 @@ function toggleThemeMode() {
     });
   }
 })();
+
+
+// fonction afficher qrcode 
+
+function openQRCode() {
+
+  const params = new URLSearchParams();
+  params.set('seed',      state.seed);
+  params.set('level',     state.selectedLevel);
+  params.set('inclusive', state.filterInclusive ? '1' : '0');
+  params.set('n',         state.numQuestions);
+  if (state.selectedThemes.length) params.set('themes', state.selectedThemes.join(','));
+  const url = location.origin + location.pathname + '?' + params.toString();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'qrOverlay';
+  overlay.style.cssText = `
+    position:fixed; inset:0; z-index:9000;
+    background:rgba(0,0,0,0.8);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; animation: fadeIn .2s ease;
+  `;
+
+  const img = document.createElement('img');
+  img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data='+url;
+  img.style.cssText = 'width:min(80vw,400px); height:auto; border-radius:5px; box-shadow:0 8px 40px rgba(0,0,0,.5);';
+  img.alt = 'QR Code';
+
+  overlay.appendChild(img);
+  document.body.appendChild(overlay);
+
+  // Fermer au clic ou Escape
+  overlay.onclick = () => overlay.remove();
+  overlay._key = (e) => { if (e.key === 'Escape') overlay.remove(); document.removeEventListener('keydown', overlay._key); };
+  document.addEventListener('keydown', overlay._key);
+}
+
+function openQRCode2() {
+
+  const overlay = document.createElement('div');
+  overlay.id = 'qrOverlay';
+  overlay.style.cssText = `
+    position:fixed; inset:0; z-index:9000;
+    background:rgba(0,0,0,0.8);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; animation: fadeIn .2s ease;
+  `;
+
+  const img = document.createElement('img');
+  img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=https://mathsroz.github.io/QCM_1ere/';
+  img.style.cssText = 'width:min(80vw,400px); height:auto; border-radius:5px; box-shadow:0 8px 40px rgba(0,0,0,.5);';
+  img.alt = 'QR Code';
+
+  overlay.appendChild(img);
+  document.body.appendChild(overlay);
+
+  // Fermer au clic ou Escape
+  overlay.onclick = () => overlay.remove();
+  overlay._key = (e) => { if (e.key === 'Escape') overlay.remove(); document.removeEventListener('keydown', overlay._key); };
+  document.addEventListener('keydown', overlay._key);
+}
 </script>
 </body>
 </html>
