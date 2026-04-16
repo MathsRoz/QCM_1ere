@@ -140,7 +140,7 @@ const QUESTIONS_FONCTIONS = [
 
       var tikz = Fig.latex(-4, 4, -4, 4)
         .grid().axes().gradX(v.gx).gradY(v.gy).clip()
-        .affine(v.a, v.y, -4, 4, 'red', 'f')
+        .affine(-v.a, v.y, -4, 4, 'red', 'f')
         .endClip()
         .end();
 

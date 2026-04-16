@@ -515,10 +515,10 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
           <div class="slider-title">Nombre de questions</div>
           <div class="slider-sub">Questions tirées aléatoirement de la banque filtrée</div>
         </div>
-        <input type="number" class="slider-num" id="numInput" value="12" min="5" max="30"
+        <input type="number" class="slider-num" id="numInput" value="12" min="1" max="30"
           oninput="syncSlider(this.value)" onchange="syncSlider(this.value)">
       </div>
-      <input type="range" id="numSlider" min="5" max="30" value="12" oninput="syncNum(this.value)">
+      <input type="range" id="numSlider" min="1" max="30" value="12" oninput="syncNum(this.value)">
     </div>
     <button class="btn-generate" id="btnGenerate" onclick="generateQCM()"> Générer le QCM</button>
   </div>
@@ -698,21 +698,21 @@ function updateFilterInfo() {
   }
 }
 function syncNum(v) {
-  v = Math.max(5, Math.min(30, +v));
+  v = Math.max(1, Math.min(30, +v));
   state.numQuestions = v;
   document.getElementById('numInput').value = v;
   // Mettre à jour le dégradé de la piste
-  const pct = (v - 5) / (30 - 5) * 100;
+  const pct = (v - 1) / (30 - 1) * 100;
   const slider = document.getElementById('numSlider');
   if (slider) slider.style.background =
     `linear-gradient(to right, var(--blue) ${pct}%, var(--card2) ${pct}%)`;
 }
 function syncSlider(v) {
-  v = Math.max(5, Math.min(30, +v));
+  v = Math.max(1, Math.min(30, +v));
   state.numQuestions = v;
   document.getElementById('numSlider').value = v;
   document.getElementById('numInput').value = v;
-  const pct = (v - 5) / (30 - 5) * 100;
+  const pct = (v - 1) / (30 - 1) * 100;
   document.getElementById('numSlider').style.background =
     `linear-gradient(to right, var(--blue) ${pct}%, var(--card2) ${pct}%)`;
 }

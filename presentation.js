@@ -53,7 +53,7 @@ function renderPresSlide() {
   const q = questions[pres.idx];
   const letters = ['A','B','C','D'];
   const cols = Math.min(q.cols || 4, q.reponses.length);
-  const gridCols = cols === 1 ? '1fr 1fr' : cols === 2 ? '1fr 1fr' : cols === 3 ? '1fr 1fr 1fr' : '1fr 1fr 1fr 1fr';
+  const gridCols = cols === 1 ? '1fr 1fr' : cols === 2 ? '1fr 1fr' : cols === 3 ? '1fr 1fr' : '1fr 1fr';
 
   // ── Header ─────────────────────────────────────────
   document.getElementById('presHeader').innerHTML = `

@@ -83,10 +83,10 @@ const QUESTIONS_CALCUL = [
     variables: { a: {values:[20,40,50,60,70,80]} },
     enonce: (v) => {
       return 'Voici trois nombres.\\\\ $A='+ frac(v.a,100)+';\\quad B='+frac(v.a-1,100)+';\\quad C='+((v.a+1)/100).toFixed(2)+' $ \\\\ Le classement par ordre croissant de ces trois nombres est :'},
-    bonneReponse: (v) => '$ C < A < B $',
+    bonneReponse: (v) => '$ B < A < C $',
     distracteurs: (v) => [
       '$ A < B < C$',
-      '$  B < A < C $',
+      '$  C < A < B $',
       '$ C < B < A $',
     ]
   },
@@ -447,9 +447,9 @@ const QUESTIONS_CALCUL = [
           'x,y,u'
         ],
         ['V=\\dfrac{1}{3}\\pi r^2h', 'h',
+          'h=\\dfrac{3V}{\\pi r^2}',
           'h=\\dfrac{\\pi r^2}{3V}',
           'h=\\dfrac{V}{3\\pi r}',
-          'h=\\dfrac{\\sqrt{V}}{\\pi r}',
         'h=\\dfrac{3V}{\\pi r}',
 
         'V,h,r'
@@ -765,7 +765,7 @@ const QUESTIONS_CALCUL = [
     v.sit = v.situations[v.s];
     v.res_mm = v.sit.facteur;          // résultat en mm
     v.res_cm = v.sit.facteur / 10;     // résultat en cm
-    return `L'épaisseur d'${v.sit.objet === "feuille d'aluminium" || v.sit.objet === 'carte bancaire' ? "une" : "un"} ${v.sit.objet} est égale à $${v.sit.epaisseur}$ mm.\\\\`
+    return `L'épaisseur d'${v.sit.objet === "feuille d'aluminium" || v.sit.objet === 'carte bancaire'|| v.sit.objet === 'feuille de papier' ? "une" : "un"} ${v.sit.objet} est égale à $${v.sit.epaisseur}$ mm.\\\\`
       + `L'épaisseur d'une pile de $${v.sit.n}$ est égale à :`;
   },
   bonneReponse: (v) => `$${v.res_cm}$ cm`,

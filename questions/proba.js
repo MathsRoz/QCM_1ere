@@ -180,12 +180,12 @@ const QUESTIONS_PROBA = [
            + '%%SVG' + svg + '%%ENDSVG%%%%TIKZ' + tikz + '%%ENDTIKZ%%'
            + '$P(A\\cap B)$ est égale à :';
     },
-    bonneReponse: function(v) { return '$ 0,'+ v.p1*v.p2  + '$'; },
+    bonneReponse: function(v) { return '$ '+ v.p1*v.p2/100  + '$'; },
     distracteurs: function(v) {
       return [
-        '$ 0,'+ (v.p1+v.p2)  + '$',
-        '$ 0,'+ v.p2  + '$',
-        '$ 0,'+ v.p1  + '$',
+        '$ '+ (v.p1+v.p2)/100  + '$',
+        '$ '+ v.p2/100  + '$',
+        '$ '+ v.p1/100  + '$',
       ];
     }
   },
@@ -222,12 +222,12 @@ const QUESTIONS_PROBA = [
            + '%%SVG' + svg + '%%ENDSVG%%%%TIKZ' + tikz + '%%ENDTIKZ%%'
            + '$P(B)$ est égale à :';
     },
-    bonneReponse: function(v) { return '$ 0,'+ (v.p1*v.p2 +(10-v.p1)*v.p3)  + '$'; },
+    bonneReponse: function(v) { return '$ '+ (v.p1*v.p2 +(10-v.p1)*v.p3)/100  + '$'; },
     distracteurs: function(v) {
       return [
-        '$ 0,'+ (v.p3+v.p2)  + '$',
-        '$ 0,'+ v.p2  + '$',
-        '$ 0,'+ v.p3  + '$',
+        '$ '+ (v.p3+v.p2)/100  + '$',
+        '$ '+ v.p2/100  + '$',
+        '$ '+ v.p3/100  + '$',
       ];
     }
   },
@@ -265,12 +265,12 @@ const QUESTIONS_PROBA = [
            + '%%SVG' + svg + '%%ENDSVG%%%%TIKZ' + tikz + '%%ENDTIKZ%%'
            + '$P(B)$ est égale à :';
     },
-    bonneReponse: function(v) { return '$ 0,'+ (v.p1*v.p2 +(10-v.p1)*v.p3)  + '$'; },
+    bonneReponse: function(v) { return '$ '+ (v.p1*v.p2 +(10-v.p1)*v.p3)/100  + '$'; },
     distracteurs: function(v) {
       return [
-        '$ 0,'+ (v.p3+v.p2)  + '$',
-        '$ 0,'+ v.p2  + '$',
-        '$ 0,'+ v.p3  + '$',
+        '$ '+ (v.p3+v.p2)/100  + '$',
+        '$ '+ v.p2/100  + '$',
+        '$ '+ v.p3/100  + '$',
       ];
     }
   },

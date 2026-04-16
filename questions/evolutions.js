@@ -87,7 +87,7 @@ const QUESTIONS_EVOLUTIONS = [
     niveau: ["techno", "specifique", "specialite"], cols: 4,
     variables: { v0: { min: 1, max: 25 }, t: { min: -9 , max: 10 } },
     enonce: (v) => {
-      if (v.t===0){vt=-1;}
+      if (v.t===0){v.t=-1;}
       return `Une valeur passe de $${v.v0*10}$ à $${(v.v0*10 *(1 + v.t/10)).toFixed(0)}$. Quel est le taux d'évolution ?`},
     bonneReponse: (v) => `$${(v.t*10)}\\%$`,
     distracteurs: (v) => [
@@ -119,7 +119,6 @@ const QUESTIONS_EVOLUTIONS = [
     bonneReponse: (v) => {
       t = ((1 + v.t1 / 100) * (1 - v.t2 / 100) * 100 - 100).toFixed(0)
       evo = (t<0) ? "baisse" : "hausse";
-      evo1 = (t>0) ? "baisse" : "hausse";
       return `Une ${evo} de $ ${Math.abs(t)}\\%$`},
     distracteurs: (v) => [
       `Une ${(v.t1 - v.t2<0) ? "baisse" : "hausse"} de $${Math.abs(v.t1 - v.t2)}\\%$`,
@@ -150,7 +149,7 @@ const QUESTIONS_EVOLUTIONS = [
     niveau: ["techno", "specifique", "specialite"], cols: 2,
     variables: { t: { min: -35, max: 35 } },
     enonce: (v) =>{
-      if(v.t===0)(v.t=-17)
+      if(v.t===0){v.t=-17;}
       return `Multiplier une valeur par $${(1 + v.t / 100).toFixed(2)}$ correspond à:`},
     bonneReponse: (v) => `Une `+ ((v.t<0) ? "baisse" : "hausse" )+ ` de $${Math.abs(v.t)}\\%$`,
     distracteurs: (v) => [
