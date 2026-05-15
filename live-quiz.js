@@ -104,8 +104,17 @@
     ['ltbCode','lvWaitCode'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = roomCode; });
     ['lvWaitQr'].forEach(id => { const el = document.getElementById(id); if(el) el.src = qrSrc; });
 
-    const opts = PEER_SERVER ? { host:PEER_SERVER.host, port:PEER_SERVER.port, path:PEER_SERVER.path } : {};
-    peer = new Peer('qcm-prof-' + roomCode, opts);
+    const ICE_SERVERS = [
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'stun:stun1.l.google.com:19302' },
+  { urls: 'turn:a.relay.metered.ca:80',  username: 'open', credential: 'open' },
+  { urls: 'turn:a.relay.metered.ca:443', username: 'open', credential: 'open' },
+  { urls: 'turns:a.relay.metered.ca:443',username: 'open', credential: 'open' },
+];
+const opts = PEER_SERVER
+  ? { host: PEER_SERVER.host, port: PEER_SERVER.port, path: PEER_SERVER.path, config: { iceServers: ICE_SERVERS } }
+  : { config: { iceServers: ICE_SERVERS } };
+peer = new Peer('qcm-prof-' + roomCode, opts);
     peer.on('open', () => {
       liveState.active = true; liveState.qIdx = -1;
       const s = getQCMState();

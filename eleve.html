@@ -106,9 +106,25 @@ function connectToPeer(roomCode) {
     peer = new Peer(myId, {
         config: {
             iceServers: [
-                { urls: 'stun:stun.l.google.com:19302' },
-                { urls: 'stun:stun1.l.google.com:19302' }
-            ]
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    // Serveurs TURN publics (Metered - gratuit)
+    {
+        urls: 'turn:a.relay.metered.ca:80',
+        username: 'open',
+        credential: 'open'
+    },
+    {
+        urls: 'turn:a.relay.metered.ca:443',
+        username: 'open',
+        credential: 'open'
+    },
+    {
+        urls: 'turns:a.relay.metered.ca:443',
+        username: 'open',
+        credential: 'open'
+    }
+]
         }
     });
 
