@@ -1,0 +1,1001 @@
+// ═══════════════════════════════════════════════════════
+//  THÈME : Calcul numérique et algébrique
+//  BO 2025 — session 2027
+// ═══════════════════════════════════════════════════════
+
+const QUESTIONS_CALCUL = [
+
+  // ── Fractions : addition à même dénominateur ── done
+  {
+    id: "C1-A", theme: "calcul", groupe :"Opérations et comparaisons de fractions",
+    desc : 'Addition de fractions',
+    niveau: ["techno", "specifique", "specialite"], cols: 4,
+    variables: { a: { min: 1, max: 7 }, b: { min: 2, max: 9 }, c: { min: 1, max: 7 } },
+    enonce: (v) => {
+      if (v.b===v.c){v.c++}
+      if (v.b===v.a){v.a--}
+      return `Calculer $\\dfrac{${v.a}}{${v.b}} + \\dfrac{${v.c}}{${v.b}}$`},
+    bonneReponse: (v) => `$${frac(v.a + v.c, v.b)}$`,
+    distracteurs: (v) => [
+      `$${frac(v.a + v.c,2 * v.b)}$`,
+      `$${frac(v.a * v.c,v.b)}$`,
+      `$${frac(v.a + v.c,v.b * v.b)}$`
+    ]
+  },
+
+  // ── Fractions : multiplication ── done
+  {
+    id: "C1-B", theme: "calcul", groupe :"Opérations et comparaisons de fractions",
+    desc : 'Multiplication de fractions',
+    niveau: ["techno", "specifique", "specialite"], cols: 4,
+    variables: { a: { min: 1, max: 5 }, b: { min: 2, max: 7 }, c: { min: 1, max: 5 }, d: { min: 2, max: 7 } },
+    enonce: (v) => {
+      if (v.b===v.a){v.a--}
+      if (v.c===v.d){v.c--}
+      return `Calculer $\\dfrac{${v.a}}{${v.b}} \\times \\dfrac{${v.c}}{${v.d}}$`},
+    bonneReponse: (v) => `$${frac(v.a * v.c, v.b * v.d)}$`,
+    distracteurs: (v) => [
+      `$\\dfrac{${v.a + v.c}}{${v.b + v.d}}$`,
+      `$\\dfrac{${v.a * v.c}}{${v.b + v.d}}$`,
+      `$\\dfrac{${v.a + v.c}}{${v.b * v.d}}$`
+    ]
+  },
+
+  // ── Comparer deux fractions ── done
+  {
+    id: "C1-C1", theme: "calcul", groupe :"Opérations et comparaisons de fractions",
+    desc : 'Comparaison de fractions I',
+    niveau: ["techno", "specifique", "specialite"], cols: 2,
+    variables: { a: { min: 3, max: 6 }, b: { min: 3, max: 8 }, c: { min: 1, max: 6 }, d: { min: 3, max: 8 } },
+    enonce: (v) => {
+      if (v.b<=v.a){v.a=v.b-1}
+      if (v.d<=v.c){v.c=v.d-1}
+      if (v.b===v.d){v.b++}
+      if (v.a===v.c){v.a--}
+
+      return`Comparer $\\dfrac{${v.a}}{${v.b}}$ et $\\dfrac{${v.c}}{${v.d}}$`},
+    bonneReponse: (v) => {
+      const lhs = v.a * v.d, rhs = v.c * v.b;
+      if (lhs > rhs) return `$\\dfrac{${v.a}}{${v.b}} > \\dfrac{${v.c}}{${v.d}}$`;
+      if (lhs < rhs) return `$\\dfrac{${v.a}}{${v.b}} < \\dfrac{${v.c}}{${v.d}}$`;
+      return `$\\dfrac{${v.a}}{${v.b}} = \\dfrac{${v.c}}{${v.d}}$`;
+    },
+    distracteurs: (v) => {
+      const lhs = v.a * v.d, rhs = v.c * v.b;
+      if (lhs > rhs) return [
+        `$\\dfrac{${v.a}}{${v.b}} < \\dfrac{${v.c}}{${v.d}}$`,
+        `$\\dfrac{${v.a}}{${v.b}} = \\dfrac{${v.c}}{${v.d}}$`,
+        `Impossible à comparer`
+      ];
+      if (lhs === rhs) return [
+        `$\\dfrac{${v.a}}{${v.b}} < \\dfrac{${v.c}}{${v.d}}$`,
+        `$\\dfrac{${v.a}}{${v.b}} > \\dfrac{${v.c}}{${v.d}}$`,
+        `Impossible à comparer`
+      ];
+      return [
+        `$\\dfrac{${v.a}}{${v.b}} > \\dfrac{${v.c}}{${v.d}}$`,
+        `$\\dfrac{${v.a}}{${v.b}} = \\dfrac{${v.c}}{${v.d}}$`,
+        `Impossible à comparer`
+      ];
+    }
+  },
+
+  {
+    id: "C1-C2", theme: "calcul", groupe :"Opérations et comparaisons de fractions",
+    desc : 'Comparaison de fractions II',
+    niveau: ["techno", "specifique"], cols: 2,
+    variables: { a: {values:[20,40,50,60,70,80]} },
+    enonce: (v) => {
+      return 'Voici trois nombres.\\\\ $A='+ frac(v.a,100)+';\\quad B='+frac(v.a-1,100)+';\\quad C='+((v.a+1)/100).toFixed(2)+' $ \\\\ Le classement par ordre croissant de ces trois nombres est :'},
+    bonneReponse: (v) => '$ B < A < C $',
+    distracteurs: (v) => [
+      '$ A < B < C$',
+      '$  C < A < B $',
+      '$ C < B < A $',
+    ]
+  },
+
+  // ── Puissances : produit ── done
+  {
+    id: "C2-A", theme: "calcul", groupe :"Opérations sur les puissances",
+    desc : 'Simplifier $a^n \\times  a^m$',
+    niveau: ["techno", "specifique", "specialite"], cols: 4,
+    variables: { a: { min: 2, max: 5 }, p: { min: -9, max: 9 }, q: { min: -9, max: 9 } },
+    enonce: (v) => `Simplifier $${v.a}^{${v.p}} \\times ${v.a}^{${v.q}}$`,
+    bonneReponse: (v) => `$${v.a}^{${v.p + v.q}}$`,
+    distracteurs: (v) => [
+      `$${v.a}^{${v.p * v.q}}$`,
+      `$${v.a * v.a}^{${v.p + v.q}}$`,
+      `$${v.a}^{${v.p - v.q}}$`
+    ]
+  },
+
+  // ── Puissances : quotient ── done
+  {
+    id: "C2-B", theme: "calcul", groupe :"Opérations sur les puissances",
+    desc : 'Simplifier $\\dfrac{a^n}{a^m}$',
+    niveau: ["techno", "specifique", "specialite"], cols: 4,
+    variables: { a: { min: 2, max: 6 }, p: { min: -6, max: 6 }, q: { min: -6, max: 8 } },
+    enonce: (v) => {
+      if(v.p===v.q){v.q--}
+      return `Simplifier $\\dfrac{${v.a}^{${v.p}}}{${v.a}^{${v.q}}}$`},
+    bonneReponse: (v) => `$${v.a}^{${v.p - v.q}}$`,
+    distracteurs: (v) => [
+      `$${v.a}^{${v.p + v.q}}$`,
+      `$1$`,
+      `$${v.a}^{${v.p * v.q}}$`
+    ]
+  },
+
+  // ── Écriture décimale → pourcentage ── done
+  {
+    id: "C3-A", theme: "calcul", groupe :"Ecriture décimale, fractionnaire et pourcentage",
+    desc : 'Ecrire $a\\%$ sous forme décimale',
+    niveau: ["techno", "specifique", "specialite"], cols: 4,
+    variables: { n: { min: 1, max: 9 } },
+    enonce: (v) => `Écrire $${v.n * 5}\\%$ sous forme décimale`,
+    bonneReponse: (v) => `$${v.n * 5 / 100}$`,
+    distracteurs: (v) => [
+      `$${v.n * 5}$`,
+      `$${v.n / 2}$`,
+      `$${v.n * 500}$`
+    ]
+  },
+
+  // ── Pourcentage → décimale ── done
+  {
+    id: "C3-B", theme: "calcul", groupe :"Ecriture décimale, fractionnaire et pourcentage",
+    desc : 'Ecrire $a$ en pourcentage',
+    niveau: ["techno", "specifique", "specialite"], cols: 4,
+    variables: { n: { min: 1, max: 9 } },
+    enonce: (v) => `Écrire $0.${v.n < 10 ? '0' + v.n : v.n}$ sous forme de pourcentage`,
+    bonneReponse: (v) => `$${v.n}\\%$`,
+    distracteurs: (v) => [
+      `$${v.n / 10}\\%$`,
+      `$${v.n * 10}\\%$`,
+      `$${v.n / 100}\\%$`
+    ]
+  },
+
+  // ── Identité remarquable : (a+b)² ── done
+  {
+    id: "C4-A", theme: "calcul", groupe : "Développer, factoriser",
+    desc : 'Développer $(ax+b)^2$',
+    niveau: ["techno", "specifique", "specialite"], cols: 2,
+    variables: { a: { min: 2, max: 8 },
+                  b:{min:2,max:8}},
+    enonce: (v) => `Développer $(${v.a}x + ${v.b})^2$`,
+    bonneReponse: (v) => `$${v.a**2}x^2 + ${2 * v.a*v.b}x + ${v.b ** 2}$`,
+    distracteurs: (v) => [
+      `$${v.a**2}x^2 + ${v.b ** 2}$`,
+      `$${v.a**2}x^2 + ${v.a*v.b}x + ${v.b ** 2}$`,
+      `$${v.a**2}x^2 + ${2 * v.a*v.b}x - ${v.b ** 2}$`
+    ]
+  },
+
+  // ── Identité remarquable : (a-b)² ── done
+  {
+    id: "C4-B", theme: "calcul",groupe : "Développer, factoriser",
+    desc : 'Développer $(ax-b)^2$',
+    niveau: ["techno", "specifique", "specialite"], cols: 2,
+    variables: { a: { min: 2, max: 7 },
+                  b:{min:2,max:8} },
+    enonce: (v) => `Développer $(${v.a}x - ${v.b})^2$`,
+    bonneReponse: (v) => `$${v.a**2}x^2 - ${2 * v.b*v.a}x + ${v.b ** 2}$`,
+    distracteurs: (v) => [
+      `$${v.a**2}x^2 + ${v.b ** 2}$`,
+      `$${v.a**2}x^2 - ${v.b ** 2}$`,
+      `$${v.a**2}x^2 + ${2 * v.b*v.a}x + ${v.b ** 2}$`
+    ]
+  },
+
+  // ── Identité remarquable : (a+b)(a-b) ── done
+  {
+    id: "C4-C", theme: "calcul",groupe : "Développer, factoriser",
+    desc : 'Développer $(ax+b)(ax-b)^2$',
+    niveau: ["techno", "specifique", "specialite"], cols: 2,
+    variables: { a: { min: 2, max: 7 } ,
+                  b:{min:2,max:8} },
+    enonce: (v) => `Développer $(${v.a}x + ${v.b})(${v.a}x - ${v.b})$`,
+    bonneReponse: (v) => `$${v.a**2}x^2 - ${v.b ** 2}$`,
+    distracteurs: (v) => [
+      `$${v.a**2}x^2 + ${v.b ** 2}$`,
+      `$${v.a**2}x^2 - ${2 * v.a*v.b}x - ${v.b ** 2}$`,
+      `$${v.a**2}x^2 + ${2 * v.a*v.b}x - ${v.b ** 2}$`
+    ]
+  },
+
+  // ── Factorisation : différence de carrés ── done
+  {
+    id: "C4-D", theme: "calcul", groupe : "Développer, factoriser",
+    desc : 'Factoriser $x^2-b^2$',
+    niveau: ["techno","specifique", "specialite"], cols: 2,
+    variables: { a: { min: 2, max: 8 } },
+    enonce: (v) => `Factoriser $x^2 - ${v.a ** 2}$`,
+    bonneReponse: (v) => `$(x - ${v.a})(x + ${v.a})$`,
+    distracteurs: (v) => [
+      `$(x - ${v.a})^2$`,
+      `$(x + ${v.a})^2$`,
+      `$(x - ${v.a / 2})(x + ${v.a / 2})$`
+    ]
+  },
+
+  // ── Équation du 1er degré ── done
+  {
+    id: "C5-A", theme: "calcul", groupe : "Résoudre une équation ou inéquation",
+    desc : 'Résoudre $ax+b=0$',
+    niveau: ["techno", "specifique", "specialite"], cols: 4,
+    variables: { a: { min: 2, max: 9 }, b: { min: 1, max: 20 } },
+    enonce: (v) => {
+      if(v.a===v.b){v.a++}
+      return `Résoudre $${v.a}x + ${v.b} = 0$`},
+    bonneReponse: (v) => `$x = ${frac(-v.b, v.a)}$`,
+    distracteurs: (v) => [
+      `$x = ${frac(v.b, v.a)}$`,
+      `$x = ${frac(v.a, v.b)}$`,
+      `$x = -${frac(v.a, v.b)}$`
+    ]
+  },
+
+  // ── Équation ax+b = c ── done
+  {
+    id: "C5-B", theme: "calcul", groupe : "Résoudre une équation ou inéquation",
+    desc : 'Résoudre $ax+b=c$',
+    niveau: ["techno", "specifique", "specialite"], cols: 4,
+    variables: { a: { min: 2, max: 8 }, b: { min: 1, max: 15 }, c: { min: 1, max: 6 } },
+    enonce: (v) => `Résoudre $${v.a}x + ${v.b} = ${v.a * v.c + v.b}$`,
+    bonneReponse: (v) => `$x = ${v.c}$`,
+    distracteurs: (v) => [
+      `$x = ${frac(v.a * v.c + v.b+v.b,v.a)}$`,
+      `$x = ${v.a + v.c}$`,
+      `$x = -${v.c}$`
+    ]
+  },
+
+  // ── Inéquation du 1er degré ── done
+  {
+    id: "C5-C", theme: "calcul", groupe : "Résoudre une équation ou inéquation",
+    desc : 'Résoudre $ax+b>0$',
+    niveau: ["techno", "specifique", "specialite"], cols: 4,
+    variables: { a: { min: 2, max: 8 }, b: { min: 1, max: 12 } },
+    enonce: (v) => `Résoudre l'inéquation $${v.a}x - ${v.b} > 0$`,
+    bonneReponse: (v) => `$x > ${frac(v.b, v.a)}$`,
+    distracteurs: (v) => [
+      `$x < ${frac(v.b, v.a)}$`,
+      `$x > ${frac(-v.b, v.a)}$`,
+      `$x < ${frac(-v.b, v.a)}$`
+    ]
+  },
+
+
+
+  // ── Équation produit nul ── done
+  {
+    id: "C5-D", theme: "calcul", groupe: 'Résoudre une équation ou inéquation',
+    desc : 'Résoudre $(x-a)(x+b)=0$',
+    niveau: ["techno", "specifique", "specialite"], cols: 2,
+    variables: { a: { min: 1, max: 8 }, b: { min: 1, max: 8 } },
+    enonce: (v) => `Résoudre $(x - ${v.a})(x + ${v.b}) = 0$`,
+    bonneReponse: (v) => `$x = ${v.a}$ ou $x = -${v.b}$`,
+    distracteurs: (v) => [
+      `$x = -${v.a}$ ou $x = ${v.b}$`,
+      `$x = ${v.a}$ ou $x = ${v.b}$`,
+      `$x = -${v.a}$ ou $x = -${v.b}$`
+    ]
+  },
+
+  {
+    id: "C5-E", theme: 'calcul', groupe: "Résoudre une équation ou inéquation",
+    desc : 'Résoudre $\\dfrac{x+a}{x-b}=0$',
+    niveau: ["techno", "specifique", "specialite"], cols: 2,
+    variables: { a: { min: 1, max: 5 }, b: { min: 6, max: 12 } },
+    enonce: (v) => `Résoudre l'équation $\\dfrac{x + ${v.a}}{x - ${v.b}} = 0$`,
+    bonneReponse: (v) => `$x = -${v.a}$`,
+
+    distracteurs: (v) => [`$x = ${v.b}$`, `$x = -${v.a}$ ou $x=${v.b}$`, `$x = ${v.b - v.a}$`]
+  },
+
+  // ── Signe d'une expression du 1er degré ── done
+  {
+    id: "C6-A", theme: "calcul", groupe: "Déterminer le signe d’une expression",
+    desc : 'Signe de $ax+b$',
+    niveau: ["techno", "specifique", "specialite"], cols: 4,
+    variables: { a: { min: 2, max: 7 }, b: { min: 2, max: 10 } },
+    enonce: (v) => `Sur quel intervalle $${v.a}x - ${v.b}$ est-il strictement positif ?`,
+    bonneReponse: (v) => `$\\left]${frac(v.b, v.a)} ; +\\infty\\right[$`,
+    distracteurs: (v) => [
+      `$\\left]-\\infty ; ${frac(v.b, v.a)}\\right[$`,
+      `$\\left]${frac(v.b, -v.a)} ; +\\infty\\right[$`,
+      `$\\left]-\\infty ; ${frac(v.b, -v.a)}\\right[$`
+    ]
+  },
+
+  // ── Expression littérale : simplification ── done
+//   {
+//     id: "C7-A", theme: "calcul", groupe : "Simplifier une expression littérale" ,
+//     niveau: ["techno", "specifique"], cols: 4,
+//     desc : 'Simplifier $-(ax-b)$',
+//     variables: { a: { min: 2, max: 7 }, b: { min: 1, max: 6 } },
+//     enonce: (v) => `Simplifier $-(${v.a}x - ${v.b})$`,
+//     bonneReponse: (v) => `$-${v.a}x + ${v.b}$`,
+//     distracteurs: (v) => [
+//       `$-${v.a}x - ${v.b}$`,
+//       `$${v.a}x - ${v.b}$`,
+//       `$${v.a}x + ${v.b}$`
+//     ]
+//   },
+
+
+//   // ── Simplifier une expression littérale ───────────────
+
+// {
+//   id: "C7-B", theme: "calcul",
+//   groupe: "Simplifier une expression littérale",
+//   niveau: ["techno", "specifique"], cols: 4,
+//   desc: "Simplifier $-(a + b)$",
+//   variables: { a: { min: 2, max: 9 }, b: { min: 2, max: 9 } },
+//   enonce: (v) => `Simplifier $-(${v.a} + ${v.b})$`,
+//   bonneReponse: (v) => `$-${v.a} - ${v.b}$`,
+//   distracteurs: (v) => [
+//     `$-${v.a} + ${v.b}$`,
+//     `$${v.a} + ${v.b}$`,
+//     `$${v.a} - ${v.b}$`,
+//   ]
+// },
+
+// {
+//   id: "C7-C", theme: "calcul",
+//   groupe: "Simplifier une expression littérale",
+//   niveau: ["techno", "specifique"], cols: 4,
+//   desc: "Simplifier $-(a - b)$",
+//   variables: { a: { min: 2, max: 9 }, b: { min: 2, max: 9 } },
+//   enonce: (v) => `Simplifier $-(${v.a} - ${v.b})$`,
+//   bonneReponse: (v) => `$${v.b} - ${v.a}$`,
+//   distracteurs: (v) => [
+//     `$-${v.a} - ${v.b}$`,
+//     `$${v.a} - ${v.b}$`,
+//     `$-${v.b} + ${v.a}$`,
+//   ]
+// },
+
+// {
+//   id: "C7-D", theme: "calcul",
+//   groupe: "Simplifier une expression littérale",
+//   niveau: ["techno", "specifique"], cols: 4,
+//   desc: "Simplifier $-(ax + b)$",
+//   variables: { a: { min: 2, max: 7 }, b: { min: 1, max: 9 } },
+//   enonce: (v) => `Simplifier $-(${v.a}x + ${v.b})$`,
+//   bonneReponse: (v) => `$-${v.a}x - ${v.b}$`,
+//   distracteurs: (v) => [
+//     `$-${v.a}x + ${v.b}$`,
+//     `$${v.a}x + ${v.b}$`,
+//     `$${v.a}x - ${v.b}$`,
+//   ]
+// },
+
+// {
+//   id: "C7-E", theme: "calcul",
+//   groupe: "Simplifier une expression littérale",
+//   niveau: ["techno", "specifique"], cols: 4,
+//   desc: "Simplifier $-(ax - b)$",
+//   variables: { a: { min: 2, max: 7 }, b: { min: 1, max: 6 } },
+//   enonce: (v) => `Simplifier $-(${v.a}x - ${v.b})$`,
+//   bonneReponse: (v) => `$-${v.a}x + ${v.b}$`,
+//   distracteurs: (v) => [
+//     `$-${v.a}x - ${v.b}$`,
+//     `$${v.a}x - ${v.b}$`,
+//     `$${v.a}x + ${v.b}$`,
+//   ]
+// },
+
+// {
+//   id: "C7-F", theme: "calcul",
+//   groupe: "Simplifier une expression littérale",
+//   niveau: ["techno", "specifique"], cols: 4,
+//   desc: "Simplifier $(-1) \\times x$",
+//   variables: { a: { values: ['x','y','a','b','m','n'] } },
+//   enonce: (v) => `Simplifier $(-1) \\times ${v.a}$`,
+//   bonneReponse: (v) => `$-${v.a}$`,
+//   distracteurs: (v) => [
+//     `$${v.a}$`,
+//     `$1 - ${v.a}$`,
+//     `$\\dfrac{${v.a}}{-1}$`,
+//   ]
+// },
+
+// {
+//   id: "C7-G", theme: "calcul",
+//   groupe: "Simplifier une expression littérale",
+//   niveau: ["techno", "specifique"], cols: 4,
+//   desc: "Simplifier $\\dfrac{0}{a}$",
+//   variables: { a: { min: 2, max: 9 } },
+//   enonce: (v) => `Simplifier $\\dfrac{0}{${v.a}}$`,
+//   bonneReponse: (v) => `$0$`,
+//   distracteurs: (v) => [
+//     `$${v.a}$`,
+//     `$\\dfrac{1}{${v.a}}$`,
+//     `Indéfini`,
+//   ]
+// },
+
+// {
+//   id: "C7-H", theme: "calcul",
+//   groupe: "Simplifier une expression littérale",
+//   niveau: ["techno", "specifique"], cols: 4,
+//   desc: "Simplifier $\\dfrac{1}{\\dfrac{1}{a}}$",
+//   variables: { a: { min: 2, max: 9 } },
+//   enonce: (v) => `Simplifier $\\dfrac{1}{\\dfrac{1}{${v.a}}}$`,
+//   bonneReponse: (v) => `$${v.a}$`,
+//   distracteurs: (v) => [
+//     `$\\dfrac{1}{${v.a}}$`,
+//     `$${v.a}^2$`,
+//     `$\\dfrac{1}{${v.a}^2}$`,
+//   ]
+// },
+
+// {
+//   id: "C7-I", theme: "calcul",
+//   groupe: "Simplifier une expression littérale",
+//   niveau: ["techno", "specifique"], cols: 2,
+//   desc: "Simplifier $\\dfrac{a/b}{c/d}$",
+//   variables: { a: { min: 2, max: 7 }, b: { min: 2, max: 7 }, c: { min: 2, max: 7 }, d: { min: 2, max: 7 } },
+//   enonce: (v) => `Simplifier $\\dfrac{\\dfrac{${v.a}}{${v.b}}}{\\dfrac{${v.c}}{${v.d}}}$`,
+//   bonneReponse: (v) => `$\\dfrac{${v.a} \\times ${v.d}}{${v.b} \\times ${v.c}}$`,
+//   distracteurs: (v) => [
+//     `$\\dfrac{${v.a} \\times ${v.c}}{${v.b} \\times ${v.d}}$`,
+//     `$\\dfrac{${v.a} \\times ${v.b}}{${v.c} \\times ${v.d}}$`,
+//     `$\\dfrac{${v.a}}{${v.b}} \\times \\dfrac{${v.c}}{${v.d}}$`,
+//   ]
+// },
+
+// {
+//   id: "C7-J", theme: "calcul",
+//   groupe: "Simplifier une expression littérale",
+//   niveau: ["techno", "specifique"], cols: 2,
+//   desc: "Calculer $\\dfrac{a}{b} \\div \\dfrac{c}{d}$",
+//   variables: { a: { min: 2, max: 6 }, b: { min: 2, max: 6 }, c: { min: 2, max: 6 }, d: { min: 2, max: 6 } },
+//   enonce: (v) => `$\\dfrac{${v.a}}{${v.b}} \\div \\dfrac{${v.c}}{${v.d}}$ est égal à :`,
+//   bonneReponse: (v) => `$\\dfrac{${v.a} \\times ${v.d}}{${v.b} \\times ${v.c}}$`,
+//   distracteurs: (v) => [
+//     `$\\dfrac{${v.a} \\times ${v.c}}{${v.b} \\times ${v.d}}$`,
+//     `$\\dfrac{${v.a}}{${v.b}} \\times \\dfrac{${v.c}}{${v.d}}$`,
+//     `$\\dfrac{${v.a} + ${v.d}}{${v.b} + ${v.c}}$`,
+//   ]
+// },
+
+// {
+//   id: "C7-K", theme: "calcul",
+//   groupe: "Simplifier une expression littérale",
+//   niveau: ["techno", "specifique"], cols: 2,
+//   desc: "Identifier l'égalité FAUSSE parmi $x = 1\\times x$, $x = x/1$...",
+//   variables: { a: { values: ['x','y','a','b','m','n'] } },
+//   enonce: (v) => `Laquelle de ces égalités est FAUSSE ?`,
+//   bonneReponse: (v) => `$${v.a} = \\dfrac{1}{${v.a}}$`,
+//   distracteurs: (v) => [
+//     `$${v.a} = 1 \\times ${v.a}$`,
+//     `$${v.a} = \\dfrac{${v.a}}{1}$`,
+//     `$${v.a} = \\dfrac{${v.a} \\times ${v.a}}{${v.a}}$`,
+//   ]
+// },
+
+  // ── Équation x² = a ── done
+  {
+    id: "C5-F", theme: "calcul", groupe : "Résoudre une équation ou inéquation",
+    desc : 'Résoudre $x^2=a$',
+    niveau: ["specifique", "specialite"], cols: 2,
+    variables: { a: { min: 1, max: 9 } },
+    enonce: (v) => `Résoudre $x^2 = ${v.a ** 2}$`,
+    bonneReponse: (v) => `$x = ${v.a}$ ou $x = -${v.a}$`,
+    distracteurs: (v) => [
+      `$x = ${v.a}$`,
+      `$x = -${v.a}$`,
+      `$x = ${v.a ** 2}$`
+    ]
+  },
+  // ── Inverse du double d'un entier ──
+  {
+    id: "C8-A", theme: "calcul", groupe : "Passer du français aux mathématiques",
+    niveau: ["techno", "specifique", "specialite"], cols: 4,
+    desc : 'L\'inverse du double',
+    variables: { n: { min: 3, max: 9 } },
+    enonce: (v) => `L'inverse du double de $${v.n}$ est égal à :`,
+    bonneReponse: (v) => `$\\dfrac{1}{${2 * v.n}}$`,
+    distracteurs: (v) => [
+      `$${frac(2, v.n)}$`,
+      `$${frac(v.n, 2)}$`,
+      `$${2 * v.n}$`
+    ]
+  },
+  {
+    id: "C8-B", theme: "calcul", groupe : "Passer du français aux mathématiques",
+    niveau: ["techno", "specifique", "specialite"], cols: 4,
+    desc : 'Le triple de l\'inverse',
+    variables: { n: { min: 4, max: 8 } },
+    enonce: (v) => `Le triple de l'inverse de $${v.n}$ est égal à :`,
+    bonneReponse: (v) => '$'+frac(3,v.n)+'$',
+    distracteurs: (v) => [
+      '$'+frac(1,3*v.n)+'$',
+      '$'+frac(v.n,3)+'$',
+      '$'+frac(3*v.n,1)+'$'
+    ]
+  },
+ 
+  // ── Calcul avec la relation F = a + b/(cd) ──
+  // Valeurs fixées : a=1/2, b=3, c=4, d=-1/4 → F = 1/2 + 3/(4×(-1/4)) = 1/2 - 3 = -5/2
+  {
+    id: "C1-D1", theme: "calcul", groupe :'Opérations et comparaisons de fractions',
+    desc : 'Calcul avec fractions I',
+    niveau: ["techno", "specifique", "specialite"], cols: 4,
+    variables: {a : {min:2,max:8}, b : {min:2,max:9},c : {min:2,max:8}},
+    enonce: (v) =>
+      `On considère la relation $F = a + \\dfrac{b}{cd}$.\n\\\\` +
+      `Lorsque $a = \\dfrac{1}{${v.a}}$, $b = ${v.b}$, $c = ${v.c}$, $d = -\\dfrac{1}{${v.c}}$,` +
+      ` la valeur de $F$ est égale à :`,
+    bonneReponse: (v) => `$`+frac(1-v.b*v.a,v.a)+`$`,
+    distracteurs: (v) => [
+      `$`+frac(1-v.b*v.a,-v.a)+`$`,
+      `$`+frac(1-v.b,v.a-1)+`$`,
+      `$`+frac(1-v.b,-v.a+1)+`$`
+    ]
+  },
+  {
+    id: "C1-D2", theme: "calcul", groupe :'Opérations et comparaisons de fractions',
+    desc : 'Calcul avec fractions II',
+    niveau: ["techno", "specifique", "specialite"], cols: 4,
+    variables: {a : {min:2,max:8}, b : {min:2,max:7},c : {min:2,max:8}},
+    enonce: function(v) {
+      v.c=(v.c===v.b)? v.c+1:v.c;
+      return `On considère $A=\\dfrac{${v.a}}{1-\\dfrac{${v.b}}{${v.c}}}$. On a :`},
+    bonneReponse: (v) => `$`+frac(v.a*v.c,v.c-v.b)+`$`,
+    distracteurs: (v) => [
+      `$`+frac(v.a*v.c,1-v.b)+`$`,
+      `$`+frac(v.a*v.c,v.b)+`$`,
+      `$`+frac(v.a,1-v.b)+`$`
+    ]
+  },
+
+  {
+    id: "C9-A", theme: "calcul", groupe :"Isoler une variable dans une égalité",
+    desc :"Isoler une variable",
+    niveau: ["techno", "specifique", "specialite"], cols: 2,
+    variables: { f: { values: [0, 1, 2, 3, 4, 5, 6, 7,8,9] } },
+    enonce: (v) => {
+      const formules = [
+        // [énoncé, variable isolée, bonne réponse, dist1, dist2, dist3]
+        [
+          'F = ma',           'a',
+          'a = \\dfrac{F}{m}',
+          'a = Fm',
+          'a = \\dfrac{m}{F}',
+          'a = F - m',
+          'F,m,a'
+        ],
+        [
+          'U = RI',           'I',
+          'I = \\dfrac{U}{R}',
+          'I = UR',
+          'I = \\dfrac{R}{U}',
+          'I = U - R',
+          'U,R,I'
+        ],
+        [
+          'p = \\dfrac{m}{V}', 'V',
+          'V = \\dfrac{m}{p}',
+          'V = mp',
+          'V = \\dfrac{p}{m}',
+          'V = \\dfrac{1}{mp}',
+          'p,m,V'
+        ],
+        [
+          'y = mx + p',        'x',
+          'x = \\dfrac{y - p}{m}',
+          'x = \\dfrac{m}{y - p}',
+          'x = \\dfrac{y}{m} + p',
+          'x = \\dfrac{p - y}{m}',
+          'y,m,x,p'
+        ],
+        [
+          'PV = nRT',          'T',
+          'T = \\dfrac{PV}{nR}',
+          'T = \\dfrac{nR}{PV}',
+          'T = \\dfrac{PR}{nV}',
+          'T = \\dfrac{V}{nR}',
+          'P,V,n,R,T'
+        ],
+        [
+          'E = \\dfrac{1}{2}mv^2', 'v',
+          'v = \\sqrt{\\dfrac{2E}{m}}',
+          'v = \\dfrac{2E}{m}',
+          'v = \\dfrac{m}{2E}',
+          'v = \\sqrt{\\dfrac{m}{2E}}',
+          'E,m,v'
+        ],
+        [
+          'A = \\pi r^2',       'r',
+          'r = \\sqrt{\\dfrac{A}{\\pi}}',
+          'r = \\dfrac{A}{\\pi}',
+          'r = \\dfrac{\\pi}{A}',
+          'r = \\sqrt{A\\pi}',
+          'A,r'
+        ],
+        [
+          'x = \\dfrac{ab}{c}', 'b',
+          'b = \\dfrac{cx}{a}',
+          'b = \\dfrac{ax}{c}',
+          'b = \\dfrac{a}{cx}',
+          'b = \\dfrac{x}{ac}',
+          'x,a,b,c'
+        ],
+        [
+          '\\dfrac{1}{x}+\\dfrac{1}{y}=\\dfrac{1}{u}', 'u',
+          'u=\\dfrac{xy}{x+y}',
+          'u=\\dfrac{x+y}{xy}',
+          'u=xy',
+          'u=x+y',
+          'x,y,u'
+        ],
+        ['V=\\dfrac{1}{3}\\pi r^2h', 'h',
+          'h=\\dfrac{3V}{\\pi r^2}',
+          'h=\\dfrac{\\pi r^2}{3V}',
+          'h=\\dfrac{V}{3\\pi r}',
+        'h=\\dfrac{3V}{\\pi r}',
+
+        'V,h,r'
+        ]
+      ];
+      const formule = formules[v.f];
+      v._formules = formule;
+      return `On considère $${v._formules[6]}$ des réels non nuls tels que $${v._formules[0]}$. \n \\\\ Isoler $${v._formules[1]}$.`;
+    },
+    bonneReponse: (v) => `$${v._formules[2]}$`,
+    distracteurs: (v) => [
+      `$${v._formules[3]}$`,
+      `$${v._formules[4]}$`,
+      `$${v._formules[5]}$`,
+    ]
+  },
+
+  // ── Signe d'un polynôme du second degré factorisé ──
+  // f(x) = a(x - r1)(x - r2) avec a, r1, r2 variés
+  // On demande : sur quel intervalle f(x) > 0 (ou < 0)
+  {
+    id: "C6-B", theme: "calcul",
+    groupe: "Déterminer le signe d’une expression",
+    desc : 'Signe de $a(x-x_1)(x-x_2)$',
+    niveau: ["specifique", "specialite"], cols: 2,
+    variables: {
+      r1:   { min: -5, max: 4 },   // racine gauche
+      ecart:{ min: 1, max: 5 },    // r2 = r1 + ecart (garantit r1 < r2)
+      a:    { values: [-3, -2, -1, 1, 2, 3] },
+      sens: { values: [0, 1] },    // 0 = cherche f>0, 1 = cherche f<0
+    },
+    enonce: (v) => {
+      const r2 = v.r1 + v.ecart;
+      v._r2 = r2;
+      const aStr = v.a === 1 ? '' : v.a === -1 ? '-' : String(v.a);
+      // Écrire les facteurs avec le bon signe
+      const f1 = v.r1 === 0 ? 'x' : `(x ${v.r1 > 0 ? '- ' + v.r1 : '+ ' + (-v.r1)})`;
+      const f2 = r2   === 0 ? 'x' : `(x ${r2   > 0 ? '- ' + r2   : '+ ' + (-r2)})`;
+      v._expr = `${aStr}${f1}${f2}`;
+      const inegalite = v.sens === 0 ? '> 0' : '< 0';
+      return `Résoudre $f(x) ${inegalite}$ où $f(x) = ${v._expr}$.`;
+    },
+    bonneReponse: (v) => {
+      const r1 = v.r1, r2 = v._r2, a = v.a;
+      // f(x) = a(x-r1)(x-r2), racines r1 < r2
+      // Si a > 0 : f > 0 sur ]-∞,r1[ ∪ ]r2,+∞[, f < 0 sur ]r1,r2[
+      // Si a < 0 : f > 0 sur ]r1,r2[, f < 0 sur ]-∞,r1[ ∪ ]r2,+∞[
+      const positifExt = a > 0; // f>0 à l'extérieur si a>0
+      if (v.sens === 0) {
+        // cherche f > 0
+        return positifExt
+          ? `$x \\in \\left]-\\infty\\,;\\,${r1}\\right[ \\cup \\left]${r2}\\,;\\,+\\infty\\right[$`
+          : `$x \\in \\left]${r1}\\,;\\,${r2}\\right[$`;
+      } else {
+        // cherche f < 0
+        return positifExt
+          ? `$x \\in \\left]${r1}\\,;\\,${r2}\\right[$`
+          : `$x \\in \\left]-\\infty\\,;\\,${r1}\\right[ \\cup \\left]${r2}\\,;\\,+\\infty\\right[$`;
+      }
+    },
+    distracteurs: (v) => {
+      const r1 = v.r1, r2 = v._r2, a = v.a;
+      const positifExt = a > 0;
+      // Distracteur 1 : réponse inversée (confusion signe de a)
+      const dist1 = v.sens === 0
+        ? (positifExt
+            ? `$x \\in \\left]${r1}\\,;\\,${r2}\\right[$`
+            : `$x \\in \\left]-\\infty\\,;\\,${r1}\\right[ \\cup \\left]${r2}\\,;\\,+\\infty\\right[$`)
+        : (positifExt
+            ? `$x \\in \\left]-\\infty\\,;\\,${r1}\\right[ \\cup \\left]${r2}\\,;\\,+\\infty\\right[$`
+            : `$x \\in \\left]${r1}\\,;\\,${r2}\\right[$`);
+      // Distracteur 2 : intervalles fermés (inclure les racines, erreur classique)
+      const dist2 = v.sens === 0
+        ? (positifExt
+            ? `$x \\in \\left]-\\infty\\,;\\,${r1}\\right] \\cup \\left[${r2}\\,;\\,+\\infty\\right[$`
+            : `$x \\in \\left[${r1}\\,;\\,${r2}\\right]$`)
+        : (positifExt
+            ? `$x \\in \\left[${r1}\\,;\\,${r2}\\right]$`
+            : `$x \\in \\left]-\\infty\\,;\\,${r1}\\right] \\cup \\left[${r2}\\,;\\,+\\infty\\right[$`);
+      // Distracteur 3 : confondre les racines (inverser r1 et r2)
+      const dist3 = v.sens === 0
+        ? (positifExt
+            ? `$x \\in \\left]-\\infty\\,;\\,${r2}\\right[ \\cup \\left]${r1}\\,;\\,+\\infty\\right[$`
+            : `$x \\in \\left]${r2}\\,;\\,${r1}\\right[$`)
+        : (positifExt
+            ? `$x \\in \\left]${r2}\\,;\\,${r1}\\right[$`
+            : `$x \\in \\left]-\\infty\\,;\\,${r2}\\right[ \\cup \\left]${r1}\\,;\\,+\\infty\\right[$`);
+      return [dist1, dist2, dist3];
+    }
+  },
+
+{
+  id: "C2-C", theme: "calcul",
+  desc : 'Simplifier $\\dfrac{(ab)^n}{a^m}$',
+  groupe: "Opérations sur les puissances",
+  niveau: ["techno", "specifique", "specialite"], cols: 2,
+  variables: {
+    a: { min: 6, max: 9 },   // exposant numérateur
+    b: { min: 2, max: 5 },   // exposant dénominateur
+    x: {min:2, max:9},
+    y : {min:2, max:5}
+  },
+  enonce: (v) => {
+    v.y=(v.x===v.y) ? v.y+1:v.y;
+    // N = 10^a / 5^b = 2^b * 10^(a-b) / 10^b... on recalcule proprement
+    // 10^a / 5^b = (2*5)^a / 5^b = 2^a * 5^a / 5^b = 2^a * 5^(a-b)
+    v._exp = v.a - v.b;
+    v._exp = (v._exp===1) ? " " : v._exp;
+    v._N = Math.pow(2, v.a) * Math.pow(5, v._exp);
+    return `On considère le nombre $N = \\dfrac{${v.x*v.y}^{${v.a}}}{${v.x}^{${v.b}}}$. On a :`;
+  },
+  bonneReponse: (v) => `$N = ${v.y}^{${v.a}} \\times ${v.x}^{${v._exp}}$`,
+  distracteurs: (v) => [
+    `$N = ${v.y}^{${v._exp}}$`,
+    `$N = ${v.y}^{${v._exp}} \\times ${v.x}^{${v._exp}}$`,
+    `$N = ${v.y*v.x}^{${v._exp}}$`,
+  ]
+},
+
+{
+  id: "C10-A", theme: "calcul",
+  groupe: "Effectuer des conversions d’unités",
+  desc: "Conversions d’unités I",
+  niveau: ["techno", "specifique", "specialite"], cols: 2,
+  variables: {
+    situation: { values: [0, 1, 2, 3] }
+  },
+  enonce: (v) => {
+    const situations = [
+      // [énoncé, donnée, valeur à convertir, facteur, unité départ, unité arrivée, résultat]
+      {
+        texte: "Un appareil a besoin d'une énergie de $7{,}5 \\times 10^6$ J pour se mettre en route. À combien de kWh cela correspond-il ?",
+        donnee: "1\\,\\text{kWh} = 3{,}6 \\times 10^6\\,\\text{J}",
+        val: 7.5e6, facteur: 3.6e6, op: '/',
+        uniteRes: '\\text{kWh}',
+      },
+      {
+        texte: "Une voiture roule à $90\\,\\text{km/h}$. Quelle est sa vitesse en m/s ?",
+        donnee: "1\\,\\text{km/h} = \\dfrac{1}{3{,}6}\\,\\text{m/s}",
+        val: 90, facteur: 3.6, op: '/',
+        uniteRes: '\\text{m/s}',
+      },
+      {
+        texte: "Une piscine contient $250\\,\\text{m}^3$ d'eau. Quel est ce volume en litres ?",
+        donnee: "1\\,\\text{m}^3 = 1000\\,\\text{L}",
+        val: 250, facteur: 1000, op: '*',
+        uniteRes: '\\text{L}',
+      },
+      {
+        texte: "Un câble mesure $3{,}5 \\times 10^4\\,\\text{cm}$. Quelle est sa longueur en km ?",
+        donnee: "1\\,\\text{km} = 10^5\\,\\text{cm}",
+        val: 3.5e4, facteur: 1e5, op: '/',
+        uniteRes: '\\text{km}',
+      },
+      {
+        texte: "Une réaction chimique libère $4{,}5 \\times 10^3\\,\\text{cal}$. Combien cela fait-il en Joules ?",
+        donnee: "1\\,\\text{cal} = 4{,}18\\,\\text{J}",
+        val: 4.5e3, facteur: 4.18, op: '*',
+        uniteRes: '\\text{J}',
+      },
+    ];
+
+    const s = situations[v.situation];
+    v._s = s;
+
+    // Calcul du résultat exact
+    const res = s.op === '/' ? s.val / s.facteur : s.val * s.facteur;
+    v._res = parseFloat(res.toPrecision(4));
+
+    return s.texte + `\\\\Donnée : $${s.donnee}$`;
+  },
+
+  bonneReponse: (v) => `$${v._res}\\,${v._s.uniteRes}$`,
+
+  distracteurs: (v) => {
+    const s = v._s;
+    const res = v._res;
+    // Dist 1 : opération inverse (multiplier au lieu de diviser ou vice-versa)
+    const inv = s.op === '/' ? s.val * s.facteur : s.val / s.facteur;
+    const d1 = parseFloat(inv.toPrecision(4));
+    // Dist 2 : erreur de puissance de 10 (facteur x10)
+    const d2 = parseFloat((res * 10).toPrecision(4));
+    // Dist 3 : erreur de puissance de 10 (facteur /10)
+    const d3 = parseFloat((res / 10).toPrecision(4));
+    return [
+      `$${d1}\\,${s.uniteRes}$`,
+      `$${d2}\\,${s.uniteRes}$`,
+      `$${d3}\\,${s.uniteRes}$`,
+    ];
+  }
+},
+
+{
+  id: "C11-A", theme: "calcul",
+  groupe: "Estimer un ordre de grandeur",
+  desc: "Estimer un ordre de grandeur" ,
+  niveau: ["techno", "specifique", "specialite"], cols: 4,
+  variables: {
+    situation: { values: [0,1,2,3] },
+    a: { min: 1, max: 3 },   
+    b: { values:[100,50,200,300,400]}, 
+  },
+  enonce: (v) => {
+    var situations = [
+      {
+        enon: `$\\sqrt{${v.b-v.a}} \\times \\sqrt{${v.b+v.a}}$`,
+        ga : `$${v.b}$`,
+        dis : ['$' + v.b/10 + '$',
+              '$' + v.b/100 + '$',
+              '$' + v.b*10 + '$',],
+      },
+      {
+        enon: ` $${v.b-v.a} \\times ${v.b+v.a}$`,
+        ga : '$' + v.b*v.b + '$',
+        dis : ['$' + v.b*v.b/10 + '$',
+              '$' + v.b*v.b/100 + '$',
+              '$' + v.b*v.b*10 + '$',],
+      },
+      {
+        enon: `$${v.b-v.a/2*3}^2$`,
+        ga : `$${v.b*v.b}$`,
+        dis : ['$' + v.b*v.b/10 + '$',
+              '$' + v.b*v.b/100 + '$',
+              '$' + v.b + '$',],
+      },
+      {
+        enon: `$${v.b-v.a} \\times ${0.5-v.a/100}$`,
+        ga : `$${v.b/2}$`,
+        dis : ['$' + v.b/10/2 + '$',
+              '$' + v.b/100/2 + '$',
+              '$' + v.b*10/2 + '$',],
+      },
+      {
+        enon: `$10^${10-v.a} + 10^{${-10+v.a}}$`,
+        ga : `$10^${10-v.a}$`,
+        dis : [`$10^0$`,
+              '$0$',
+              `$100^${0}$`,],
+      },
+    ];
+
+     v._s = situations[v.situation];
+    
+
+    return 'On considère $A=$ ' + v._s.enon + ' . $A$ est environ égale à :' ;
+  },
+
+  bonneReponse: (v) => v._s.ga,
+
+  distracteurs: (v) => v._s.dis
+  
+},
+
+{
+  id: "C2-D", theme: "calcul",
+  desc : 'Trouver la bonne égalité',
+  groupe: "Opérations sur les puissances",
+  niveau: ["techno", "specifique"], cols: 2,
+  variables: {
+    a: { min: 2, max: 9 },
+    b: { min: 2, max: 6 },
+    c: { min: 2, max: 6 },
+    d: { min: 2, max: 9 },
+    e: { min: 2, max: 9 },
+  },
+  enonce: (v) => `La seule égalité vraie est :`,
+
+  bonneReponse: (v) => `$\\dfrac{${v.a}^{${v.b}}}{${v.a}^{${v.c}}} = ${v.a}^{${v.b - v.c}}$`,
+
+  distracteurs: (v) => [
+    // (a^b)^c = a^(b+c) au lieu de a^(b*c)
+    `$(${v.a}^{${v.b}})^{${v.c}} = ${v.a}^{${v.b + v.c}}$`,
+    // a^b × a^c = a^(b*c) au lieu de a^(b+c)
+    `$${v.a}^{${v.b}} \\times ${v.a}^{${v.c}} = ${v.a}^{${v.b * v.c}}$`,
+    // (a×b)^c = a^c × b^c est vrai, donc on met une erreur : (a+b)^c = a^c + b^c
+    `$(${v.a}+${v.d})^{${v.c}} = ${v.a}^{${v.c}}+${v.d}^{${v.c}}$`,
+  ]
+},
+
+{
+  id: "C11-B", theme: "calcul",
+  groupe: "Effectuer des conversions d’unités",
+  desc: "Conversions d’unités II",
+
+  niveau: ["techno", "specifique", "specialite"], cols: 4,
+  variables: {
+    s: { values: [0, 1, 2, 3] },
+  },
+  enonce: (v) => {
+    v.situations = [
+      {
+        objet: "feuille de papier",
+        epaisseur: "70 \\times 10^{-3}",
+        unite: "mm",
+        n: 2000, facteur: 70e-3 * 2000,
+        // 70e-3 * 2000 = 140 mm = 14 cm
+      },
+      {
+        objet: "cheveu",
+        epaisseur: "8 \\times 10^{-2}",
+        unite: "mm",
+        n: 500, facteur: 8e-2 * 500,
+        // 8e-2 * 500 = 40 mm = 4 cm
+      },
+      {
+        objet: "carte bancaire",
+        epaisseur: "8 \\times 10^{-1}",
+        unite: "mm",
+        n: 250, facteur: 8e-1 * 250,
+        // 8e-1 * 250 = 200 mm = 20 cm
+      },
+      {
+        objet: "feuille d'aluminium",
+        epaisseur: "16 \\times 10^{-3}",
+        unite: "mm",
+        n: 5000, facteur: 16e-3 * 5000,
+        // 16e-3 * 5000 = 80 mm = 8 cm
+      },
+    ];
+    v.sit = v.situations[v.s];
+    v.res_mm = v.sit.facteur;          // résultat en mm
+    v.res_cm = v.sit.facteur / 10;     // résultat en cm
+    return `L'épaisseur d'${v.sit.objet === "feuille d'aluminium" || v.sit.objet === 'carte bancaire'|| v.sit.objet === 'feuille de papier' ? "une" : "un"} ${v.sit.objet} est égale à $${v.sit.epaisseur}$ mm.\\\\`
+      + `L'épaisseur d'une pile de $${v.sit.n}$ est égale à :`;
+  },
+  bonneReponse: (v) => `$${v.res_cm}$ cm`,
+  distracteurs: (v) => [
+    `$${v.res_mm/10}$ mm`,           // bonne valeur mais mauvaise unité
+    `$${v.res_cm * 10}$ cm`,      // oubli de conversion ×10
+    `$${v.res_cm / 10}$ cm`,      // conversion inversée
+  ]
+},
+
+{
+  id: "C11-C", theme: "calcul",
+  groupe: "Effectuer des conversions d’unités",
+  desc: "Conversions d’unités III",
+
+  niveau: ["techno", "specifique", "specialite"], cols: 4,
+  variables: {
+    // minutes choisies pour donner des résultats "pièges" sympas
+    m: { values: [75, 90, 105,66,72,96] },
+  },
+  enonce: (v) => {
+    v.res = v.m / 60;   // résultat exact en heures
+    return `Une durée de $${v.m}$ minutes correspond à :`;
+  },
+  bonneReponse: (v) => `$${v.res.toFixed(4).replace(/\.?0+$/, '')}$ heure`,
+  distracteurs: (v) => [
+    // erreur classique : écrire les minutes après la virgule
+    `$${Math.floor(v.m / 60)}.${v.m % 60}$ heure`,
+    // diviser par 100 au lieu de 60
+    `$${(v.m / 100).toFixed(2)}$ heure`,
+    // multiplier par 60 au lieu de diviser
+    `$${+parseFloat(v.m /60-.25).toFixed(2)}$ heure`,
+  ]
+},
+
+];
+
+

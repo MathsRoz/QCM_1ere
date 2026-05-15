@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Mentions légales – QCM Maths Première</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      rgb(11, 17, 32);
+      --card:    rgb(19,29,48);
+      --card2:   rgb(33, 42, 60);
+      --border:  rgba(60, 122, 193, 0.2);
+      --border2: rgba(255, 255, 255, 0.07);
+      --accent:  #89afc8;
+      --accent2: rgb(91, 124, 185);
+      --accent3: rgba(62, 106, 187, 0.171);
+      --text:    #cbd8df;
+      --text2:   #b8bdc7;
+      --text3:   #a3b0b6;
+      --orange:  #ff7e14;
+      --mono:    'DM Mono', monospace;
+      --sans:    'DM Sans', sans-serif;
+      --radius:  10px;
+      --radius2: 7px;
+    }
+    body.light {
+      --bg:      rgb(255, 249, 240);
+      --card:    rgb(255, 255, 255);
+      --card2:   rgb(255, 249, 240);
+      --border:  rgba(235, 241, 248, 0.15);
+      --border2: rgba(0,0,0,0.07);
+      --accent:  #b6814f;
+      --accent2: #b17e5c;
+      --accent3: rgba(167, 89, 0, 0.15);
+      --text:    #000000;
+      --text2:   #383535;
+      --text3:   #7e7871;
+      --orange:  #c05808;
+    }
+    .theme-transitioning, .theme-transitioning * {
+      transition: none !important;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0;
+    }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(131, 159, 211, 0.3); border-radius: 99px; }
+
+    /* ─── HEADER ─── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--bg);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border2);
+      padding: 0 24px;
+      height: 42px;
+      display: flex; align-items: center;
+      box-shadow: 0px 2px 5px rgba(0,0,0,0.4);
+    }
+    .logo {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 14px; font-weight: 400;
+      white-space: nowrap;
+      text-decoration: none; color: var(--text);
+      transition: 0.1s ease;
+    }
+    .logo strong { font-weight: 600; }
+    .logo:hover{ scale: 1.05;}
+    .theme-icon {
+      font-size: 16px;
+      cursor: pointer;
+      margin-left: 10px;
+      background: none; border: none;
+      line-height: 1;
+      padding: 0;
+    }
+
+    /* Steps centered */
+    .steps {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 4px;
+    }
+    .step-pill {
+      display: flex; align-items: center; gap: 7px;
+      padding: 5px 12px; border-radius: 99px;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      border: 1.5px solid transparent;
+      color: var(--text3); transition: all 0.25s;
+      text-decoration: none;
+    }
+    .step-pill .step-num {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-family: var(--mono); font-weight: 500;
+    }
+    .step-pill.active {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: var(--accent3);
+    }
+    .step-pill.active .step-num { background: var(--accent); color: #fff; }
+    .step-sep { color: var(--text3); font-size: 14px; margin: 0 2px; }
+
+    /* Banque right */
+    .header-right {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .banque-btn {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 500;
+      color: var(--text2);
+      text-decoration: none;
+      padding: 4px 10px; border-radius: var(--radius2);
+      transition: color 0.2s;
+    }
+    .banque-btn:hover { color: var(--text); }
+
+    /* ─── MAIN ─── */
+    main {
+      position: relative; z-index: 1;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 52px 24px 80px;
+    }
+
+    .page-title {
+      font-size: 22px; font-weight: 600; letter-spacing: -0.3px;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .page-sub {
+      font-size: 13px; color: var(--text3);
+      margin-bottom: 36px;
+    }
+
+    /* ─── SECTION LABEL ─── */
+    .section-label {
+      font-family: var(--mono);
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 10px;
+      margin-top: 28px;
+    }
+    .section-label:first-of-type { margin-top: 0; }
+
+    /* ─── CARD ─── */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 18px 22px;
+      margin-bottom: 10px;
+    }
+
+    .info-row {
+      display: flex; align-items: baseline; gap: 16px;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--border2);
+      font-size: 13px;
+    }
+    .info-row:first-child { padding-top: 0; }
+    .info-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .info-key {
+      font-family: var(--mono); font-size: 11px;
+      color: var(--text3); min-width: 90px; flex-shrink: 0;
+    }
+    .info-val { color: var(--text2); }
+
+    .card p {
+      font-size: 13px; color: var(--text2);
+      line-height: 1.7; margin-bottom: 10px;
+    }
+    .card p:last-child { margin-bottom: 0; }
+
+    ul { list-style: none; }
+    ul li {
+      font-size: 13px; color: var(--text2);
+      padding: 6px 0 6px 16px;
+      position: relative;
+      line-height: 1.6;
+    }
+    ul li:last-child { border-bottom: none; }
+    ul li::before {
+      content: '›';
+      position: absolute; left: 0;
+      color: var(--accent);
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .tag {
+      display: inline-block;
+      font-family: var(--mono); font-size: 11px;
+      background: var(--card2); color: var(--text3);
+      padding: 2px 8px; border-radius: 5px;
+      border: 1px solid var(--border2);
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      position: relative; z-index: 1;
+      display: flex; align-items: center; justify-content: space-between;
+      margin: 0 24px 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border2);
+      color: var(--text3);
+      font-family: var(--mono);
+      font-size: 8pt;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="https://mathsroz.github.io/QCM_automatismes_1ere/" class="logo">
+    QCM Maths <strong>Première</strong>
+  </a>
+  <button class="theme-icon" id="themeBtn" title="Thème">🌙</button>
+
+</header>
+
+<main>
+  <h1 class="page-title">Mentions légales</h1>
+  <p class="page-sub">Informations légales relatives au site</p>
+
+  <div class="section-label">Éditeur du site</div>
+  <div class="card">
+    <div class="info-row">
+      <span class="info-key">URL</span>
+      <span class="info-val"><a href="https://mathsroz.github.io/QCM_automatismes_1ere/">mathsroz.github.io/QCM_automatismes_1ere</a></span>
+    </div>
+    <div class="info-row">
+      <span class="info-key">Éditeur</span>
+      <span class="info-val">Mathsroz</span>
+    </div>
+    <div class="info-row">
+      <span class="info-key">Statut</span>
+      <span class="info-val">Enseignant</span>
+    </div>
+    <div class="info-row">
+      <span class="info-key">Email</span>
+      <span class="info-val"><a href="mailto:mathsroz.contact@gmail.com">mathsroz.contact@gmail.com</a></span>
+    </div>
+  </div>
+
+  <div class="section-label">Hébergement</div>
+  <div class="card">
+    <div class="info-row">
+      <span class="info-key">Hébergeur</span>
+      <span class="info-val">GitHub, Inc.</span>
+    </div>
+    <div class="info-row">
+      <span class="info-key">Adresse</span>
+      <span class="info-val">88 Colin P. Kelly Jr St, San Francisco, CA 94107, USA</span>
+    </div>
+    <div class="info-row">
+      <span class="info-key">Site</span>
+      <span class="info-val"><a href="https://github.com">github.com</a></span>
+    </div>
+  </div>
+
+  <div class="section-label">Finalité</div>
+  <div class="card">
+    <p>Ce site propose des questionnaires à choix multiples (QCM) destinés à l'entraînement en mathématiques pour les élèves de classe de première.</p>
+  </div>
+
+  <div class="section-label">Licence</div>
+  <div class="card">
+    <p>Le contenu de ce site (textes, exercices, code source) est mis à disposition sous licence <span class="tag">AGPL v3</span></p>
+    <p style="margin-top:12px;">Vous êtes autorisé à utiliser, modifier et redistribuer ce contenu à condition de :</p>
+    <ul style="margin-top:8px;">
+      <li>Mentionner l'auteur original</li>
+      <li>Conserver la même licence</li>
+      <li>Rendre accessible le code source des versions modifiées</li>
+    </ul>
+    <p style="margin-top:12px;">Texte complet : <a href="https://www.gnu.org/licenses/agpl-3.0.html">gnu.org/licenses/agpl-3.0.html</a></p>
+  </div>
+
+  <div class="section-label">Données personnelles</div>
+  <div class="card">
+    <p>Ce site ne collecte pas de données personnelles via formulaire ou compte utilisateur.</p>
+    <p>Des données techniques peuvent être collectées automatiquement par l'hébergeur (GitHub) à des fins de sécurité. Pour plus d'informations : <a href="https://docs.github.com/fr/site-policy/privacy-policies/github-privacy-statement">Politique de confidentialité GitHub</a></p>
+  </div>
+
+  <div class="section-label">Cookies</div>
+  <div class="card">
+    <p>Ce site n'utilise pas de cookies à des fins de suivi ou de publicité.</p>
+  </div>
+
+  <div class="section-label">Responsabilité</div>
+  <div class="card">
+    <p>L'éditeur s'efforce de fournir des contenus fiables. Toutefois, il ne peut être tenu responsable :</p>
+    <ul style="margin-top:8px;">
+      <li>Des erreurs dans les contenus ou QCM</li>
+      <li>De l'utilisation qui pourrait être faite des informations</li>
+    </ul>
+  </div>
+
+  <div class="section-label">Code source</div>
+  <div class="card">
+    <p>Conformément à la licence AGPL v3, le code source est accessible ici :<br>
+    <a href="https://github.com/mathsroz/QCM_automatismes_1ere" style="display:inline-block;margin-top:6px;">github.com/mathsroz/QCM_automatismes_1ere →</a></p>
+  </div>
+</main>
+
+<footer>
+  <span>QCM Maths Première — Mathsroz</span>
+  <span>Dernière mise à jour : mai 2026</span>
+</footer>
+
+<script>
+  const btn = document.getElementById('themeBtn');
+  if (localStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light');
+    btn.textContent = '☀️';
+  }
+  btn.addEventListener('click', () => {
+    document.body.classList.add('theme-transitioning');
+    document.body.classList.toggle('light');
+    const light = document.body.classList.contains('light');
+    btn.textContent = light ? '☀️' : '🌙';
+    localStorage.setItem('theme', light ? 'light' : 'dark');
+    setTimeout(() => document.body.classList.remove('theme-transitioning'), 50);
+  });
+</script>
+</body>
+</html>

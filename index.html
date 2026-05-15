@@ -1,9 +1,1251 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>  <meta charset="UTF-8">  <meta http-equiv="refresh" content="0; url=https://mathsroz.github.io/QCM_automatismes_1ere/">  
-    <title>Redirection...</title>
-  </head>
-  <body>  
-      <p>Redirection en cours... <a href="https://mathsroz.github.io/QCM_automatismes_1ere/">Cliquez ici</a> si la redirection ne fonctionne pas.</p>
-  </body>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM Automatismes Mathématiques — Première</title>
+<link rel="icon" type="image/svg+xml" href="check-square.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Playpen+Sans+Arabic:wght@100..800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="style/style.css">
+<link rel="stylesheet" href="style/presentation.css">
+<style>
+
+  
+/* ─── MAIN ─── */
+main { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 20px 20px 0px 20px; }
+
+/* ─── VIEW TRANSITIONS ─── */
+.view { display: none; animation: slideIn 0.3s cubic-bezier(0.16,1,0.3,1); }
+.view.active { display: block; }
+@keyframes slideIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ─── SECTION TITLE ─── */
+.section-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
+.section-sub { font-size: 14px; color: var(--text2); margin-bottom: 28px; }
+
+.warning {color:var(--card); 
+  font-size: 22px; font-weight: 700; 
+  letter-spacing: -0.5px; padding: 10px 15px; 
+  margin-bottom: 30px; 
+  border-radius: 10px;
+  background-color: var(--red);
+  border: 2px solid var(--red);}
+
+
+/* ─── THEME CARDS ─── */
+.theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+.theme-card {
+  text-align: center;
+  align-items: center;
+  justify-items: center;
+  background: var(--card); border: 2px solid var(--border2);border-color: var(--card); 
+  border-radius: var(--radius); padding: 18px 20px;
+  cursor: pointer; position: relative; overflow: hidden;
+  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+}
+.theme-card::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+  background: var(--accent, var(--blue));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+.theme-card:hover {  transform: translateY(-2px); }
+.theme-card:hover::after { transform: scaleX(1); }
+.theme-card.selected { border: 2px solid var(--border2); border-color: var(--accent, var(--blue)); }
+.theme-card.selected::after { transform: scaleX(1); }
+.theme-icon {
+  width: 36px; height: 36px; border-radius: 6px;
+  background: var(--icon-bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; margin-bottom: 12px;
+}
+.theme-name { display:flex; font-size:14px; font-weight: 600; margin-bottom: 3px;}
+.theme-desc { font-size: 12px; color: var(--text2); line-height: 1.4;}
+
+/* ─── LEVEL BUTTONS ─── */
+.level-section { margin-bottom: 28px; }
+.level-label { font-size: 13px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+.level-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.level-btn {
+  padding: 9px 20px; border-radius: 99px; border: 2px solid var(--card);
+  background: var(--card); color: var(--text2);
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.05);
+  cursor: pointer; transition: all 0.25s;
+}
+.level-btn:hover { border-color: rgba(255,255,255,0.12); color: var(--text);transform: translateY(-2px);}
+.level-btn.active[data-lvl="techno"]    { background: rgba(94,184,138,0.1);  border-color: var(--green);  color: var(--green);   }
+.level-btn.active[data-lvl="specifique"]{ background: rgba(212,175,110,0.1); border-color: var(--amber);  color: var(--amber);   }
+.level-btn.active[data-lvl="specialite"]{ background: rgba(217,119,87,0.1);  border-color: var(--orange); color: var(--orange); }
+
+/* ─── FILTER TOGGLE ─── */
+.filter-section { margin-bottom: 28px; }
+.filter-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.toggle-wrap { display: flex; align-items: center; gap: 10px; }
+.toggle {
+  width: 44px; height: 24px; border-radius: 99px;
+  background: var(--card2); border: 0px solid var(--border2);
+  box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.226);
+  position: relative; cursor: pointer; transition: background 0.25s; flex-shrink: 0;
+}
+.toggle.on { background: var(--accent);  }
+.toggle::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 16px; height: 16px; border-radius: 50%; background: #ffffff;
+  transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+.toggle.on::after { transform: translateX(20px); }
+.toggle-label { font-size: 13px; font-weight: 500; }
+.filter-info {
+  font-size: 12px; color: var(--text3);
+  background: var(--card2); border: 0px solid var(--border2);
+  border-radius: 99px; padding: 4px 11px; font-family: var(--mono);
+  transition: all 0.25s;
+  box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.226);
+}
+.tooltip-wrap { position: relative; display: inline-block; }
+.tooltip-icon {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--card2); border: 0px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: var(--text3); cursor: help;
+  box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.226);
+}
+.tooltip-box {
+  position: absolute; bottom: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%);
+  background: var(--card2); border: 0px solid var(--border);
+  border-radius: var(--radius2); padding: 10px 14px;
+  font-size: 12px; color: var(--text2); line-height: 1.5;
+  width: 240px; z-index: 99;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s; white-space: normal;
+}
+.tooltip-wrap:hover .tooltip-box { opacity: 1; }
+
+/* ─── SLIDER CARD ─── */
+.slider-card {
+  background: var(--card); border: 0px solid var(--border2);
+  border-radius: var(--radius); padding: 20px 22px; margin-bottom: 28px;
+  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.05);
+}
+.slider-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; }
+.slider-title { font-size: 14px; font-weight: 600; }
+.slider-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.slider-num {
+  font-family: var(--mono); font-size: 22px; font-weight: 500;
+  color: var(--accent); border: none; background: transparent;
+  width: 50px; text-align: right; outline: none;
+}
+input[type=range] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 4px; border-radius: 99px;
+  background: var(--card2); outline: none; cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--accent); cursor: pointer;
+  
+  transition: transform 0.2s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+/* ─── GENERATE BUTTON ─── */
+.btn-generate {
+  display: block; width: 100%;
+  padding: 14px; border-radius: 99px;
+  background: var(--accent);
+  border: none; color: var(--bg);
+  font-family: var(--sans); font-size: 15px; font-weight: 600;
+  cursor: pointer; position: relative; overflow: hidden;
+ box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.25s; letter-spacing: -0.2px;
+}
+
+.btn-generate:hover { transform: translateY(-2px); color: var(--text); }
+.btn-generate:hover::after { left: 100%; }
+.btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* ─── PREVIEW ─── */
+.preview-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+.preview-meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.meta-badge {
+  font-family: var(--mono); font-size: 11px; padding: 4px 10px;
+  border-radius: 99px; border: 0px solid; background: var(--card);
+  box-shadow: 0px 0px 3px rgba(0, 0, 0, .05);
+}
+.meta-blue   { border-color: var(--blue); color: var(--text2); }
+.meta-green  { border-color: rgba(111, 179, 144, 0.4);  color: var(--green); }
+.meta-orange { border-color: rgba(87, 133, 217, 0.4);  color: var(--blue); }
+.meta-gray   { border-color: var(--border2); color: var(--text3); }
+.meta-seed {color:var(--amber);cursor:pointer; transition: 0.2s;}
+.meta-seed:hover {transform: translateY(-2px);}
+.preview-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; justify-content: center;}
+
+.question-card {
+  background: var(--card); border: 0px solid var(--border2);
+  border-radius: var(--radius); padding: 22px 24px; margin-bottom: 14px;
+  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s;
+}
+.q-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
+.q-num {
+  font-family: var(--mono); font-size: 12px; color: var(--bg);
+  font-weight: 500;
+  background: var(--text3) ; 
+  padding: 2px 9px; border-radius: 99px; flex-shrink: 0;
+}
+.q-enonce { font-size: 14px; line-height: 1.7; flex: 1; }
+.answers-grid { display: grid; gap: 8px; margin-top: 14px; }
+.answer-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: var(--radius2);
+  border: 2px solid var(--card); background: var(--card2);
+  cursor: pointer; transition: all 0.2s; text-align: left;
+  box-shadow: inset 0px 0px 3px rgba(0, 0, 0, 0.089);
+  font-family: var(--sans); font-size: 13px; color: var(--text); width: 100%;
+}
+
+.answer-letter {
+  width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+  background: var(--text3); border: 0px solid var(--border2);
+  color: var(--card) ; 
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  transition: all 0.2s;
+}
+.answer-btn:hover {  background: var(--accent3);}
+.answer-btn:hover .answer-letter { background: var(--accent); border-color: var; color: white; }
+.answer-btn.selected { border-color: var(--accent); background: var(--accent3); }
+.answer-btn.selected .answer-letter { background: var(--accent); border-color: var(--accent); color: white; }
+.answer-btn.correct { border-color: var(--green); background: rgba(94,184,138,0.08); }
+.answer-btn.correct .answer-letter { background: var(--green); border-color: var(--green); color: white; }
+.answer-btn.wrong { border-color: var(--red); background: rgba(224,112,112,0.08); }
+.answer-btn.wrong .answer-letter { background: var(--red); border-color: var(--red); color: white; }
+
+.score-bar {
+  background: var(--card); border: 2px solid var(--border);
+  border-radius: var(--radius); padding: 18px 22px; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 16px;
+}
+.score-num { font-family: var(--mono); font-size: 28px; font-weight: 500; color: var(--accent); }
+.score-label { font-size: 14px; color: var(--text2); }
+
+/* ─── EXPORT ─── */
+.tab-bar { display: flex; gap: 4px; margin-bottom: 20px; }
+.tab-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 8px 18px; border-radius: 10px; border: 0px solid var(--border2);
+  background: var(--card); color: var(--text2);
+  font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer;
+  border : 2px solid var(--card) ;
+  transition: all 0.2s;
+}
+.tab-btn.active { background: var(--accent3); border-color: var(--accent); color: var(--accent); }
+
+.export-options {
+  background: var(--card); border: 0px solid var(--border2);
+  border-radius: var(--radius); padding: 18px 20px; margin-bottom: 16px;
+  display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+}
+.export-opt { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.export-opt label { color: var(--text2); white-space: nowrap; }
+.export-opt select {
+  background: var(--card2); border: 0px solid var(--border2); color: var(--text);
+  border-radius: 6px; padding: 5px 10px; font-family: var(--sans); font-size: 13px;
+  outline: none; cursor: pointer;
+}
+.export-opt select:focus { border-color: rgba(87, 117, 217, 0.4); }
+.checkbox-opt { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; color: var(--text2); }
+.checkbox-opt input { accent-color: var(--accent); width: 15px; height: 15px; cursor: pointer; }
+
+.latex-preview {
+  background: #090d11; border: 1px solid var(--border2);
+  border-radius: var(--radius); padding: 20px;
+  font-family: var(--mono); font-size: 12px; line-height: 1.8;
+  max-height: 400px; overflow-y: auto; margin-bottom: 16px;
+  white-space: pre; tab-size: 2;
+  color: rgb(230, 230, 230);
+}
+.lt-cmd     { color: #d4af6e; }
+.lt-env     { color: #5eb88a; }
+.lt-math    { color: #d97757; }
+.lt-comment { color: #6b6660; font-style: italic; }
+.lt-brace   { color: #a09b90; }
+
+.export-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.qrcode { display: flex; margin: 10px; transition: .2s;}
+.qrcode:hover {cursor : pointer; transform: translateY(-2px);}
+
+/* ─── RESPONSIVE ─── */
+/* ─── RESPONSIVE MOBILE ─── */
+@media (max-width: 640px) {
+  .btn-editeur { display: none !important; }
+  .qrcode { display: none !important; }
+  .meta-seed { display: none !important; }
+  /* Header : logo + steps compacts */
+  header {
+    padding: 0 12px;
+    height: auto;
+    min-height: 52px;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .logo { font-size: 13px; }
+  .logo-badge { width: 26px; height: 26px; font-size: 13px; }
+  .steps { margin-left: 0; width: 100%; justify-content: center; gap: 2px; }
+  .step-pill { padding: 4px 8px; font-size: 11px; }
+  .step-pill .step-num { width: 16px; height: 16px; font-size: 10px; }
+  .step-sep { font-size: 12px; }
+
+  /* Main : moins de padding */
+  main { padding: 20px 12px 60px; }
+
+  /* Titres */
+  .section-title { font-size: 18px; }
+  .section-sub { font-size: 13px; margin-bottom: 18px; }
+
+  /* Thèmes : 1 colonne */
+  .theme-grid { grid-template-columns: 1fr 1fr !important; gap: 8px; margin-bottom: 18px; }
+  .theme-card { padding: 14px 16px; }
+  .theme-icon { width: 30px; height: 30px; font-size: 15px; margin-bottom: 8px; }
+  .theme-name { font-size: 13px; }
+  .theme-desc { font-size: 11px; }
+
+  /* Niveaux : pleine largeur */
+  .level-btns { gap: 6px; }
+  .level-btn { padding: 8px 14px; font-size: 12px; flex: 1; text-align: center; }
+
+  /* Toggle filtre */
+  .filter-row { gap: 8px; }
+  .filter-info { font-size: 11px; }
+
+  /* Slider */
+  .slider-card { padding: 16px; }
+  .slider-num { font-size: 18px; }
+
+  /* Bouton générer */
+  .btn-generate { font-size: 14px; padding: 13px; }
+
+  /* Actions preview : défilement horizontal */
+  .preview-actions {
+    gap: 6px;
+    overflow-x: auto;
+    flex-wrap: wrap;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .preview-actions::-webkit-scrollbar { display: none; }
+  .preview-actions .btn { white-space: nowrap; flex-shrink: 0; padding: 7px 12px; font-size: 12px; }
+
+  /* Meta badges : défilement horizontal */
+  .preview-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .preview-meta {
+    overflow-x: auto;
+    flex-wrap: wrap;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .preview-meta::-webkit-scrollbar { display: none; }
+  .meta-badge { white-space: nowrap; }
+
+  /* Carte question */
+  .question-card { padding: 16px; }
+  .q-enonce { font-size: 13px; }
+
+  /* Grille réponses : toujours 1 colonne sur mobile */
+  .answers-grid { grid-template-columns: 1fr  !important; gap: 6px; }
+  .answer-btn { padding: 9px 12px; font-size: 12px; }
+
+  /* Score */
+  .score-bar { padding: 14px 16px; gap: 10px; }
+  .score-num { font-size: 22px; }
+
+  /* Export */
+  .tab-bar { overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
+  .tab-bar::-webkit-scrollbar { display: none; }
+  .tab-btn { display: inline-flex; align-items: center; gap: 5px; padding: 7px 12px; font-size: 12px; }
+  .export-options { padding: 14px; gap: 10px; flex-direction: column; align-items: flex-start; }
+  .latex-preview { font-size: 11px; padding: 14px; max-height: 280px; }
+  .export-btns { flex-direction: column; }
+  .export-btns .btn { width: 100%; justify-content: center; }
+}
+
+/* ─── MODE PRÉSENTATION → presentation.css ─── */
+</style>
+
+
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <!-- <div class="logo-badge"> </div> -->
+    <div class="logo-text">QCM Maths <span>Automatismes Première </span></div>
+  </div>
+  <button id="themeToggle" onclick="toggleThemeMode()" style="
+    background:none; border:none; cursor:pointer; font-size:18px;
+    padding:4px 8px; border-radius:8px; transition:all .2s;
+    color:var(--text3); line-height:1;
+  " title="Basculer thème clair/sombre">🌙</button>
+  <div class="steps">
+    <div class="step-pill active" id="step1" onclick="goToView('config')">
+      <div class="step-num">1</div> Configuration
+    </div>
+    <div class="step-sep">›</div>
+    <div class="step-pill" id="step2" onclick="goToView('preview')">
+      <div class="step-num">2</div> Prévisualisation
+    </div>
+    <div class="step-sep">›</div>
+    <div class="step-pill" id="step3" onclick="goToView('export')">
+      <div class="step-num">3</div> Export
+    </div>
+  </div>
+  <a href="editeur-banque.html" target="_blank" class="btn-editeur" style="
+    margin-left:auto; display:inline-flex; align-items:center; gap:6px;
+    padding:6px 14px; border-radius:99px; font-size:12px; font-weight:500;
+     background:var(--card);
+    color:var(--text); text-decoration:none; transition:all .2s;
+    white-space:nowrap;
+  " onmouseover="this.style.background='var(--card2)'"
+     onmouseout="this.style.background='var(--card)'">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill=var(--yellow) stroke=var(--yellow) stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder-icon lucide-folder"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg> Banque
+  </a>
+  
+</header>
+
+<main>
+  <!-- ══ VIEW 1 : CONFIGURATION ══ -->
+  <div class="view active" id="view-config">
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; ">
+    <div style="display: flex; flex-direction: column;"> 
+    <div class="section-title">Configurer le QCM</div>
+    <div class="section-sub">Sélectionnez les thèmes, le niveau et le nombre de questions</div>
+  </div>
+  <div class="qrcode" onclick="openQRCode2()"><img 
+  src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://mathsroz.github.io/QCM_automatismes_1ere/"
+  alt="QR Code"
+  width="100" height="100"
+  style="border-radius:3px; margin-left: auto; box-shadow: 0 0 4px rgba(0, 0, 0, 0.226);"
+></div>
+</div>
+    
+    <div class="level-label">Thèmes <span style="font-size:11px;color:var(--text3);text-transform:none;font-weight:400;margin-left:6px;"> Si aucun thème n’est sélectionné, tous les thèmes seront automatiquement pris en compte. </span></div>
+    <div class="theme-grid" style="grid-template-columns:1fr 1fr 1fr;">
+      <div class="theme-card" data-theme="calcul" style="--accent:var(--blue);--icon-bg:var(--blue);" onclick="toggleTheme(this)">
+        <div class="theme-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calculator-icon lucide-calculator"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg></div>
+        <div class="theme-name">Calcul numérique et algébrique</div>
+        <div class="theme-desc">Fractions, puissances, identités, équations, inéquations</div>
+      </div>
+      <div class="theme-card" data-theme="proportions" style="--accent: var(--pur);--icon-bg:var(--pur)" onclick="toggleTheme(this)">
+        <div class="theme-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-percent-icon lucide-percent"><line x1="19" x2="5" y1="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg></div>
+        <div class="theme-name">Proportions et pourcentages</div>
+        <div class="theme-desc">Fractions, pourcentages, proportionnalité</div>
+      </div>
+      <div class="theme-card" data-theme="evolutions" style="--accent:var(--yellow);--icon-bg:var(--yellow)" onclick="toggleTheme(this)">
+        <div class="theme-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up-down-icon lucide-trending-up-down"><path d="M14.828 14.828 21 21"/><path d="M21 16v5h-5"/><path d="m21 3-9 9-4-4-6 6"/><path d="M21 8V3h-5"/></svg></div>
+        <div class="theme-name">Évolutions et variations</div>
+        <div class="theme-desc">Taux d'évolution, coefficient multiplicateur, évolutions successives</div>
+      </div>
+      <div class="theme-card" data-theme="fonctions" style="--accent:var(--green);--icon-bg:var(--green)" onclick="toggleTheme(this)">
+        <div class="theme-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-spline-icon lucide-chart-spline"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 16c.5-2 1.5-7 4-7 2 0 2 3 4 3 2.5 0 4.5-5 5-7"/></svg></div>
+        <div class="theme-name">Fonctions et représentations</div>
+        <div class="theme-desc">Fonctions affines, images, antécédents, droites</div>
+      </div>
+      <div class="theme-card" data-theme="stats" style="--accent:var(--red);--icon-bg:var(--red)" onclick="toggleTheme(this)">
+        <div class="theme-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-column-big-icon lucide-chart-column-big"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><rect x="15" y="5" width="4" height="12" rx="1"/><rect x="7" y="8" width="4" height="9" rx="1"/></svg></div>
+        <div class="theme-name">Statistiques</div>
+        <div class="theme-desc">Moyenne, médiane, quartiles, boîtes à moustaches</div>
+      </div>
+      <div class="theme-card" data-theme="proba" style="--accent:var(--cyan);--icon-bg:var(--cyan)" onclick="toggleTheme(this)">
+        <div class="theme-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--bg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dices-icon lucide-dices"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></svg></div>
+        <div class="theme-name">Probabilités</div>
+        <div class="theme-desc">Événements, probabilités conditionnelles, arbres</div>
+      </div>
+    </div>
+    <div class="level-section">
+      <div class="level-label">Niveau</div>
+      <div class="level-btns">
+        <button class="level-btn " data-lvl="techno" onclick="selectLevel(this)">1ère Technologique</button>
+        <button class="level-btn" data-lvl="specifique" onclick="selectLevel(this)">1ère Spécifique</button>
+        <button class="level-btn active" data-lvl="specialite" onclick="selectLevel(this)">1ère Spécialité</button>
+      </div>
+    </div>
+    <div class="filter-section">
+      <div class="level-label">Mode de filtrage</div>
+      <div class="filter-row">
+        <div class="toggle-wrap">
+          <div class="toggle on" id="filterToggle" onclick="toggleFilter()"></div>
+          <span class="toggle-label" id="filterLabel">Inclusif</span>
+        </div>
+        <div class="tooltip-wrap">
+          <div class="tooltip-icon">?</div>
+          <div class="tooltip-box"><b>Inclusif :</b> inclut les questions du niveau sélectionné et des niveaux inférieurs.<br><br><b>Strict :</b> uniquement les questions du niveau exact sélectionné.</div>
+        </div>
+        <div class="filter-info" id="filterInfo">Techno et Spécifique</div>
+      </div>
+    </div>
+    <div class="slider-card">
+      <div class="slider-header">
+        <div>
+          <div class="slider-title">Nombre de questions</div>
+          <div class="slider-sub">Questions tirées aléatoirement de la banque filtrée</div>
+        </div>
+        <input type="number" class="slider-num" id="numInput" value="12" min="1" max="30"
+          oninput="syncSlider(this.value)" onchange="syncSlider(this.value)">
+      </div>
+      <input type="range" id="numSlider" min="1" max="30" value="12" oninput="syncNum(this.value)">
+    </div>
+    <button class="btn-generate" id="btnGenerate" onclick="generateQCM()"> Générer le QCM</button>
+  </div>
+
+  <!-- ══ VIEW 2 : PRÉVISUALISATION ══ -->
+  <div class="view" id="view-preview">
+    <div class="preview-header">
+      <div>
+        <div class="section-title">Prévisualisation</div>
+      </div>
+      <div class="preview-meta" id="previewMeta"></div>
+    </div>
+    <div class="preview-actions">
+      <button class="btn" onclick="goToView('config')"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-undo2-icon lucide-undo-2"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>   </button>
+      <button class="btn " onclick="regenerate()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-refresh-ccw-icon lucide-refresh-ccw"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg> </button>
+      <button class="btn " id="btnSubmit" onclick="submitQCM()" style="color: var(--green);"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke=var(--green) stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-check-big-icon lucide-square-check-big"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg> Corriger</button>
+      <!-- <button class="btn" id="btnCorrect" onclick="toggleCorrection()">👁️ Afficher le corrigé</button> -->
+      <button class="btn" onclick="startPresentation()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-monitor-icon lucide-monitor"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg> Présentation</button>
+      <button class="btn " onclick="goToView('export')"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-icon lucide-file"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/></svg> Exporter</button>
+    </div>
+    <div id="scoreBar" style="display:none" class="score-bar">
+      <div class="score-num" id="scoreNum">—</div>
+      <div class="score-label" id="scoreLabel"></div>
+    </div>
+    <div id="questionsContainer"></div>
+  </div>
+
+  <!-- ══ VIEW 3 : EXPORT ══ -->
+  <div class="view" id="view-export">
+    <div class="section-title">Export LaTeX</div>
+    <div class="section-sub">Téléchargez votre QCM en format LaTeX ou compilez-le en PDF</div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+      <button class="btn" onclick="goToView('preview')"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-undo2-icon lucide-undo-2"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg> Prévisualisation</button>
+    </div>
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchExportTab('exam',this)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-pen-icon lucide-file-pen"><path d="M12.659 22H18a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v9.34"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10.378 12.622a1 1 0 0 1 3 3.003L8.36 20.637a2 2 0 0 1-.854.506l-2.867.837a.5.5 0 0 1-.62-.62l.836-2.869a2 2 0 0 1 .506-.853z"/></svg> Document classique</button>
+      <button class="tab-btn" onclick="switchExportTab('beamer',this)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-monitor-icon lucide-monitor"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg> Diaporama</button>
+    </div>
+    <div id="opts-exam" class="export-options">
+      <label class="checkbox-opt">
+        <input type="checkbox" id="inclureCorrige"> Inclure le corrigé
+      </label>
+    </div>
+    <div id="opts-beamer" class="export-options" style="display:none">
+      <div class="section-sub">La génération de diaporamas reste expérimentale : certaines questions peuvent s’afficher de manière incorrecte. Un mode présentation est toutefois disponible sans recourir à la génération de diaporamas LaTeX.</div>
+      <div class="export-opt">
+        <label>Thème</label>
+        <select id="beamerTheme" onchange="updateExport()">
+          <option value="Singapore" selected>Singapore</option>
+          <option value="Madrid">Madrid</option>
+          <option value="Warsaw">Warsaw</option>
+          <option value="Berlin">Berlin</option>
+          <option value="Copenhagen">Copenhagen</option>
+          <option value="AnnArbor">AnnArbor</option>
+        </select>
+      </div>
+      <div class="export-opt">
+        <label>Couleur</label>
+        <select id="beamerColor" onchange="updateExport()">
+          <option value="default" selected>default</option>
+          <option value="crane">crane</option>
+          <option value="dolphin">dolphin</option>
+          <option value="orchid">orchid</option>
+          <option value="rose">rose</option>
+          <option value="seahorse">seahorse</option>
+        </select>
+      </div>
+      <div class="export-opt">
+        <label>Format diapos</label>
+        <select id="beamerFormat" onchange="updateExport()">
+          <option value="one">1 question = 1 diapo</option>
+          <option value="corrected">1 question + 1 diapo corrigé</option>
+          <option value="allcorr">Toutes questions puis toutes corrections</option>
+        </select>
+      </div>
+    </div>
+    <div class="latex-preview" id="latexPreview"></div>
+    <div class="export-btns">
+      <button class="btn" onclick="downloadTex()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download-icon lucide-download"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg> Télécharger le .tex</button>
+      <button class="btn" onclick="compilePDF()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-down-icon lucide-file-down"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg> Compiler en PDF</button>
+    </div>
+  </div>
+</main>
+
+  <footer>
+
+   
+
+        <div>
+            © 2026 Mathsroz
+        </div>
+        <span>•</span>
+        <div style="display:flex; gap:12px; justify-content:center;align-items: center;">
+
+            <a href="mentionslegales.html" style="color:inherit; " >Mentions légales</a>
+          </div>
+            <span>•</span>
+        
+        <div>
+            <a href="https://github.com/mathsroz/QCM_automatismes_1ere"
+               target="_blank"
+               style="display:flex; align-items:center; gap:6px; color:inherit;">
+
+                <!-- Icône GitHub -->
+                <svg height="18" width="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                    <path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38
+                    0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+                    -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87
+                    2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95
+                    0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12
+                    0 0 .67-.21 2.2.82a7.65 7.65 0 0 1 2-.27c.68 0 1.36.09 2 .27
+                    1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15
+                    0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+                    0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8
+                    c0-4.42-3.58-8-8-8Z"/>
+                </svg>
+
+                Code source
+            </a>
+
+        </div>
+        <span>•</span>
+        <div>
+            Licence GNU AGPL v3
+        </div>
+        <span>•</span>
+        <div>
+            Aucune donnée collectée
+        </div>
+
+
+</footer>
+
+
+<div id="toast"></div>
+
+<!-- Fichiers externes : utilitaires, rendu SVG, banques de questions -->
+<script src="questions/utils.js"></script>
+<script src="questions/svg-renderer.js"></script>
+<script src="questions/calcul.js"></script>
+<script src="questions/proportions.js"></script>
+<script src="questions/evolutions.js"></script>
+<script src="questions/fonctions.js"></script>
+<script src="questions/stats.js"></script>
+<script src="questions/proba.js"></script>
+<script src="presentation.js"></script>
+<script src="compiler.js"></script>
+<link rel="stylesheet" href="live-quiz.css">
+<script src="live-quiz.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════
+//  ASSEMBLAGE DE LA BANQUE COMPLÈTE
+// ═══════════════════════════════════════════════════════
+const QUESTION_BANK = [
+  ...QUESTIONS_CALCUL,
+  ...QUESTIONS_PROPORTIONS,
+  ...QUESTIONS_EVOLUTIONS,
+  ...QUESTIONS_FONCTIONS,
+  ...QUESTIONS_STATS,
+  ...QUESTIONS_PROBA,
+];
+</script>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  ÉTAT GLOBAL
+// ═══════════════════════════════════════════════════════
+let state = {
+  selectedThemes: [],
+  selectedLevel: 'specialite',
+  filterInclusive: true,
+  numQuestions: 12,
+  generatedQuestions: [],
+  userAnswers: {},
+  submitted: false,
+  showCorrection: false,
+  exportTab: 'exam',
+  seed: null,
+};
+
+// ═══════════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════════
+function goToView(name) {
+  if (name === 'preview' && !state.generatedQuestions.length) return;
+  if (name === 'export' && !state.generatedQuestions.length) return;
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  ['config','preview','export'].forEach((v,i) => {
+    const pill = document.getElementById('step'+(i+1));
+    pill.classList.remove('active','done');
+    if (v === name) pill.classList.add('active');
+    else if (state.generatedQuestions.length && ['config','preview','export'].indexOf(v) < ['config','preview','export'].indexOf(name)) pill.classList.add('done');
+  });
+  if (name === 'export') updateExport();
+}
+
+// ═══════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════
+function toggleTheme(card) {
+  const t = card.dataset.theme;
+  card.classList.toggle('selected');
+  const idx = state.selectedThemes.indexOf(t);
+  if (idx === -1) state.selectedThemes.push(t);
+  else state.selectedThemes.splice(idx, 1);
+}
+function selectLevel(btn) {
+  document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  state.selectedLevel = btn.dataset.lvl;
+  updateFilterInfo();
+}
+function toggleFilter() {
+  state.filterInclusive = !state.filterInclusive;
+  document.getElementById('filterToggle').classList.toggle('on', state.filterInclusive);
+  document.getElementById('filterLabel').textContent = state.filterInclusive ? 'Inclusif' : 'Strict';
+  updateFilterInfo();
+}
+function updateFilterInfo() {
+  const el = document.getElementById('filterInfo');
+  const lvls = ['techno','specifique','specialite'];
+  const idx = lvls.indexOf(state.selectedLevel);
+  if (state.filterInclusive) {
+    el.textContent = lvls.slice(0,idx+1).map(l=>({techno:'Techno',specifique:'Spéc.',specialite:'Spé.'}[l])).join(' et ');
+  } else {
+    el.textContent = {techno:'Techno uniquement',specifique:'Spécifique uniquement',specialite:'Spécialité uniquement'}[state.selectedLevel];
+  }
+}
+function syncNum(v) {
+  v = Math.max(1, Math.min(30, +v));
+  state.numQuestions = v;
+  document.getElementById('numInput').value = v;
+  // Mettre à jour le dégradé de la piste
+  const pct = (v - 1) / (30 - 1) * 100;
+  const slider = document.getElementById('numSlider');
+  if (slider) slider.style.background =
+    `linear-gradient(to right, var(--accent) ${pct}%, var(--card2) ${pct}%)`;
+}
+function syncSlider(v) {
+  v = Math.max(1, Math.min(30, +v));
+  state.numQuestions = v;
+  document.getElementById('numSlider').value = v;
+  document.getElementById('numInput').value = v;
+  const pct = (v - 1) / (30 - 1) * 100;
+  document.getElementById('numSlider').style.background =
+    `linear-gradient(to right, var(--blue) ${pct}%, var(--card2) ${pct}%)`;
+}
+
+// ═══════════════════════════════════════════════════════
+//  GÉNÉRATION
+// ═══════════════════════════════════════════════════════
+function filterBank() {
+  const lvls = ['techno','specifique','specialite'];
+  const selIdx = lvls.indexOf(state.selectedLevel);
+  return QUESTION_BANK.filter(q => {
+    if (state.selectedThemes.length && !state.selectedThemes.includes(q.theme)) return false;
+    const qLvls = Array.isArray(q.niveau) ? q.niveau : [q.niveau];
+    if (state.filterInclusive) return qLvls.some(l => lvls.indexOf(l) <= selIdx);
+    else return qLvls.some(l => l === state.selectedLevel);
+  });
+}
+function instantiateQuestion(template) {
+  let vars = {};
+  for (const [k,v] of Object.entries(template.variables||{})) {
+    vars[k] = pickVar(v);
+  }
+  vars = dedupeAnswers(template, vars);
+  const enonce = template.enonce(vars);
+  const bonne  = template.bonneReponse(vars);
+  const dist   = template.distracteurs(vars);
+  const allReponses = shuffle([bonne, ...dist.slice(0,3)]);
+  return { id: template.id+'_'+Math.random().toString(36).slice(2,6),
+    theme: template.theme, cols: template.cols||4,
+    enonce, reponses: allReponses, bonneReponse: bonne };
+}
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i=a.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+
+// ── Générateur pseudo-aléatoire déterministe (Mulberry32) ──
+function makeRNG(seed) {
+  return function() {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+function generateQCM(seed) {
+  const pool = filterBank();
+  if (!pool.length) { showToast('Aucune question disponible.','error'); return; }
+
+  // Seed : fournie (reproduction) ou aléatoire (nouveau QCM)
+  state.seed = (seed !== undefined) ? +seed : Math.floor(Math.random() * 1e9);
+
+  // Patcher Math.random pendant toute la génération
+  const _orig = Math.random;
+  Math.random = makeRNG(state.seed);
+
+  const n = Math.min(state.numQuestions, pool.length);
+  state.generatedQuestions = shuffle(dedupeGroups(pool)).slice(0,n).map(instantiateQuestion);
+
+  Math.random = _orig;   // restaurer
+
+  state.userAnswers = {};
+  state.submitted = false;
+  state.showCorrection = false;
+  renderPreview();
+  goToView('preview');
+}
+function regenerate() { generateQCM(); }
+
+function dedupeGroups(pool) {
+  const seen = new Set();
+  return shuffle(pool).filter(q => {
+    if (!q.groupe) return true;
+    if (seen.has(q.groupe)) return false;
+    seen.add(q.groupe);
+    return true;
+  });
+}
+// ═══════════════════════════════════════════════════════
+//  RENDU PRÉVISUALISATION
+// ═══════════════════════════════════════════════════════
+const themeNames = {
+  calcul:'Calcul', proportions:'Proportions',
+  evolutions:'Évolutions', fonctions:'Fonctions',
+  stats:'Statistiques', proba:'Probabilités'
+};
+const levelNames = {techno:'1ère Techno',specifique:'1ère Spécifique',specialite:'1ère Spécialité'};
+
+const colorTheme = {calcul:'blue',proportions:'pur',evolutions:'yellow', fonctions:'green', stats:'red', proba:'cyan'}
+
+function renderPreview() {
+  const themes = [...new Set(state.generatedQuestions.map(q=>q.theme))];
+  document.getElementById('previewMeta').innerHTML =
+    `<div class="meta-badge meta-blue" >${levelNames[state.selectedLevel]}</div>`+
+    themes.map(t=>`<div class="meta-badge meta-orange" style="color:var(--${colorTheme[t]})">${themeNames[t]||t}</div>`).join('')+
+    `<div class="meta-badge meta-blue">${state.generatedQuestions.length} questions</div>`+
+    `<div class="meta-badge meta-gray">${state.filterInclusive?'Inclusif':'Strict'}</div>`+
+    `<div class="meta-badge meta-gray">${new Date().toLocaleDateString('fr-FR')}</div>`+
+    `<div class="meta-badge meta-seed"  title="Cliquer pour copier le lien" onclick="copySeedLink()">Copier le lien</div>`+
+    `<div class="meta-badge meta-seed"  title="Cliquer pour afficher le QRcode" onclick="openQRCode()">qrcode</div>`;
+  document.getElementById('scoreBar').style.display = 'none';
+  document.getElementById('btnSubmit').style.display = '';
+  // document.getElementById('btnCorrect').textContent = '👁️ Afficher le corrigé';
+
+  const container = document.getElementById('questionsContainer');
+  container.innerHTML = '';
+
+  // Rendre toutes les questions (les scripts tikz sont injectés via DOM)
+  state.generatedQuestions.forEach((q,i) => renderQuestion(q,i,container));
+
+  // KaTeX
+  setTimeout(() => {
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters:[{left: '$$', right: '$$', display: true},{left:'$',right:'$',display:false}], throwOnError:false
+      });
+    }
+  }, 300);
+}
+
+function renderQuestion(q, idx, container) {
+  const letters = ['A','B','C','D'];
+  const cols = Math.min(q.cols||4, q.reponses.length);
+  const gridCols = cols===1?'1fr':cols===2?'1fr 1fr':cols===3?'1fr 1fr 1fr':'1fr 1fr 1fr 1fr';
+
+  const card = document.createElement('div');
+  card.className = 'question-card';
+  card.id = 'qcard_'+idx;
+
+  const header = document.createElement('div');
+  header.className = 'q-header';
+  const num = document.createElement('div');
+  num.className = 'q-num';
+  num.textContent = 'Q'+(idx+1);
+  const enonce = document.createElement('div');
+  enonce.className = 'q-enonce';
+  buildContent(enonce, q.enonce);
+  header.appendChild(num);
+  header.appendChild(enonce);
+  card.appendChild(header);
+
+  const grid = document.createElement('div');
+  grid.className = 'answers-grid';
+  grid.style.gridTemplateColumns = gridCols;
+  grid.id = 'answers_'+idx;
+  q.reponses.forEach((rep, ri) => {
+    const btn = document.createElement('button');
+    btn.className = 'answer-btn';
+    btn.dataset.qi = idx; btn.dataset.ri = ri;
+    btn.onclick = () => selectAnswer(idx, ri);
+    const letter = document.createElement('div');
+    letter.className = 'answer-letter';
+    letter.textContent = letters[ri];
+    const content = document.createElement('div');
+    buildContent(content, rep);
+    btn.appendChild(letter);
+    btn.appendChild(content);
+    grid.appendChild(btn);
+  });
+  card.appendChild(grid);
+  container.appendChild(card);
+}
+
+/**
+ * Construit le contenu mixte texte + figures d'un élément.
+ * Gère deux types de marqueurs :
+ *  %%SVG...%%ENDSVG%%%%TIKZ...%%ENDTIKZ%% → SVG direct (Fig), le TikZ est ignoré à l'affichage
+ *  %%SVG...%%ENDSVG%%                      → SVG direct seul
+ *  %%TIKZ...%%ENDTIKZ%%                    → code TikZ parsé par tikzToSvg() (legacy)
+ */
+function buildContent(container, str) {
+  if (typeof str !== 'string') { container.textContent = String(str); return; }
+  // Découper en capturant les blocs figures dans l'ordre de priorité :
+  // 1. paire SVG+TIKZ  2. SVG seul  3. TIKZ seul
+  const parts = str.split(/(%%SVG[\s\S]*?%%ENDSVG%%(?:\s*%%TIKZ[\s\S]*?%%ENDTIKZ%%)?|%%TIKZ[\s\S]*?%%ENDTIKZ%%)/);
+  parts.forEach(part => {
+    if (part.startsWith('%%SVG')) {
+      // Extraire le SVG brut (tout ce qui précède %%ENDSVG%%)
+      const svgCode = part.replace(/^%%SVG/, '').replace(/%%ENDSVG%%[\s\S]*$/, '').trim();
+      const wrap = document.createElement('div');
+      wrap.className = 'fig-wrap';
+      wrap.innerHTML = svgCode;   // injection directe — le SVG est valide HTML5
+      container.appendChild(wrap);
+    } else if (part.startsWith('%%TIKZ')) {
+      // TikZ legacy → SVG via moteur
+      const code = part.replace(/^%%TIKZ/, '').replace(/%%ENDTIKZ%%$/, '').trim();
+      const wrap = document.createElement('div');
+      wrap.className = 'fig-wrap';
+      wrap.innerHTML = tikzToSvg(code);
+      container.appendChild(wrap);
+    } else if (part) {
+      const span = document.createElement('span');
+      // Remplacer \\ par <br> uniquement hors des blocs $...$ et $$...$$
+      const safe = part.replace(/((\$\$[\s\S]*?\$\$)|(\$[^$]*?\$))|(\\\\\s*)/g, (m, math, d, i, br) => {
+        if (math) return math;   // bloc math → préserver tel quel
+        if (br)   return '<br>'; // \\ hors math → retour à la ligne
+        return m;
+      });
+      span.innerHTML = safe;
+      // Rendu KaTeX immédiat sur ce span (évite le flash de code brut)
+      if (window.renderMathInElement) {
+        renderMathInElement(span, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$',  right: '$',  display: false},
+          ],
+          throwOnError: false
+        });
+      }
+      container.appendChild(span);
+    }
+  });
+}
+
+//  INTERACTIONS
+// ═══════════════════════════════════════════════════════
+function selectAnswer(qi, ri) {
+  if (state.submitted || state.showCorrection) return;
+  state.userAnswers[qi] = ri;
+  document.getElementById('answers_'+qi).querySelectorAll('.answer-btn').forEach((btn,i) => {
+    btn.classList.toggle('selected', i===ri);
+  });
+}
+function submitQCM() {
+  state.submitted = true;
+  let correct = 0;
+  state.generatedQuestions.forEach((q,qi) => {
+    const sel = state.userAnswers[qi];
+    document.getElementById('answers_'+qi).querySelectorAll('.answer-btn').forEach((btn,ri) => {
+      const isCorrect = q.reponses[ri] === q.bonneReponse;
+      const isSelected = ri === sel;
+      if (isSelected && isCorrect) { btn.classList.add('correct'); correct++; }
+      else if (isSelected) btn.classList.add('wrong');
+      else if (isCorrect) btn.classList.add('correct');
+    });
+  });
+  const pct = Math.round(correct/state.generatedQuestions.length*100);
+  document.getElementById('scoreNum').textContent = correct+'/'+state.generatedQuestions.length;
+  document.getElementById('scoreLabel').textContent = 'soit '+pct+'% de bonnes réponses';
+  document.getElementById('scoreBar').style.display = 'flex';
+  document.getElementById('btnSubmit').style.display = 'none';
+  setTimeout(()=>{ if(window.renderMathInElement) renderMathInElement(document.body,{delimiters:[{left: '$$', right: '$$', display: true},{left:'$',right:'$',display:false}],throwOnError:false}); },80);
+}
+// function toggleCorrection() {
+//   state.showCorrection = !state.showCorrection;
+//   document.getElementById('btnCorrect').textContent = state.showCorrection ? '🙈 Masquer le corrigé' : '👁️ Afficher le corrigé';
+//   state.generatedQuestions.forEach((q,qi) => {
+//     const sel = state.userAnswers[qi];
+//     document.getElementById('answers_'+qi).querySelectorAll('.answer-btn').forEach((btn,ri) => {
+//       btn.classList.remove('selected','correct','wrong');
+//       if (state.showCorrection) {
+//         const isCorrect = q.reponses[ri] === q.bonneReponse;
+//         const isSelected = ri === sel;
+//         if (isCorrect) btn.classList.add('correct');
+//         if (!isCorrect && isSelected) btn.classList.add('wrong');
+//       } else {
+//         if (ri === sel) btn.classList.add('selected');
+//       }
+//     });
+//   });
+//   setTimeout(()=>{ if(window.renderMathInElement) renderMathInElement(document.body,{delimiters:[{left:'$',right:'$',display:false}],throwOnError:false}); },200);
+// }
+
+// ═══════════════════════════════════════════════════════
+//  EXPORT LATEX
+// ═══════════════════════════════════════════════════════
+let currentLatex = '';
+function switchExportTab(tab, btn) {
+  state.exportTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('opts-exam').style.display = tab==='exam'?'flex':'none';
+  document.getElementById('opts-beamer').style.display = tab==='beamer'?'flex':'none';
+  updateExport();
+}
+function updateExport() {
+  if (!state.generatedQuestions.length) return;
+  currentLatex = state.exportTab === 'exam' ? buildExam() : buildBeamer();
+  document.getElementById('latexPreview').innerHTML = highlightLatex(currentLatex);
+}
+// latexifyStr, examSplit, beamerSplit, highlightLatex, openInOverleaf → compiler.js
+
+function buildExam() {
+  const inclCorrige = document.getElementById('inclureCorrige')?.checked;
+  return buildExamDoc(state.generatedQuestions, { inclCorrige });
+}
+
+function buildBeamer() {
+  return buildBeamerDoc(state.generatedQuestions, {
+    theme:  document.getElementById('beamerTheme')?.value  || 'Singapore',
+    color:  document.getElementById('beamerColor')?.value  || 'default',
+    fmt:    document.getElementById('beamerFormat')?.value || 'one',
+  });
+}
+
+function downloadTex() {
+  // downloadTex() de compiler.js
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([currentLatex],{type:'text/plain'}));
+  a.download = 'QCM-1ere-' + new Date().toLocaleDateString('fr-FR').replace(/\//g,'-') + '.tex';
+  a.click();
+  showToast('Fichier .tex téléchargé ✓', 'success');
+}
+
+async function compilePDF() {
+  showToast('Tentative de compilation…');
+  try {
+    const fd = new FormData();
+    fd.append('filecontents[]', new Blob([currentLatex],{type:'text/plain'}), 'main.tex');
+    fd.append('filename[]','main.tex'); fd.append('engine','pdflatex'); fd.append('return','pdf');
+    const res = await fetch('https://latex.ytotech.com/builds/sync',{method:'POST',body:fd});
+    if (res.ok) {
+      const blob = await res.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'QCM-1ere-' + new Date().toLocaleDateString('fr-FR').replace(/\//g,'-') + '.pdf';
+      a.click();
+      showToast('PDF généré ✓','success');
+      return;
+    }
+  } catch(e) {}
+  openInOverleaf(currentLatex);
+  showToast('Ouverture sur Overleaf…');
+}
+
+// ═══════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════
+let _toastTimer;
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'show '+type;
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(()=>{ t.className=''; }, 3200);
+}
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+document.getElementById('inclureCorrige').addEventListener('change', updateExport);
+updateFilterInfo();
+// Initialiser le dégradé du slider
+syncNum(12);
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.renderMathInElement)
+    renderMathInElement(document.body,{delimiters:[{left: '$$', right: '$$', display: true},{left:'$',right:'$',display:false}],throwOnError:false});
+});
+
+// ── Copier le lien avec la seed ──────────────────────────
+function copySeedLink() {
+  const params = new URLSearchParams();
+  params.set('seed',      state.seed);
+  params.set('level',     state.selectedLevel);
+  params.set('inclusive', state.filterInclusive ? '1' : '0');
+  params.set('n',         state.numQuestions);
+  if (state.selectedThemes.length) params.set('themes', state.selectedThemes.join(','));
+  const url = location.origin + location.pathname + '?' + params.toString();
+  navigator.clipboard.writeText(url).then(() => showToast('Lien copié ✓', 'success'));
+}
+
+// ── Restaurer depuis l'URL si seed présente ──────────────
+(function() {
+  const p = new URLSearchParams(location.search);
+  if (!p.get('seed')) return;
+
+  const seed   = +p.get('seed');
+  const level  = p.get('level')  || 'specialite';
+  const incl   = p.get('inclusive') !== '0';
+  const n      = +p.get('n') || 12;
+  const themes = p.get('themes') ? p.get('themes').split(',') : [];
+
+  state.selectedLevel   = level;
+  state.filterInclusive = incl;
+  state.numQuestions    = n;
+  state.selectedThemes  = themes;
+
+  document.querySelectorAll('.level-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.lvl === level));
+  document.getElementById('filterToggle').classList.toggle('on', incl);
+  document.getElementById('filterLabel').textContent = incl ? 'Inclusif' : 'Strict';
+  syncNum(n);
+  if (themes.length) {
+    document.querySelectorAll('.theme-card').forEach(c => {
+      if (themes.includes(c.dataset.theme)) c.classList.add('selected');
+    });
+  }
+  updateFilterInfo();
+  generateQCM(seed);
+})();
+
+// ═══════════════════════════════════════════════════════
+//  MODE PRÉSENTATION — via presentation.js
+// ═══════════════════════════════════════════════════════
+
+// Fournit les questions à presentation.js
+function presGetQuestions() { return state.generatedQuestions; }
+
+// Fournit le rendu de contenu à presentation.js
+function presRenderContent(container, str) { buildContent(container, str); }
+
+// Bouton présentation dans l'interface
+function startPresentation() {
+  if (!state.generatedQuestions.length) return;
+  openPresentation(state.generatedQuestions);
+}
+
+// ═══════════════════════════════════════════════════════
+//  THÈME CLAIR / SOMBRE
+// ═══════════════════════════════════════════════════════
+function toggleThemeMode() {
+  // Activer les transitions seulement au moment du basculement
+  document.body.classList.add('theme-transitioning');
+  const isLight = document.body.classList.toggle('light');
+  document.getElementById('themeToggle').textContent = isLight ? '☀️' : '🌙';
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  // Retirer après la transition
+  setTimeout(() => document.body.classList.remove('theme-transitioning'), 300);
+}
+
+// Restaurer le thème sauvegardé
+(function() {
+  if (localStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light');
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('themeToggle');
+      if (btn) btn.textContent = '☀️';
+    });
+  }
+})();
+
+
+// fonction afficher qrcode 
+
+function openQRCode() {
+
+  const params = new URLSearchParams();
+  params.set('seed',      state.seed);
+  params.set('level',     state.selectedLevel);
+  params.set('inclusive', state.filterInclusive ? '1' : '0');
+  params.set('n',         state.numQuestions);
+  if (state.selectedThemes.length) params.set('themes', state.selectedThemes.join(','));
+  const url = location.origin + location.pathname + '?' + params.toString();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'qrOverlay';
+  overlay.style.cssText = `
+    position:fixed; inset:0; z-index:9000;
+    background:rgba(0,0,0,0.8);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; animation: fadeIn .2s ease;
+  `;
+
+  const img = document.createElement('img');
+  img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data='+url;
+  img.style.cssText = 'width:min(80vw,400px); height:auto; border-radius:5px; box-shadow:0 8px 40px rgba(0,0,0,.5);';
+  img.alt = 'QR Code';
+
+  overlay.appendChild(img);
+  document.body.appendChild(overlay);
+
+  // Fermer au clic ou Escape
+  overlay.onclick = () => overlay.remove();
+  overlay._key = (e) => { if (e.key === 'Escape') overlay.remove(); document.removeEventListener('keydown', overlay._key); };
+  document.addEventListener('keydown', overlay._key);
+}
+
+function openQRCode2() {
+
+  const overlay = document.createElement('div');
+  overlay.id = 'qrOverlay';
+  overlay.style.cssText = `
+    position:fixed; inset:0; z-index:9000;
+    background:rgba(0,0,0,0.8);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; animation: fadeIn .2s ease;
+  `;
+
+  const img = document.createElement('img');
+  img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=https://mathsroz.github.io/QCM_1ere/';
+  img.style.cssText = 'width:min(80vw,400px); height:auto; border-radius:5px; box-shadow:0 8px 40px rgba(0,0,0,.5);';
+  img.alt = 'QR Code';
+
+  overlay.appendChild(img);
+  document.body.appendChild(overlay);
+
+  // Fermer au clic ou Escape
+  overlay.onclick = () => overlay.remove();
+  overlay._key = (e) => { if (e.key === 'Escape') overlay.remove(); document.removeEventListener('keydown', overlay._key); };
+  document.addEventListener('keydown', overlay._key);
+}
+</script>
+</body>
 </html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>QCM — Rejoindre la session</title>
+    <link rel="icon" type="image/svg+xml" href="check-square.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <!-- Lien vers le fichier CSS externe -->
+    <link rel="stylesheet" href="style/eleve.css">
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.2/dist/peerjs.min.js"></script>
+</head>
+<body>
+
+<!-- ══ ÉCRAN 1 : REJOINDRE ══ -->
+<div class="screen active" id="screen-join">
+    <div class="logo">QCM Maths · Première</div>
+    <div class="join-card">
+        <div class="join-title">Rejoindre la session</div>
+        <div class="join-sub">Entre le code de salle affiché au tableau et ton prénom.</div>
+        <div class="field-label">Code de salle</div>
+        <input class="code-input" id="codeInput" maxlength="6" placeholder="XXXXXX" autocomplete="off" autocapitalize="characters" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+        <div class="field-label">Ton prénom</div>
+        <input class="name-input" id="nameInput" maxlength="20" placeholder="Ex : Marie">
+        <button class="btn-join" id="btnJoin" onclick="joinSession()">Rejoindre</button>
+    </div>
+</div>
+
+<!-- ══ ÉCRAN 2 : ATTENTE ══ -->
+<div class="screen" id="screen-wait">
+    <div class="wait-icon pulse">⏳</div>
+    <div class="wait-title" id="waitTitle">Connexion en cours…</div>
+    <div class="wait-sub" id="waitSub">Attends que le professeur lance le quiz.</div>
+</div>
+
+<!-- ══ ÉCRAN 3 : QUESTION ══ -->
+<div class="screen" id="screen-question">
+    <div class="q-card">
+        <div class="q-num" id="qNum"></div>
+        <div class="q-timer">
+            <div class="timer-bar-wrap"><div class="timer-bar" id="timerBar"></div></div>
+            <div class="timer-num" id="timerNum">—</div>
+        </div>
+        <div class="q-enonce" id="qEnonce"></div>
+        <div class="answers" id="answersContainer"></div>
+        <div class="feedback-banner" id="feedbackBanner"></div>
+    </div>
+</div>
+
+<!-- ══ ÉCRAN 4 : FIN ══ -->
+<div class="screen" id="screen-end">
+    <div class="score-big" id="endScore">—</div>
+    <div class="score-label" id="endLabel">Quiz terminé</div>
+    <button class="btn-back" onclick="resetApp()">← Nouvelle session</button>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ─── ÉTAT ───────────────────────────────────────────────
+let peer = null, conn = null;
+let myName = '';
+let totalQ = 0, qIdx = 0, score = 0;
+let selectedAnswer = null, answered = false;
+let timerInterval = null, timerRemaining = 0;
+
+// ─── NAVIGATION ────────────────────────────────────────
+function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + id).classList.add('active');
+}
+
+function toast(msg, dur = 3000) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), dur);
+}
+
+// ─── REJOINDRE ──────────────────────────────────────────
+function joinSession() {
+    const code = document.getElementById('codeInput').value.trim();
+    const name = document.getElementById('nameInput').value.trim();
+    if (code.length < 4) { toast('Code trop court (min. 4 caractères)'); return; }
+    if (!name) { toast('Entre ton prénom'); return; }
+    myName = name;
+    document.getElementById('btnJoin').disabled = true;
+    showScreen('wait');
+    setWait('Connexion…', 'Connexion au serveur de signalisation…');
+    connectToPeer(code);
+}
+
+function setWait(title, sub) {
+    document.getElementById('waitTitle').textContent = title;
+    document.getElementById('waitSub').textContent = sub;
+}
+
+// ─── PEERJS ─────────────────────────────────────────────
+function connectToPeer(roomCode) {
+    const myId = 'eleve-' + Math.random().toString(36).slice(2, 10);
+    peer = new Peer(myId, {
+        config: {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' }
+            ]
+        }
+    });
+
+    peer.on('open', () => {
+        setWait('En attente…', 'En attente du lancement par le professeur.');
+        conn = peer.connect('qcm-prof-' + roomCode, { reliable: true });
+        conn.on('open', () => {
+            send({ type: 'hello', name: myName });
+            setWait('Connecté ✓', 'En attente que le professeur lance le quiz…');
+        });
+        conn.on('data', handleMessage);
+        conn.on('error', (e) => { toast('Erreur de connexion : ' + e); resetApp(); });
+        conn.on('close', () => { toast('Connexion perdue.'); resetApp(); });
+    });
+
+    peer.on('error', (e) => {
+        const msg = e.type === 'peer-unavailable'
+            ? 'Code de salle introuvable. Vérifie le code.'
+            : 'Erreur réseau. Réessaie.';
+        toast(msg);
+        resetApp();
+    });
+}
+
+function send(data) {
+    if (conn && conn.open) conn.send(data);
+}
+
+function handleMessage(msg) {
+    switch (msg.type) {
+        case 'question': showQuestion(msg); break;
+        case 'reveal':   revealAnswers(msg.bonneReponse); break;
+        case 'end':      showEnd(msg.score, msg.total); break;
+    }
+}
+
+function showQuestion(msg) {
+    const { index, total, enonce, reponses, duree } = msg;
+    qIdx = index; totalQ = total;
+    selectedAnswer = null; answered = false;
+
+
+    document.getElementById('qNum').textContent = 'Question ' + (index + 1) + ' / ' + total;
+    buildContent(document.getElementById('qEnonce'), enonce);
+
+    const letters = ['A', 'B', 'C', 'D'];
+    const cont = document.getElementById('answersContainer');
+    cont.innerHTML = '';
+    reponses.forEach((rep, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'ans-btn';
+        btn.dataset.idx = i;
+        btn.setAttribute('data-raw', rep); // Stocker pour comparaison
+        const letter = document.createElement('div');
+        letter.className = 'ans-letter';
+        letter.textContent = letters[i];
+        const content = document.createElement('div');
+        buildContent(content, rep);
+        btn.appendChild(letter); btn.appendChild(content);
+        btn.onclick = () => selectAnswer(i, btn, rep);
+        cont.appendChild(btn);
+    });
+
+    document.getElementById('feedbackBanner').className = 'feedback-banner';
+    document.getElementById('feedbackBanner').textContent = '';
+
+    clearTimer();
+    if (duree && duree > 0) startTimer(duree);
+    else { document.getElementById('timerBar').style.width = '0%'; document.getElementById('timerNum').textContent = '∞'; }
+
+    showScreen('question');
+    setTimeout(() => {
+        if (window.renderMathInElement) renderMathInElement(document.getElementById('screen-question'), { delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}], throwOnError:false });
+    }, 100);
+}
+
+function selectAnswer(idx, btn, reponseText) {
+    if (answered) return;
+    answered = true;
+    selectedAnswer = idx;
+    document.querySelectorAll('.ans-btn').forEach(b => { b.classList.remove('selected'); b.disabled = true; });
+    btn.classList.add('selected');
+    send({ type: 'answer', index: qIdx, answerIdx: idx, answerText: reponseText, name: myName });
+}
+
+function revealAnswers(bonneReponse) {
+    clearTimer();
+    const reponseEls = document.querySelectorAll('.ans-btn');
+    reponseEls.forEach((btn, i) => {
+        btn.disabled = true;
+        const raw = btn.getAttribute('data-raw') || '';
+        const isCorrect = raw === bonneReponse;
+        const isSelected = parseInt(btn.dataset.idx) === selectedAnswer;
+        
+        if (isSelected) btn.classList.remove('selected');
+        
+        if (isCorrect) { 
+            btn.classList.add('correct'); 
+            if (isSelected) { score++; showFeedback(true); } 
+        } else if (isSelected) { 
+            btn.classList.add('wrong'); 
+            showFeedback(false); 
+        }
+    });
+
+    if (selectedAnswer === null) showFeedback(null);
+}
+
+function showFeedback(correct) {
+    const b = document.getElementById('feedbackBanner');
+    if (correct === true) { b.className = 'feedback-banner show-correct'; b.textContent = '✓ Bonne réponse !'; }
+    else if (correct === false) { b.className = 'feedback-banner show-wrong'; b.textContent = '✗ Mauvaise réponse'; }
+    else { b.className = 'feedback-banner show-wrong'; b.textContent = 'Pas de réponse'; }
+}
+
+function showEnd(serverScore, total) {
+    clearTimer();
+    const s = serverScore !== undefined ? serverScore : score;
+    const totalCount = total || totalQ;
+    document.getElementById('endScore').textContent = s + '/' + totalCount;
+    document.getElementById('endLabel').textContent = 'Quiz terminé — ' + Math.round(s / totalCount * 100) + '% de bonnes réponses';
+    showScreen('end');
+}
+
+function startTimer(duree) {
+    timerRemaining = duree;
+    updateTimerUI(duree, duree);
+    timerInterval = setInterval(() => {
+        timerRemaining--;
+        updateTimerUI(timerRemaining, duree);
+        if (timerRemaining <= 0) {
+            clearTimer();
+            if (!answered) { answered = true; send({ type: 'answer', index: qIdx, answerIdx: null, answerText: null, name: myName }); }
+        }
+    }, 1000);
+}
+
+function updateTimerUI(rem, total) {
+    const pct = Math.max(0, rem / total * 100);
+    const bar = document.getElementById('timerBar');
+    bar.style.width = pct + '%';
+    bar.className = 'timer-bar' + (rem <= 5 ? ' low' : '');
+    document.getElementById('timerNum').textContent = rem > 0 ? rem + 's' : '0s';
+}
+
+function clearTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+}
+
+function buildContent(container, str) {
+    container.innerHTML = '';
+    if (typeof str !== 'string') { container.textContent = String(str); return; }
+    const parts = str.split(/(%%SVG[\s\S]*?%%ENDSVG%%(?:\s*%%TIKZ[\s\S]*?%%ENDTIKZ%%)?|%%TIKZ[\s\S]*?%%ENDTIKZ%%)/);
+    parts.forEach(part => {
+        if (part.startsWith('%%SVG')) {
+            const svgCode = part.replace(/^%%SVG/, '').replace(/%%ENDSVG%%[\s\S]*$/, '').trim();
+            const wrap = document.createElement('div');
+            wrap.className = 'fig-wrap';
+            wrap.innerHTML = svgCode;
+            container.appendChild(wrap);
+        } else if (part.startsWith('%%TIKZ')) {
+            // Ignoré côté client
+        } else if (part) {
+            const span = document.createElement('span');
+            const safe = part.replace(/((\$\$[\s\S]*?\$\$)|(\$[^$]*?\$))|(\\\\\s*)/g, (m, math, d, i, br) => {
+                if (math) return math;
+                if (br) return '<br>';
+                return m;
+            });
+            span.innerHTML = safe;
+            if (window.renderMathInElement) renderMathInElement(span, { delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}], throwOnError:false });
+            container.appendChild(span);
+        }
+    });
+}
+
+function resetApp() {
+    clearTimer();
+    if (conn) { try { conn.close(); } catch(e){} conn = null; }
+    if (peer) { try { peer.destroy(); } catch(e){} peer = null; }
+    score = 0; qIdx = 0; totalQ = 0; selectedAnswer = null; answered = false;
+    document.getElementById('codeInput').value = '';
+    document.getElementById('btnJoin').disabled = false;
+    showScreen('join');
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(location.search);
+    const code = params.get('code');
+    if (code) document.getElementById('codeInput').value = code.toUpperCase();
+    document.getElementById('nameInput').focus();
+});
+</script>
+</body>
+</html>
