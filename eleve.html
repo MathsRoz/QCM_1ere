@@ -106,25 +106,12 @@ function connectToPeer(roomCode) {
     peer = new Peer(myId, {
         config: {
             iceServers: [
-    { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' },
-    // Serveurs TURN publics (Metered - gratuit)
-    {
-        urls: 'turn:a.relay.metered.ca:80',
-        username: 'open',
-        credential: 'open'
-    },
-    {
-        urls: 'turn:a.relay.metered.ca:443',
-        username: 'open',
-        credential: 'open'
-    },
-    {
-        urls: 'turns:a.relay.metered.ca:443',
-        username: 'open',
-        credential: 'open'
-    }
-]
+                { urls: 'stun:stun.relay.metered.ca:80' },
+                { urls: 'turn:global.relay.metered.ca:80',                 username: 'dc351ba8dd72c358bd06ecfc', credential: '3kzo/j6VBrTYY/bS' },
+                { urls: 'turn:global.relay.metered.ca:80?transport=tcp',   username: 'dc351ba8dd72c358bd06ecfc', credential: '3kzo/j6VBrTYY/bS' },
+                { urls: 'turn:global.relay.metered.ca:443',                username: 'dc351ba8dd72c358bd06ecfc', credential: '3kzo/j6VBrTYY/bS' },
+                { urls: 'turns:global.relay.metered.ca:443?transport=tcp', username: 'dc351ba8dd72c358bd06ecfc', credential: '3kzo/j6VBrTYY/bS' },
+            ]
         }
     });
 
@@ -132,9 +119,7 @@ function connectToPeer(roomCode) {
         setWait('En attente…', 'En attente du lancement par le professeur.');
         conn = peer.connect('qcm-prof-' + roomCode, { reliable: true });
         conn.on('open', () => {
-            setTimeout(() => {
-        send({ type: 'hello', name: myName });
-    }, 300);
+            send({ type: 'hello', name: myName });
             setWait('Connecté ✓', 'En attente que le professeur lance le quiz…');
         });
         conn.on('data', handleMessage);
@@ -157,21 +142,9 @@ function send(data) {
 
 function handleMessage(msg) {
     switch (msg.type) {
-        case 'init-ok':
-            setWait('Connecté ✓', 'Le professeur va bientôt lancer le quiz...');
-            break;
-        case 'question': 
-            showQuestion(msg); 
-            break;
-        case 'reveal':   
-            revealAnswers(msg.bonneReponse); 
-            break;
-        case 'end':      
-            showEnd(msg.score, msg.total); 
-            break;
-        case 'askName':  
-            send({ type: 'hello', name: myName }); 
-            break;
+        case 'question': showQuestion(msg); break;
+        case 'reveal':   revealAnswers(msg.bonneReponse); break;
+        case 'end':      showEnd(msg.score, msg.total); break;
     }
 }
 

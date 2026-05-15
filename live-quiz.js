@@ -105,16 +105,16 @@
     ['lvWaitQr'].forEach(id => { const el = document.getElementById(id); if(el) el.src = qrSrc; });
 
     const ICE_SERVERS = [
-  { urls: 'stun:stun.l.google.com:19302' },
-  { urls: 'stun:stun1.l.google.com:19302' },
-  { urls: 'turn:a.relay.metered.ca:80',  username: 'open', credential: 'open' },
-  { urls: 'turn:a.relay.metered.ca:443', username: 'open', credential: 'open' },
-  { urls: 'turns:a.relay.metered.ca:443',username: 'open', credential: 'open' },
-];
-const opts = PEER_SERVER
-  ? { host: PEER_SERVER.host, port: PEER_SERVER.port, path: PEER_SERVER.path, config: { iceServers: ICE_SERVERS } }
-  : { config: { iceServers: ICE_SERVERS } };
-peer = new Peer('qcm-prof-' + roomCode, opts);
+      { urls: 'stun:stun.relay.metered.ca:80' },
+      { urls: 'turn:global.relay.metered.ca:80',                    username: 'dc351ba8dd72c358bd06ecfc', credential: '3kzo/j6VBrTYY/bS' },
+      { urls: 'turn:global.relay.metered.ca:80?transport=tcp',      username: 'dc351ba8dd72c358bd06ecfc', credential: '3kzo/j6VBrTYY/bS' },
+      { urls: 'turn:global.relay.metered.ca:443',                   username: 'dc351ba8dd72c358bd06ecfc', credential: '3kzo/j6VBrTYY/bS' },
+      { urls: 'turns:global.relay.metered.ca:443?transport=tcp',    username: 'dc351ba8dd72c358bd06ecfc', credential: '3kzo/j6VBrTYY/bS' },
+    ];
+    const opts = PEER_SERVER
+      ? { host: PEER_SERVER.host, port: PEER_SERVER.port, path: PEER_SERVER.path, config: { iceServers: ICE_SERVERS } }
+      : { config: { iceServers: ICE_SERVERS } };
+    peer = new Peer('qcm-prof-' + roomCode, opts);
     peer.on('open', () => {
       liveState.active = true; liveState.qIdx = -1;
       const s = getQCMState();
@@ -122,25 +122,11 @@ peer = new Peer('qcm-prof-' + roomCode, opts);
       document.getElementById('btnLive').classList.add('live-on');
     });
     peer.on('connection', conn => {
-  const student = { conn, name:'?', answers:[], answered:false };
-  connections.push(student);
-
-  conn.on('open', () => {
-    // 1. Envoyer un signal de confirmation immédiat pour débloquer l'écran "Attente" de l'élève
-    conn.send({ type: 'init-ok' }); 
-
-    // 2. Demander le nom
-    setTimeout(() => {
-      if (student.name === '?') conn.send({ type: 'askName' });
-    }, 500);
-  });
-
-  conn.on('data', msg => handleStudentMsg(student, msg));
-  conn.on('close', () => { 
-    connections = connections.filter(s => s !== student); 
-    refreshStudentsAll(); 
-  });
-});
+      const student = { conn, name:'?', answers:[], answered:false };
+      connections.push(student);
+      conn.on('data', msg => handleStudentMsg(student, msg));
+      conn.on('close', () => { connections = connections.filter(s => s !== student); refreshStudentsAll(); });
+    });
     peer.on('error', e => { if (e.type === 'unavailable-id') { peer.destroy(); peer = null; startPeer(); } });
   }
 
