@@ -132,7 +132,9 @@ function connectToPeer(roomCode) {
         setWait('En attente…', 'En attente du lancement par le professeur.');
         conn = peer.connect('qcm-prof-' + roomCode, { reliable: true });
         conn.on('open', () => {
-            send({ type: 'hello', name: myName });
+            setTimeout(() => {
+        send({ type: 'hello', name: myName });
+    }, 300);
             setWait('Connecté ✓', 'En attente que le professeur lance le quiz…');
         });
         conn.on('data', handleMessage);
@@ -158,6 +160,7 @@ function handleMessage(msg) {
         case 'question': showQuestion(msg); break;
         case 'reveal':   revealAnswers(msg.bonneReponse); break;
         case 'end':      showEnd(msg.score, msg.total); break;
+        case 'askName':  send({ type: 'hello', name: myName }); break;
     }
 }
 

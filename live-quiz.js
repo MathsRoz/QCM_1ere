@@ -124,6 +124,12 @@ peer = new Peer('qcm-prof-' + roomCode, opts);
     peer.on('connection', conn => {
       const student = { conn, name:'?', answers:[], answered:false };
       connections.push(student);
+      conn.on('open', () => {
+        // Demander le nom si pas encore reçu après 1s
+        setTimeout(() => {
+            if (student.name === '?') conn.send({ type: 'askName' });
+        }, 1000);
+    });
       conn.on('data', msg => handleStudentMsg(student, msg));
       conn.on('close', () => { connections = connections.filter(s => s !== student); refreshStudentsAll(); });
     });
