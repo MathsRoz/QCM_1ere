@@ -157,10 +157,21 @@ function send(data) {
 
 function handleMessage(msg) {
     switch (msg.type) {
-        case 'question': showQuestion(msg); break;
-        case 'reveal':   revealAnswers(msg.bonneReponse); break;
-        case 'end':      showEnd(msg.score, msg.total); break;
-        case 'askName':  send({ type: 'hello', name: myName }); break;
+        case 'init-ok':
+            setWait('Connecté ✓', 'Le professeur va bientôt lancer le quiz...');
+            break;
+        case 'question': 
+            showQuestion(msg); 
+            break;
+        case 'reveal':   
+            revealAnswers(msg.bonneReponse); 
+            break;
+        case 'end':      
+            showEnd(msg.score, msg.total); 
+            break;
+        case 'askName':  
+            send({ type: 'hello', name: myName }); 
+            break;
     }
 }
 

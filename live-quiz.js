@@ -122,17 +122,25 @@ peer = new Peer('qcm-prof-' + roomCode, opts);
       document.getElementById('btnLive').classList.add('live-on');
     });
     peer.on('connection', conn => {
-      const student = { conn, name:'?', answers:[], answered:false };
-      connections.push(student);
-      conn.on('open', () => {
-        // Demander le nom si pas encore reçu après 1s
-        setTimeout(() => {
-            if (student.name === '?') conn.send({ type: 'askName' });
-        }, 1000);
-    });
-      conn.on('data', msg => handleStudentMsg(student, msg));
-      conn.on('close', () => { connections = connections.filter(s => s !== student); refreshStudentsAll(); });
-    });
+  const student = { conn, name:'?', answers:[], answered:false };
+  connections.push(student);
+
+  conn.on('open', () => {
+    // 1. Envoyer un signal de confirmation immédiat pour débloquer l'écran "Attente" de l'élève
+    conn.send({ type: 'init-ok' }); 
+
+    // 2. Demander le nom
+    setTimeout(() => {
+      if (student.name === '?') conn.send({ type: 'askName' });
+    }, 500);
+  });
+
+  conn.on('data', msg => handleStudentMsg(student, msg));
+  conn.on('close', () => { 
+    connections = connections.filter(s => s !== student); 
+    refreshStudentsAll(); 
+  });
+});
     peer.on('error', e => { if (e.type === 'unavailable-id') { peer.destroy(); peer = null; startPeer(); } });
   }
 
